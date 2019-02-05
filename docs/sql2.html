@@ -48,6 +48,71 @@
 
 
 
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -67,10 +132,71 @@
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
-<li class="chapter" data-level="2" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>2</b> DBI</a></li>
-<li class="chapter" data-level="3" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>3</b> dbplyr</a></li>
-<li class="chapter" data-level="4" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>4</b> SQL Basics</a></li>
-<li class="chapter" data-level="5" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>5</b> SQL Advanced</a></li>
+<li class="chapter" data-level="2" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>2</b> DBI</a><ul>
+<li class="chapter" data-level="2.1" data-path="dbi.html"><a href="dbi.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="dbi.html"><a href="dbi.html#libraries-code-data"><i class="fa fa-check"></i><b>2.2</b> Libraries, Code &amp; Data</a></li>
+<li class="chapter" data-level="2.3" data-path="dbi.html"><a href="dbi.html#connection"><i class="fa fa-check"></i><b>2.3</b> Connection</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="dbi.html"><a href="dbi.html#connection-summary"><i class="fa fa-check"></i><b>2.3.1</b> Connection Summary</a></li>
+<li class="chapter" data-level="2.3.2" data-path="dbi.html"><a href="dbi.html#list-tables"><i class="fa fa-check"></i><b>2.3.2</b> List Tables</a></li>
+<li class="chapter" data-level="2.3.3" data-path="dbi.html"><a href="dbi.html#list-fields"><i class="fa fa-check"></i><b>2.3.3</b> List Fields</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="dbi.html"><a href="dbi.html#querying-data"><i class="fa fa-check"></i><b>2.4</b> Querying Data</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="dbi.html"><a href="dbi.html#entire-table"><i class="fa fa-check"></i><b>2.4.1</b> Entire Table</a></li>
+<li class="chapter" data-level="2.4.2" data-path="dbi.html"><a href="dbi.html#few-rows"><i class="fa fa-check"></i><b>2.4.2</b> Few Rows</a></li>
+<li class="chapter" data-level="2.4.3" data-path="dbi.html"><a href="dbi.html#read-data-in-batches"><i class="fa fa-check"></i><b>2.4.3</b> Read Data in Batches</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="dbi.html"><a href="dbi.html#query"><i class="fa fa-check"></i><b>2.5</b> Query</a><ul>
+<li class="chapter" data-level="2.5.1" data-path="dbi.html"><a href="dbi.html#query-status"><i class="fa fa-check"></i><b>2.5.1</b> Query Status</a></li>
+<li class="chapter" data-level="2.5.2" data-path="dbi.html"><a href="dbi.html#query-info"><i class="fa fa-check"></i><b>2.5.2</b> Query Info</a></li>
+<li class="chapter" data-level="2.5.3" data-path="dbi.html"><a href="dbi.html#latest-query"><i class="fa fa-check"></i><b>2.5.3</b> Latest Query</a></li>
+<li class="chapter" data-level="2.5.4" data-path="dbi.html"><a href="dbi.html#rows-fetched"><i class="fa fa-check"></i><b>2.5.4</b> Rows Fetched</a></li>
+<li class="chapter" data-level="2.5.5" data-path="dbi.html"><a href="dbi.html#rows-affected"><i class="fa fa-check"></i><b>2.5.5</b> Rows Affected</a></li>
+<li class="chapter" data-level="2.5.6" data-path="dbi.html"><a href="dbi.html#column-info"><i class="fa fa-check"></i><b>2.5.6</b> Column Info</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="dbi.html"><a href="dbi.html#create-table"><i class="fa fa-check"></i><b>2.6</b> Create Table</a></li>
+<li class="chapter" data-level="2.7" data-path="dbi.html"><a href="dbi.html#append-data"><i class="fa fa-check"></i><b>2.7</b> Append Data</a></li>
+<li class="chapter" data-level="2.8" data-path="dbi.html"><a href="dbi.html#insert-rows"><i class="fa fa-check"></i><b>2.8</b> Insert Rows</a></li>
+<li class="chapter" data-level="2.9" data-path="dbi.html"><a href="dbi.html#remove-table"><i class="fa fa-check"></i><b>2.9</b> Remove Table</a></li>
+<li class="chapter" data-level="2.10" data-path="dbi.html"><a href="dbi.html#sqlite-data-type"><i class="fa fa-check"></i><b>2.10</b> SQLite Data Type</a></li>
+<li class="chapter" data-level="2.11" data-path="dbi.html"><a href="dbi.html#close-connection"><i class="fa fa-check"></i><b>2.11</b> Close Connection</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>3</b> dbplyr</a><ul>
+<li class="chapter" data-level="3.1" data-path="dbplyr.html"><a href="dbplyr.html#introduction-3"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="dbplyr.html"><a href="dbplyr.html#libraries-code-data-1"><i class="fa fa-check"></i><b>3.2</b> Libraries, Code &amp; Data</a></li>
+<li class="chapter" data-level="3.3" data-path="dbplyr.html"><a href="dbplyr.html#connect-to-database"><i class="fa fa-check"></i><b>3.3</b> Connect to Database</a></li>
+<li class="chapter" data-level="3.4" data-path="dbplyr.html"><a href="dbplyr.html#reference-data"><i class="fa fa-check"></i><b>3.4</b> Reference Data</a></li>
+<li class="chapter" data-level="3.5" data-path="dbplyr.html"><a href="dbplyr.html#query-data"><i class="fa fa-check"></i><b>3.5</b> Query Data</a></li>
+<li class="chapter" data-level="3.6" data-path="dbplyr.html"><a href="dbplyr.html#show-query"><i class="fa fa-check"></i><b>3.6</b> Show Query</a></li>
+<li class="chapter" data-level="3.7" data-path="dbplyr.html"><a href="dbplyr.html#collect-data"><i class="fa fa-check"></i><b>3.7</b> Collect Data</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>4</b> SQL Basics</a><ul>
+<li class="chapter" data-level="4.1" data-path="sqlbasics.html"><a href="sqlbasics.html#introduction-4"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="sqlbasics.html"><a href="sqlbasics.html#libraries-code-data-2"><i class="fa fa-check"></i><b>4.2</b> Libraries, Code &amp; Data</a></li>
+<li class="chapter" data-level="4.3" data-path="sqlbasics.html"><a href="sqlbasics.html#set-up"><i class="fa fa-check"></i><b>4.3</b> Set Up</a></li>
+<li class="chapter" data-level="4.4" data-path="sqlbasics.html"><a href="sqlbasics.html#select-columns"><i class="fa fa-check"></i><b>4.4</b> Select Columns</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="sqlbasics.html"><a href="sqlbasics.html#syntax"><i class="fa fa-check"></i><b>4.4.1</b> Syntax</a></li>
+<li class="chapter" data-level="4.4.2" data-path="sqlbasics.html"><a href="sqlbasics.html#select-single-column"><i class="fa fa-check"></i><b>4.4.2</b> Select Single Column</a></li>
+<li class="chapter" data-level="4.4.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-multiple-columns"><i class="fa fa-check"></i><b>4.4.3</b> Select Multiple Columns</a></li>
+<li class="chapter" data-level="4.4.4" data-path="sqlbasics.html"><a href="sqlbasics.html#select-all-columns"><i class="fa fa-check"></i><b>4.4.4</b> Select All Columns</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="sqlbasics.html"><a href="sqlbasics.html#limit"><i class="fa fa-check"></i><b>4.5</b> Limit</a></li>
+<li class="chapter" data-level="4.6" data-path="sqlbasics.html"><a href="sqlbasics.html#distinct"><i class="fa fa-check"></i><b>4.6</b> Distinct</a></li>
+<li class="chapter" data-level="4.7" data-path="sqlbasics.html"><a href="sqlbasics.html#filter"><i class="fa fa-check"></i><b>4.7</b> Filter</a></li>
+<li class="chapter" data-level="4.8" data-path="sqlbasics.html"><a href="sqlbasics.html#and-or-not"><i class="fa fa-check"></i><b>4.8</b> And, Or &amp; Not</a></li>
+<li class="chapter" data-level="4.9" data-path="sqlbasics.html"><a href="sqlbasics.html#between"><i class="fa fa-check"></i><b>4.9</b> BETWEEN</a></li>
+<li class="chapter" data-level="4.10" data-path="sqlbasics.html"><a href="sqlbasics.html#in"><i class="fa fa-check"></i><b>4.10</b> IN</a></li>
+<li class="chapter" data-level="4.11" data-path="sqlbasics.html"><a href="sqlbasics.html#is-null"><i class="fa fa-check"></i><b>4.11</b> IS NULL</a></li>
+<li class="chapter" data-level="4.12" data-path="sqlbasics.html"><a href="sqlbasics.html#like"><i class="fa fa-check"></i><b>4.12</b> LIKE</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>5</b> SQL Advanced</a><ul>
+<li class="chapter" data-level="5.1" data-path="sql2.html"><a href="sql2.html#introduction-5"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="sql2.html"><a href="sql2.html#libraries-code-data-3"><i class="fa fa-check"></i><b>5.2</b> Libraries, Code &amp; Data</a></li>
+<li class="chapter" data-level="5.3" data-path="sql2.html"><a href="sql2.html#set-up-1"><i class="fa fa-check"></i><b>5.3</b> Set Up</a></li>
+<li class="chapter" data-level="5.4" data-path="sql2.html"><a href="sql2.html#aggregate"><i class="fa fa-check"></i><b>5.4</b> Aggregate</a></li>
+<li class="chapter" data-level="5.5" data-path="sql2.html"><a href="sql2.html#alias"><i class="fa fa-check"></i><b>5.5</b> Alias</a></li>
+<li class="chapter" data-level="5.6" data-path="sql2.html"><a href="sql2.html#order-by"><i class="fa fa-check"></i><b>5.6</b> Order By</a></li>
+<li class="chapter" data-level="5.7" data-path="sql2.html"><a href="sql2.html#group-by"><i class="fa fa-check"></i><b>5.7</b> Group By</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -93,7 +219,165 @@
             <section class="normal" id="section-">
 <div id="sql2" class="section level1">
 <h1><span class="header-section-number">Chapter 5</span> SQL Advanced</h1>
+<div id="introduction-5" class="section level2">
+<h2><span class="header-section-number">5.1</span> Introduction</h2>
+<p>In this chapter, we will learn to</p>
+<ul>
+<li>aggregate data</li>
+<li>order data</li>
+<li>and group data</li>
+</ul>
+</div>
+<div id="libraries-code-data-3" class="section level2">
+<h2><span class="header-section-number">5.2</span> Libraries, Code &amp; Data</h2>
+<p>We will use the following libraries in this post:</p>
+<ul>
+<li><a href="http://readr.tidyverse.org/">DBI</a></li>
+<li><a href="https://rstats-db.github.io/RSQLite/">RSQLite</a></li>
+<li><a href="http://dbplyr.tidyverse.org/">dbplyr</a></li>
+</ul>
+<p>All the data sets used in this chapter can be found <a href="https://github.com/rsquaredacademy/datasets">here</a> and code can be downloaded from <a href="https://gist.github.com/rsquaredacademy/691dba8e13873c648bfdb91aba65d4d7">here</a>.</p>
+</div>
+<div id="set-up-1" class="section level2">
+<h2><span class="header-section-number">5.3</span> Set Up</h2>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" data-line-number="1">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb97-2" data-line-number="2">con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</a>
+<a class="sourceLine" id="cb97-3" data-line-number="3"><span class="kw">copy_to</span>(con, ecom)</a></code></pre></div>
+</div>
+<div id="aggregate" class="section level2">
+<h2><span class="header-section-number">5.4</span> Aggregate</h2>
+<p>Let us combine the aggregate statements with WHERE statement to filter data.</p>
+<ul>
+<li>SUM() : returns the total sum of a numeric column</li>
+</ul>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT SUM(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<pre><code>##   SUM(n_visit)
+## 1         4972</code></pre>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT SUM(n_visit) </span></a>
+<a class="sourceLine" id="cb100-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb100-3" data-line-number="3"><span class="st">                 WHERE n_visit &gt; 5&quot;</span>)</a></code></pre></div>
+<pre><code>##   SUM(n_visit)
+## 1         3574</code></pre>
+<ul>
+<li>AVG() : returns the average value of a numeric column</li>
+</ul>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<pre><code>##   AVG(n_visit)
+## 1        4.972</code></pre>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) </span></a>
+<a class="sourceLine" id="cb104-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb104-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;P%&#39;&quot;</span>)</a></code></pre></div>
+<pre><code>##   AVG(n_visit)
+## 1     5.079137</code></pre>
+<ul>
+<li>MAX() : returns the largest value of the selected column</li>
+</ul>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<pre><code>##   MAX(n_visit)
+## 1           10</code></pre>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) </span></a>
+<a class="sourceLine" id="cb108-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb108-3" data-line-number="3"><span class="st">                 WHERE device == &#39;tablet&#39;&quot;</span>)</a></code></pre></div>
+<pre><code>##   MAX(n_visit)
+## 1           10</code></pre>
+<ul>
+<li>MIN() : returns the smallest value of the selected column</li>
+</ul>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb110-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<pre><code>##   MIN(n_visit)
+## 1            0</code></pre>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb112-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(n_visit) </span></a>
+<a class="sourceLine" id="cb112-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb112-3" data-line-number="3"><span class="st">                 WHERE duration BETWEEN 600 AND 900&quot;</span>)</a></code></pre></div>
+<pre><code>##   MIN(n_visit)
+## 1            0</code></pre>
+</div>
+<div id="alias" class="section level2">
+<h2><span class="header-section-number">5.5</span> Alias</h2>
+<p>SQL aliases are used to give a table, or a column in a table, a temporary name. They are often used to make column names more readable. An alias only exists for the duration of the query. Below are a
+few examples:</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb114-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) AS avg_mobile </span></a>
+<a class="sourceLine" id="cb114-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb114-3" data-line-number="3"><span class="st">                 WHERE device == &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
+<pre><code>##   avg_mobile
+## 1   5.479651</code></pre>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb116-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) AS max_visit </span></a>
+<a class="sourceLine" id="cb116-2" data-line-number="2"><span class="st">                 FROM ecom&quot;</span>)</a></code></pre></div>
+<pre><code>##   max_visit
+## 1        10</code></pre>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb118-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(duration) AS min_duration </span></a>
+<a class="sourceLine" id="cb118-2" data-line-number="2"><span class="st">                 FROM ecom&quot;</span>)</a></code></pre></div>
+<pre><code>##   min_duration
+## 1           10</code></pre>
+</div>
+<div id="order-by" class="section level2">
+<h2><span class="header-section-number">5.6</span> Order By</h2>
+<p>The ORDER BY keyword is used to sort the records in ascending or descending order. By default, the records are sorted in ascending order. Use the DESC keyword if you want to sort the records in descending order,</p>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb120-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb120-3" data-line-number="3"><span class="st">                 ORDER BY country&quot;</span>)</a></code></pre></div>
+<pre><code>##        id referrer device bouncers n_visit n_pages duration
+## 1     232   social laptop        0       8       2       60
+## 2     299    yahoo laptop        0      10      18      180
+## 3     570   social laptop        1       2       1      274
+## 4     677   direct tablet        1      10       1      682
+##                               country purchase order_items order_value
+## 1                         Afghanistan        0           0           0
+## 2                         Afghanistan        0           0           0
+## 3                         Afghanistan        0           0           0
+## 4                         Afghanistan        0           0           0
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 996 rows ]</code></pre>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb122-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT *  </span></a>
+<a class="sourceLine" id="cb122-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb122-3" data-line-number="3"><span class="st">                 ORDER BY duration&quot;</span>)</a></code></pre></div>
+<pre><code>##        id referrer device bouncers n_visit n_pages duration
+## 1     236    yahoo tablet        1       5       1       10
+## 2     615   social laptop        1       1       1       10
+## 3     392    yahoo laptop        0       0       1       12
+## 4     688   social mobile        1       2       1       12
+##                               country purchase order_items order_value
+## 1                              Poland        0           0           0
+## 2                             Finland        0           0           0
+## 3                           Indonesia        0           0           0
+## 4                            Botswana        0           0           0
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 996 rows ]</code></pre>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb124-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb124-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb124-3" data-line-number="3"><span class="st">                 ORDER BY n_visit DESC&quot;</span>)</a></code></pre></div>
+<pre><code>##        id referrer device bouncers n_visit n_pages duration
+## 1       1   google laptop        1      10       1      693
+## 2       7    yahoo mobile        1      10       1       75
+## 3       8   direct mobile        1      10       1      908
+## 4      29   google mobile        1      10       1      338
+##                               country purchase order_items order_value
+## 1                      Czech Republic        0           0           0
+## 2                          Bangladesh        0           0           0
+## 3                           Indonesia        0           0           0
+## 4                              Russia        0           0           0
+##  [ reached getOption(&quot;max.print&quot;) -- omitted 996 rows ]</code></pre>
+</div>
+<div id="group-by" class="section level2">
+<h2><span class="header-section-number">5.7</span> Group By</h2>
+<p>The GROUP BY statement is used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result by one or more columns.</p>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb126-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device, </span></a>
+<a class="sourceLine" id="cb126-2" data-line-number="2"><span class="st">                 count(*) AS visits </span></a>
+<a class="sourceLine" id="cb126-3" data-line-number="3"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb126-4" data-line-number="4"><span class="st">                 GROUP BY device </span></a>
+<a class="sourceLine" id="cb126-5" data-line-number="5"><span class="st">                 ORDER by visits DESC&quot;</span>)</a></code></pre></div>
+<pre><code>##   device visits
+## 1 mobile    344
+## 2 tablet    331
+## 3 laptop    325</code></pre>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb128-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device, MAX(duration) AS max_duration </span></a>
+<a class="sourceLine" id="cb128-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb128-3" data-line-number="3"><span class="st">                 GROUP BY device </span></a>
+<a class="sourceLine" id="cb128-4" data-line-number="4"><span class="st">                 ORDER by max_duration DESC&quot;</span>)</a></code></pre></div>
+<pre><code>##   device max_duration
+## 1 tablet          999
+## 2 laptop          997
+## 3 mobile          994</code></pre>
 
+</div>
 </div>
             </section>
 
@@ -136,7 +420,8 @@ gitbook.start({
 },
 "download": null,
 "toc": {
-"collapse": "subsection"
+"collapse": "subsection",
+"scroll_highlight": true
 }
 });
 });

@@ -1,2 +1,230 @@
 # SQL Basics {#sqlbasics}
 
+```{r setup, eval=TRUE, message=FALSE, echo=FALSE}
+library(dplyr)
+library(DBI)
+library(RSQLite)
+knitr::opts_chunk$set(R.options=list(max.print=50))
+```
+
+## Introduction
+
+In this chapter, we will learn to:
+
+- select 
+    - single column
+    - multiple columns
+    - distinct values in a column
+- limit the number of records returned
+- handle NULL values
+- and filter columns using the following operators
+   - WHERE
+   - AND, or & NOT
+   - BETWEEN
+   - IN
+   - LIKE
+
+
+## Libraries, Code & Data
+
+We will use the following libraries:
+
+- [DBI](http://readr.tidyverse.org/)
+- [RSQLite](https://rstats-db.github.io/RSQLite/)
+- [dbplyr](http://dbplyr.tidyverse.org/)
+
+All the data sets used in this chapter can be found [here](https://github.com/rsquaredacademy/datasets) and code can be downloaded from [here](https://gist.github.com/rsquaredacademy/f44774d9c6e115c08d5e2e693380a00f).
+
+## Set Up
+
+```{r setup2a, message=FALSE}
+ecom <- readr::read_csv('https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv')
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+copy_to(con, ecom)
+```
+## Select Columns
+
+The SQL SELECT statement is used to fetch the data from a database table.
+
+### Syntax
+
+Below is the basic syntax of the SELECT statement.
+
+`SELECT column1, column2, columnN FROM table_name;`
+
+Here, column1, column2... are the fields of a table whose values you want to fetch. 
+If you want to fetch all the fields, use the following syntax.
+
+`SELECT * FROM table_name;`
+
+### Select Single Column
+
+Let us begin by selecting the `device` field from the `ecom` table.
+
+```{r sql1}
+dbGetQuery(con, "SELECT device FROM ecom")
+```
+
+### Select Multiple Columns
+
+Select the following fields from the `ecom` table:
+
+- `referrer`
+- `device`
+- `purchase`
+
+```{r sql2}
+dbGetQuery(con, "SELECT referrer, device, purchase  FROM ecom")
+```
+
+### Select All Columns
+
+Select all the fields from the `ecom` table.
+
+```{r sql3}
+dbGetQuery(con, "SELECT * FROM ecom")
+```
+
+## Limit
+
+If you have a large table with thousands of rows, returning all the records
+will take time. Use LIMIT to specify the number of records to return.
+
+```{r sql4}
+dbGetQuery(con, "SELECT * FROM ecom limit 10")
+```
+
+## Distinct
+
+A column in a table may often contain many duplicate values; and we might be interested only in the 
+distinct/unique values. In such cases, we can use the SELECT DISTINCT statement to return only distinct values.
+
+```{r sql5}
+dbGetQuery(con, "SELECT distinct referrer FROM ecom")
+```
+
+## Filter
+
+Now that we know how to select columns, let us focus on filtering data. In SQL, the WHERE keyword is used to extract only those records that fulfill a specified condition. Data filter based on both text and numeric values in a table. Below are a few comparison operators we can use:
+
+- `=` equal
+- `<>` not equal
+- `<` less than
+- `>` greater than
+- `<=` less than or equal to
+- `>=` greater than or equal to
+
+
+The following SQL statement filters all rows from the `ecom` table where the `duration` field
+is greater than 300.
+
+```{r sql15}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE duration > 300")
+```
+
+Let us filter data based on a text value. In the following example, we filter all rows 
+from the `ecom` table where the `device` used is `mobile`.
+
+```{r sql7}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE device == 'mobile'")
+```
+
+## And, Or & Not
+
+The WHERE clause can be combined with other operators such as  
+
+- AND - displays a record if all the conditions separated by AND is TRUE
+- OR  - displays a record if any of the conditions separated by OR is TRUE
+- NOT - displays a record if the condition(s) is NOT TRUE
+
+to filter data based on more than one condition or to create more complex conditions.
+
+In the following example, we filter all the rows from the `ecom` table where
+`n_visit` (visit count) is greater than 3 and `duration` (time spent on the site)
+is greater than 100. We use AND to create multiple conditions.
+
+```{r sql8}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE n_visit > 3 AND duration > 100")
+```
+
+In the next example, we will use both AND & OR. Our goal is to filter all 
+rows from the `ecom` table that follow the below conditions:
+
+- `n_visit` (visit count) is either equal to 3 or 5
+- `device` used to visit the website is either `mobile` or `tablet`
+
+```{r sql9}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom WHERE (n_visit == 5 OR n_visit == 3)  
+                 AND (device = 'mobile' OR device = 'tablet')")
+```
+
+## BETWEEN
+
+The BETWEEN operator selects values within a given range and is inclusive: begin and end values are included. The values can be numbers, text, or dates. In the following example, we filter rows from 
+the `ecom` table where the visit count is between 1 and 3, and the `device` used to visit the website is
+`mobile`.
+
+```{r sql10}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom
+                 WHERE n_visit BETWEEN 1 AND 3 AND device = 'mobile'")
+```
+
+## IN
+
+The IN operator allows us to specify multiple values in a WHERE clause. It is a shorthand 
+for multiple OR conditions. In the below example, we filter rows from the `ecom` table where
+the visit count is either 2 or 4 or 6 or 8 or 10. Instead of using multiple OR conditions, 
+we use the IN operator.
+
+```{r sql11}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE n_visit IN (2, 4, 6, 8, 10)")
+```
+
+## IS NULL
+
+A field with a NULL value is a field with no value. If a field in a table is optional, it is possible to insert a new record or update a record without adding a value to this field. Then, the field will be saved with a NULL value. In the next example, we filter all rows from the `ecom` table where the `device` column
+has NULL values.
+
+```{r sql12}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE device IS NULL")
+```
+
+## LIKE
+
+The LIKE operator is used to search for a specific pattern in a column. There are two wildcards used in conjunction with the LIKE operator:
+
+- % : represents zero, one, or multiple characters
+- _ : represents a single character
+
+In the following example, we filter all rows from the `ecom` table where the name of the `country` starts with `P`. We use `%` after `P` to indicate that it can be followed by any number or type of characters.
+
+```{r sql13}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE country LIKE 'P%'")
+```
+
+Let us look at another example where we filter all rows from the `ecom` table where the name of the
+country should follow the below conditions:
+
+- name can start with any character
+- the second character must be `o`
+- it can have any type or number of characters after the second character
+
+```{r sql14}
+dbGetQuery(con, "SELECT * 
+                 FROM ecom 
+                 WHERE country LIKE '_o%'")
+```
