@@ -127,7 +127,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <nav role="navigation">
 
 <ul class="summary">
-<li><a href="./">R, Databases & SQL</a></li>
+<li><a href="https://github.com/rsquaredacademy-education/rdbsql/">R, Databases & SQL</a></li>
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a></li>
@@ -466,11 +466,11 @@ attention to creating new tables in the database.</p>
 <p>Let us see if the <strong>trial</strong> table has been overwritten.</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from trial limit 5&quot;</span>)</a></code></pre></div>
 <pre><code>##    x y
-## 1 10 k
-## 2 55 l
-## 3 47 m
-## 4 35 n
-## 5 60 o</code></pre>
+## 1 84 k
+## 2  2 l
+## 3 35 m
+## 4 38 n
+## 5  8 o</code></pre>
 </div>
 </div>
 <div id="append-data" class="section level2">
@@ -484,26 +484,26 @@ attention to creating new tables in the database.</p>
 <p>Let us quickly check if the new data has been appended to the <strong>trial</strong> table.</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1"><span class="kw">dbReadTable</span>(con, <span class="st">&quot;trial&quot;</span>)</a></code></pre></div>
 <pre><code>##     x y
-## 1  10 k
-## 2  55 l
-## 3  47 m
-## 4  35 n
-## 5  60 o
-## 6   6 p
-## 7  13 q
-## 8  75 r
+## 1  84 k
+## 2   2 l
+## 3  35 m
+## 4  38 n
+## 5   8 o
+## 6  93 p
+## 7  51 q
+## 8  86 r
 ## 9  29 s
-## 10 24 t
-## 11 38 e
-## 12 60 f
-## 13 66 g
-## 14 26 h
-## 15 19 i
-## 16 94 j
-## 17  4 k
-## 18 98 l
-## 19 99 m
-## 20 44 n</code></pre>
+## 10 41 t
+## 11 31 e
+## 12 96 f
+## 13 40 g
+## 14 45 h
+## 15 10 i
+## 16 18 j
+## 17 14 k
+## 18 22 l
+## 19 77 m
+## 20 75 n</code></pre>
 <p>We can also use <code>sqlAppendTable()</code> to append data to an existing table.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">sqlAppendTable</span>(con, <span class="st">&quot;ecom&quot;</span>, <span class="kw">head</span>(ecom))</a></code></pre></div>
 <pre><code>## Warning: Do not rely on the default value of the row.names argument for
@@ -613,7 +613,7 @@ gitbook.start({
 },
 "download": null,
 "toc": {
-"collapse": "subsection",
+"collapse": "section",
 "scroll_highlight": true
 }
 });
