@@ -130,7 +130,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/rsquaredacademy-education/rdbsql/">R, Databases & SQL</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-information"><i class="fa fa-check"></i>Software information</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>2</b> DBI</a><ul>
 <li class="chapter" data-level="2.1" data-path="dbi.html"><a href="dbi.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
@@ -240,9 +244,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="set-up-1" class="section level2">
 <h2><span class="header-section-number">5.3</span> Set Up</h2>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" data-line-number="1">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</a>
-<a class="sourceLine" id="cb97-2" data-line-number="2">con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</a>
-<a class="sourceLine" id="cb97-3" data-line-number="3"><span class="kw">copy_to</span>(con, ecom)</a></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb99-1" data-line-number="1">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb99-2" data-line-number="2">con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</a>
+<a class="sourceLine" id="cb99-3" data-line-number="3"><span class="kw">copy_to</span>(con, ecom)</a></code></pre></div>
 </div>
 <div id="aggregate" class="section level2">
 <h2><span class="header-section-number">5.4</span> Aggregate</h2>
@@ -250,45 +254,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul>
 <li>SUM() : returns the total sum of a numeric column</li>
 </ul>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb98-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT SUM(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT SUM(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   SUM(n_visit)
 ## 1         4972</code></pre>
-<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT SUM(n_visit) </span></a>
-<a class="sourceLine" id="cb100-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb100-3" data-line-number="3"><span class="st">                 WHERE n_visit &gt; 5&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT SUM(n_visit) </span></a>
+<a class="sourceLine" id="cb102-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb102-3" data-line-number="3"><span class="st">                 WHERE n_visit &gt; 5&quot;</span>)</a></code></pre></div>
 <pre><code>##   SUM(n_visit)
 ## 1         3574</code></pre>
 <ul>
 <li>AVG() : returns the average value of a numeric column</li>
 </ul>
-<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb102-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   AVG(n_visit)
 ## 1        4.972</code></pre>
-<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb104-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) </span></a>
-<a class="sourceLine" id="cb104-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb104-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;P%&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) </span></a>
+<a class="sourceLine" id="cb106-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb106-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;P%&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##   AVG(n_visit)
 ## 1     5.079137</code></pre>
 <ul>
 <li>MAX() : returns the largest value of the selected column</li>
 </ul>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb106-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   MAX(n_visit)
 ## 1           10</code></pre>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb108-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) </span></a>
-<a class="sourceLine" id="cb108-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb108-3" data-line-number="3"><span class="st">                 WHERE device == &#39;tablet&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb110-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) </span></a>
+<a class="sourceLine" id="cb110-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb110-3" data-line-number="3"><span class="st">                 WHERE device == &#39;tablet&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##   MAX(n_visit)
 ## 1           10</code></pre>
 <ul>
 <li>MIN() : returns the smallest value of the selected column</li>
 </ul>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb110-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb112-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(n_visit) FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   MIN(n_visit)
 ## 1            0</code></pre>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb112-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(n_visit) </span></a>
-<a class="sourceLine" id="cb112-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb112-3" data-line-number="3"><span class="st">                 WHERE duration BETWEEN 600 AND 900&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb114-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(n_visit) </span></a>
+<a class="sourceLine" id="cb114-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb114-3" data-line-number="3"><span class="st">                 WHERE duration BETWEEN 600 AND 900&quot;</span>)</a></code></pre></div>
 <pre><code>##   MIN(n_visit)
 ## 1            0</code></pre>
 </div>
@@ -296,26 +300,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">5.5</span> Alias</h2>
 <p>SQL aliases are used to give a table, or a column in a table, a temporary name. They are often used to make column names more readable. An alias only exists for the duration of the query. Below are a
 few examples:</p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb114-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) AS avg_mobile </span></a>
-<a class="sourceLine" id="cb114-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb114-3" data-line-number="3"><span class="st">                 WHERE device == &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb116-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT AVG(n_visit) AS avg_mobile </span></a>
+<a class="sourceLine" id="cb116-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb116-3" data-line-number="3"><span class="st">                 WHERE device == &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##   avg_mobile
 ## 1   5.479651</code></pre>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb116-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) AS max_visit </span></a>
-<a class="sourceLine" id="cb116-2" data-line-number="2"><span class="st">                 FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb118-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MAX(n_visit) AS max_visit </span></a>
+<a class="sourceLine" id="cb118-2" data-line-number="2"><span class="st">                 FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   max_visit
 ## 1        10</code></pre>
-<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb118-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(duration) AS min_duration </span></a>
-<a class="sourceLine" id="cb118-2" data-line-number="2"><span class="st">                 FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT MIN(duration) AS min_duration </span></a>
+<a class="sourceLine" id="cb120-2" data-line-number="2"><span class="st">                 FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   min_duration
 ## 1           10</code></pre>
 </div>
 <div id="order-by" class="section level2">
 <h2><span class="header-section-number">5.6</span> Order By</h2>
 <p>The ORDER BY keyword is used to sort the records in ascending or descending order. By default, the records are sorted in ascending order. Use the DESC keyword if you want to sort the records in descending order,</p>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb120-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb120-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb120-3" data-line-number="3"><span class="st">                 ORDER BY country&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb122-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb122-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb122-3" data-line-number="3"><span class="st">                 ORDER BY country&quot;</span>)</a></code></pre></div>
 <pre><code>##        id referrer device bouncers n_visit n_pages duration
 ## 1     232   social laptop        0       8       2       60
 ## 2     299    yahoo laptop        0      10      18      180
@@ -327,9 +331,9 @@ few examples:</p>
 ## 3                         Afghanistan        0           0           0
 ## 4                         Afghanistan        0           0           0
 ##  [ reached getOption(&quot;max.print&quot;) -- omitted 996 rows ]</code></pre>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb122-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT *  </span></a>
-<a class="sourceLine" id="cb122-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb122-3" data-line-number="3"><span class="st">                 ORDER BY duration&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb124-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT *  </span></a>
+<a class="sourceLine" id="cb124-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb124-3" data-line-number="3"><span class="st">                 ORDER BY duration&quot;</span>)</a></code></pre></div>
 <pre><code>##        id referrer device bouncers n_visit n_pages duration
 ## 1     236    yahoo tablet        1       5       1       10
 ## 2     615   social laptop        1       1       1       10
@@ -341,9 +345,9 @@ few examples:</p>
 ## 3                           Indonesia        0           0           0
 ## 4                            Botswana        0           0           0
 ##  [ reached getOption(&quot;max.print&quot;) -- omitted 996 rows ]</code></pre>
-<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb124-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb124-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb124-3" data-line-number="3"><span class="st">                 ORDER BY n_visit DESC&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb126-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb126-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb126-3" data-line-number="3"><span class="st">                 ORDER BY n_visit DESC&quot;</span>)</a></code></pre></div>
 <pre><code>##        id referrer device bouncers n_visit n_pages duration
 ## 1       1   google laptop        1      10       1      693
 ## 2       7    yahoo mobile        1      10       1       75
@@ -359,19 +363,19 @@ few examples:</p>
 <div id="group-by" class="section level2">
 <h2><span class="header-section-number">5.7</span> Group By</h2>
 <p>The GROUP BY statement is used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result by one or more columns.</p>
-<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb126-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device, </span></a>
-<a class="sourceLine" id="cb126-2" data-line-number="2"><span class="st">                 count(*) AS visits </span></a>
-<a class="sourceLine" id="cb126-3" data-line-number="3"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb126-4" data-line-number="4"><span class="st">                 GROUP BY device </span></a>
-<a class="sourceLine" id="cb126-5" data-line-number="5"><span class="st">                 ORDER by visits DESC&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb128-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device, </span></a>
+<a class="sourceLine" id="cb128-2" data-line-number="2"><span class="st">                 count(*) AS visits </span></a>
+<a class="sourceLine" id="cb128-3" data-line-number="3"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb128-4" data-line-number="4"><span class="st">                 GROUP BY device </span></a>
+<a class="sourceLine" id="cb128-5" data-line-number="5"><span class="st">                 ORDER by visits DESC&quot;</span>)</a></code></pre></div>
 <pre><code>##   device visits
 ## 1 mobile    344
 ## 2 tablet    331
 ## 3 laptop    325</code></pre>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb128-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device, MAX(duration) AS max_duration </span></a>
-<a class="sourceLine" id="cb128-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb128-3" data-line-number="3"><span class="st">                 GROUP BY device </span></a>
-<a class="sourceLine" id="cb128-4" data-line-number="4"><span class="st">                 ORDER by max_duration DESC&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb130-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device, MAX(duration) AS max_duration </span></a>
+<a class="sourceLine" id="cb130-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb130-3" data-line-number="3"><span class="st">                 GROUP BY device </span></a>
+<a class="sourceLine" id="cb130-4" data-line-number="4"><span class="st">                 ORDER by max_duration DESC&quot;</span>)</a></code></pre></div>
 <pre><code>##   device max_duration
 ## 1 tablet          999
 ## 2 laptop          997

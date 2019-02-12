@@ -130,7 +130,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/rsquaredacademy-education/rdbsql/">R, Databases & SQL</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-information"><i class="fa fa-check"></i>Software information</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
 <li class="chapter" data-level="2" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>2</b> DBI</a><ul>
 <li class="chapter" data-level="2.1" data-path="dbi.html"><a href="dbi.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
@@ -253,9 +257,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="set-up" class="section level2">
 <h2><span class="header-section-number">4.3</span> Set Up</h2>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" data-line-number="1">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</a>
-<a class="sourceLine" id="cb68-2" data-line-number="2">con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</a>
-<a class="sourceLine" id="cb68-3" data-line-number="3"><span class="kw">copy_to</span>(con, ecom)</a></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" data-line-number="1">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</a>
+<a class="sourceLine" id="cb70-2" data-line-number="2">con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</a>
+<a class="sourceLine" id="cb70-3" data-line-number="3"><span class="kw">copy_to</span>(con, ecom)</a></code></pre></div>
 </div>
 <div id="select-columns" class="section level2">
 <h2><span class="header-section-number">4.4</span> Select Columns</h2>
@@ -271,7 +275,7 @@ If you want to fetch all the fields, use the following syntax.</p>
 <div id="select-single-column" class="section level3">
 <h3><span class="header-section-number">4.4.2</span> Select Single Column</h3>
 <p>Let us begin by selecting the <code>device</code> field from the <code>ecom</code> table.</p>
-<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##      device
 ## 1    laptop
 ## 2    tablet
@@ -333,7 +337,7 @@ If you want to fetch all the fields, use the following syntax.</p>
 <li><code>device</code></li>
 <li><code>purchase</code></li>
 </ul>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT referrer, device, purchase  FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT referrer, device, purchase  FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##      referrer device purchase
 ## 1      google laptop        0
 ## 2       yahoo tablet        0
@@ -356,7 +360,7 @@ If you want to fetch all the fields, use the following syntax.</p>
 <div id="select-all-columns" class="section level3">
 <h3><span class="header-section-number">4.4.4</span> Select All Columns</h3>
 <p>Select all the fields from the <code>ecom</code> table.</p>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##        id referrer device bouncers n_visit n_pages duration
 ## 1       1   google laptop        1      10       1      693
 ## 2       2    yahoo tablet        1       9       1      459
@@ -374,7 +378,7 @@ If you want to fetch all the fields, use the following syntax.</p>
 <h2><span class="header-section-number">4.5</span> Limit</h2>
 <p>If you have a large table with thousands of rows, returning all the records
 will take time. Use LIMIT to specify the number of records to return.</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM ecom limit 10&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM ecom limit 10&quot;</span>)</a></code></pre></div>
 <pre><code>##    id referrer device bouncers n_visit n_pages duration        country
 ## 1   1   google laptop        1      10       1      693 Czech Republic
 ## 2   2    yahoo tablet        1       9       1      459          Yemen
@@ -391,7 +395,7 @@ will take time. Use LIMIT to specify the number of records to return.</p>
 <h2><span class="header-section-number">4.6</span> Distinct</h2>
 <p>A column in a table may often contain many duplicate values; and we might be interested only in the
 distinct/unique values. In such cases, we can use the SELECT DISTINCT statement to return only distinct values.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT distinct referrer FROM ecom&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT distinct referrer FROM ecom&quot;</span>)</a></code></pre></div>
 <pre><code>##   referrer
 ## 1   google
 ## 2    yahoo
@@ -412,9 +416,9 @@ distinct/unique values. In such cases, we can use the SELECT DISTINCT statement 
 </ul>
 <p>The following SQL statement filters all rows from the <code>ecom</code> table where the <code>duration</code> field
 is greater than 300.</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb79-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb79-3" data-line-number="3"><span class="st">                 WHERE duration &gt; 300&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb81-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb81-3" data-line-number="3"><span class="st">                 WHERE duration &gt; 300&quot;</span>)</a></code></pre></div>
 <pre><code>##      id referrer device bouncers n_visit n_pages duration
 ## 1     1   google laptop        1      10       1      693
 ## 2     2    yahoo tablet        1       9       1      459
@@ -428,9 +432,9 @@ is greater than 300.</p>
 ##  [ reached getOption(&quot;max.print&quot;) -- omitted 472 rows ]</code></pre>
 <p>Let us filter data based on a text value. In the following example, we filter all rows
 from the <code>ecom</code> table where the <code>device</code> used is <code>mobile</code>.</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb81-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb81-3" data-line-number="3"><span class="st">                 WHERE device == &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb83-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb83-3" data-line-number="3"><span class="st">                 WHERE device == &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##       id referrer device bouncers n_visit n_pages duration
 ## 1      5    yahoo mobile        1       9       1      955
 ## 2      7    yahoo mobile        1      10       1       75
@@ -455,9 +459,9 @@ from the <code>ecom</code> table where the <code>device</code> used is <code>mob
 <p>In the following example, we filter all the rows from the <code>ecom</code> table where
 <code>n_visit</code> (visit count) is greater than 3 and <code>duration</code> (time spent on the site)
 is greater than 100. We use AND to create multiple conditions.</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb83-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb83-3" data-line-number="3"><span class="st">                 WHERE n_visit &gt; 3 AND duration &gt; 100&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb85-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb85-3" data-line-number="3"><span class="st">                 WHERE n_visit &gt; 3 AND duration &gt; 100&quot;</span>)</a></code></pre></div>
 <pre><code>##       id referrer device bouncers n_visit n_pages duration
 ## 1      1   google laptop        1      10       1      693
 ## 2      2    yahoo tablet        1       9       1      459
@@ -475,9 +479,9 @@ rows from the <code>ecom</code> table that follow the below conditions:</p>
 <li><code>n_visit</code> (visit count) is either equal to 3 or 5</li>
 <li><code>device</code> used to visit the website is either <code>mobile</code> or <code>tablet</code></li>
 </ul>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb85-2" data-line-number="2"><span class="st">                 FROM ecom WHERE (n_visit == 5 OR n_visit == 3)  </span></a>
-<a class="sourceLine" id="cb85-3" data-line-number="3"><span class="st">                 AND (device = &#39;mobile&#39; OR device = &#39;tablet&#39;)&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb87-2" data-line-number="2"><span class="st">                 FROM ecom WHERE (n_visit == 5 OR n_visit == 3)  </span></a>
+<a class="sourceLine" id="cb87-3" data-line-number="3"><span class="st">                 AND (device = &#39;mobile&#39; OR device = &#39;tablet&#39;)&quot;</span>)</a></code></pre></div>
 <pre><code>##      id referrer device bouncers n_visit n_pages duration
 ## 1     4     bing tablet        0       3      18      468
 ## 2     9     bing mobile        0       3      19      209
@@ -495,9 +499,9 @@ rows from the <code>ecom</code> table that follow the below conditions:</p>
 <p>The BETWEEN operator selects values within a given range and is inclusive: begin and end values are included. The values can be numbers, text, or dates. In the following example, we filter rows from
 the <code>ecom</code> table where the visit count is between 1 and 3, and the <code>device</code> used to visit the website is
 <code>mobile</code>.</p>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb87-2" data-line-number="2"><span class="st">                 FROM ecom</span></a>
-<a class="sourceLine" id="cb87-3" data-line-number="3"><span class="st">                 WHERE n_visit BETWEEN 1 AND 3 AND device = &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb89-2" data-line-number="2"><span class="st">                 FROM ecom</span></a>
+<a class="sourceLine" id="cb89-3" data-line-number="3"><span class="st">                 WHERE n_visit BETWEEN 1 AND 3 AND device = &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##     id referrer device bouncers n_visit n_pages duration
 ## 1    9     bing mobile        0       3      19      209
 ## 2   32   direct mobile        1       2       1      501
@@ -516,9 +520,9 @@ the <code>ecom</code> table where the visit count is between 1 and 3, and the <c
 for multiple OR conditions. In the below example, we filter rows from the <code>ecom</code> table where
 the visit count is either 2 or 4 or 6 or 8 or 10. Instead of using multiple OR conditions,
 we use the IN operator.</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb89-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb89-3" data-line-number="3"><span class="st">                 WHERE n_visit IN (2, 4, 6, 8, 10)&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb91-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb91-3" data-line-number="3"><span class="st">                 WHERE n_visit IN (2, 4, 6, 8, 10)&quot;</span>)</a></code></pre></div>
 <pre><code>##      id referrer device bouncers n_visit n_pages duration
 ## 1     1   google laptop        1      10       1      693
 ## 2     7    yahoo mobile        1      10       1       75
@@ -535,9 +539,9 @@ we use the IN operator.</p>
 <h2><span class="header-section-number">4.11</span> IS NULL</h2>
 <p>A field with a NULL value is a field with no value. If a field in a table is optional, it is possible to insert a new record or update a record without adding a value to this field. Then, the field will be saved with a NULL value. In the next example, we filter all rows from the <code>ecom</code> table where the <code>device</code> column
 has NULL values.</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb91-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb91-3" data-line-number="3"><span class="st">                 WHERE device IS NULL&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb93-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb93-3" data-line-number="3"><span class="st">                 WHERE device IS NULL&quot;</span>)</a></code></pre></div>
 <pre><code>##  [1] id          referrer    device      bouncers    n_visit    
 ##  [6] n_pages     duration    country     purchase    order_items
 ## [11] order_value
@@ -551,9 +555,9 @@ has NULL values.</p>
 <li>_ : represents a single character</li>
 </ul>
 <p>In the following example, we filter all rows from the <code>ecom</code> table where the name of the <code>country</code> starts with <code>P</code>. We use <code>%</code> after <code>P</code> to indicate that it can be followed by any number or type of characters.</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb93-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb93-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;P%&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb95-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb95-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;P%&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##      id referrer device bouncers n_visit n_pages duration
 ## 1     5    yahoo mobile        1       9       1      955
 ## 2    14    yahoo tablet        0       5       8       80
@@ -572,9 +576,9 @@ country should follow the below conditions:</p>
 <li>the second character must be <code>o</code></li>
 <li>it can have any type or number of characters after the second character</li>
 </ul>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb95-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb95-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;_o%&#39;&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
+<a class="sourceLine" id="cb97-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
+<a class="sourceLine" id="cb97-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;_o%&#39;&quot;</span>)</a></code></pre></div>
 <pre><code>##      id referrer device bouncers n_visit n_pages duration
 ## 1     5    yahoo mobile        1       9       1      955
 ## 2     6    yahoo laptop        0       5       5      135
