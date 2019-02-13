@@ -10,7 +10,7 @@ In this chapter, we will learn to
 
 ## Libraries, Code & Data
 
-We will use the following libraries in this post:
+We will use the following libraries in this chapter:
 
 - [DBI](http://readr.tidyverse.org/)
 - [RSQLite](https://rstats-db.github.io/RSQLite/)

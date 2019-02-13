@@ -1,6 +1,7 @@
 --- 
 title: "R, Databases & SQL"
 author: "Aravind Hebbali"
+date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 link-citations: yes
@@ -17,6 +18,10 @@ knitr::include_graphics('img/rdbsql.png')
 
 ## Structure of the book {-}
 
+Chapter \@ref(dbi) introduces the **DBI** package. Chapter \@ref(dbplyr) explores
+data wrangling within database using the **dplyr** package. Chapters \@ref(sqlbasics)
+and \@ref(sql2) introduce basic and advanced SQL.
+
 ## Software information {-}
 
 The R session information when compiling this book is shown below:
@@ -25,3 +30,4 @@ The R session information when compiling this book is shown below:
 sessionInfo()
 ```
 
+We do not add prompts (`>` and `+`) to R source code in this book, and we comment out the text output with two hashes `##` by default, as you can see from the R session information above. This is for your convenience when you want to copy and run the code (the text output will be ignored since it is commented out). Package names are in bold text (e.g., **rmarkdown**), and function names are followed by parentheses (e.g., `bookdown::render_book()`). The double-colon operator `::` means accessing an object from a package. 
