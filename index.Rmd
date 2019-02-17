@@ -20,7 +20,7 @@ knitr::include_graphics('img/rdbsql.png')
 
 Chapter \@ref(dbi) introduces the **DBI** package. Chapter \@ref(dbplyr) explores
 data wrangling within database using the **dplyr** package. Chapters \@ref(sqlbasics)
-and \@ref(sql2) introduce basic and advanced SQL.
+and \@ref(sql2) introduce basic and advanced SQL
 
 ## Software information {-}
 
