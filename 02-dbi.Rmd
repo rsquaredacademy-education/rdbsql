@@ -25,10 +25,7 @@ In this chapter, we will learn to:
 - generate SQL query
 - close database connection
 
-
-## Libraries, Code & Data
-
-We will use the following libraries:
+We will use the following R packages:
 
 - [DBI](http://rstats-db.github.io/DBI/)
 - [RSQLite](https://rstats-db.github.io/RSQLite/)

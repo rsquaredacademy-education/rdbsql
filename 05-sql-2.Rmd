@@ -8,13 +8,17 @@ In this chapter, we will learn to
 - order data
 - and group data
 
-## Libraries, Code & Data
-
-We will use the following libraries in this chapter:
+We will use the following R packages:
 
 - [DBI](http://readr.tidyverse.org/)
 - [RSQLite](https://rstats-db.github.io/RSQLite/)
 - [dbplyr](http://dbplyr.tidyverse.org/)
+
+```{r lite1aab, echo=FALSE, eval=TRUE, results='hide', message=FALSE}
+library(dbplyr)
+library(DBI)
+library(RSQLite)
+```
 
 All the data sets used in this chapter can be found [here](https://github.com/rsquaredacademy/datasets) and code can be downloaded from [here](https://gist.github.com/rsquaredacademy/691dba8e13873c648bfdb91aba65d4d7).
 
