@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>R, Databases &amp; SQL</title>
+  <title>Chapter 3 SQL Basics | R, Databases &amp; SQL</title>
   <meta name="description" content="Introduction to databases and SQL.">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="R, Databases &amp; SQL" />
+  <meta property="og:title" content="Chapter 3 SQL Basics | R, Databases &amp; SQL" />
   <meta property="og:type" content="book" />
   
   
@@ -17,7 +17,7 @@
   
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="R, Databases &amp; SQL" />
+  <meta name="twitter:title" content="Chapter 3 SQL Basics | R, Databases &amp; SQL" />
   
   <meta name="twitter:description" content="Introduction to databases and SQL." />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Aravind Hebbali">
 
 
-<meta name="date" content="2019-02-20">
+<meta name="date" content="2019-03-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="sql2.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -249,9 +250,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="set-up" class="section level2">
 <h2><span class="header-section-number">3.2</span> Set Up</h2>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" data-line-number="1">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</a>
-<a class="sourceLine" id="cb70-2" data-line-number="2">con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</a>
-<a class="sourceLine" id="cb70-3" data-line-number="3"><span class="kw">copy_to</span>(con, ecom)</a></code></pre></div>
+<p>In order to be able to use the <code>ecom</code> data set for our case study, we will read
+it using the <strong>readr</strong> package and then copy it to an in memory database using the
+<code>copy_to()</code> function from <strong>dplyr</strong>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)
+con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)
+<span class="kw">copy_to</span>(con, ecom)</code></pre>
 </div>
 <div id="select-columns" class="section level2">
 <h2><span class="header-section-number">3.3</span> Select Columns</h2>
@@ -267,59 +271,49 @@ If you want to fetch all the fields, use the following syntax.</p>
 <div id="select-single-column" class="section level3">
 <h3><span class="header-section-number">3.3.2</span> Select Single Column</h3>
 <p>Let us begin by selecting the <code>device</code> field from the <code>ecom</code> table.</p>
-<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT device FROM ecom&quot;</span>)</a></code></pre></div>
-<pre><code>##      device
-## 1    laptop
-## 2    tablet
-## 3    laptop
-## 4    tablet
-## 5    mobile
-## 6    laptop
-## 7    mobile
-## 8    mobile
-## 9    mobile
-## 10   mobile
-## 11   laptop
-## 12   tablet
-## 13   mobile
-## 14   tablet
-## 15   mobile
-## 16   laptop
-## 17   tablet
-## 18   tablet
-## 19   tablet
-## 20   tablet
-## 21   laptop
-## 22   mobile
-## 23   mobile
-## 24   laptop
-## 25   laptop
-## 26   laptop
-## 27   tablet
-## 28   laptop
-## 29   mobile
-## 30   mobile
-## 31   tablet
-## 32   mobile
-## 33   laptop
-## 34   tablet
-## 35   mobile
-## 36   mobile
-## 37   laptop
-## 38   mobile
-## 39   mobile
-## 40   mobile
-## 41   mobile
-## 42   mobile
-## 43   laptop
-## 44   tablet
-## 45   laptop
-## 46   tablet
-## 47   mobile
-## 48   laptop
-## 49   mobile
-## 50   tablet
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 950 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> device <span class="kw">FROM</span> ecom</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 3.1: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="left">device</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">laptop</td>
+</tr>
+<tr class="even">
+<td align="left">tablet</td>
+</tr>
+<tr class="odd">
+<td align="left">laptop</td>
+</tr>
+<tr class="even">
+<td align="left">tablet</td>
+</tr>
+<tr class="odd">
+<td align="left">mobile</td>
+</tr>
+<tr class="even">
+<td align="left">laptop</td>
+</tr>
+<tr class="odd">
+<td align="left">mobile</td>
+</tr>
+<tr class="even">
+<td align="left">mobile</td>
+</tr>
+<tr class="odd">
+<td align="left">mobile</td>
+</tr>
+<tr class="even">
+<td align="left">mobile</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="select-multiple-columns" class="section level3">
 <h3><span class="header-section-number">3.3.3</span> Select Multiple Columns</h3>
@@ -329,71 +323,420 @@ If you want to fetch all the fields, use the following syntax.</p>
 <li><code>device</code></li>
 <li><code>purchase</code></li>
 </ul>
-<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT referrer, device, purchase  FROM ecom&quot;</span>)</a></code></pre></div>
-<pre><code>##      referrer device purchase
-## 1      google laptop        0
-## 2       yahoo tablet        0
-## 3      direct laptop        0
-## 4        bing tablet        1
-## 5       yahoo mobile        0
-## 6       yahoo laptop        0
-## 7       yahoo mobile        0
-## 8      direct mobile        0
-## 9        bing mobile        0
-## 10     google mobile        0
-## 11     direct laptop        0
-## 12     direct tablet        0
-## 13     direct mobile        1
-## 14      yahoo tablet        0
-## 15      yahoo mobile        0
-## 16       bing laptop        0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 984 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> referrer, device, purchase  <span class="kw">FROM</span> ecom</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-3">Table 3.2: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">purchase</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">yahoo</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="select-all-columns" class="section level3">
 <h3><span class="header-section-number">3.3.4</span> Select All Columns</h3>
 <p>Select all the fields from the <code>ecom</code> table.</p>
-<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM ecom&quot;</span>)</a></code></pre></div>
-<pre><code>##        id referrer device bouncers n_visit n_pages duration
-## 1       1   google laptop        1      10       1      693
-## 2       2    yahoo tablet        1       9       1      459
-## 3       3   direct laptop        1       0       1      996
-## 4       4     bing tablet        0       3      18      468
-##                               country purchase order_items order_value
-## 1                      Czech Republic        0           0           0
-## 2                               Yemen        0           0           0
-## 3                              Brazil        0           0           0
-## 4                               China        1           6         434
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 996 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * <span class="kw">FROM</span> ecom</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-4">Table 3.3: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">693</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">459</td>
+<td align="left">Yemen</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">996</td>
+<td align="left">Brazil</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">18</td>
+<td align="right">468</td>
+<td align="left">China</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">434</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">yahoo</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">135</td>
+<td align="left">South Africa</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">75</td>
+<td align="left">Bangladesh</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">908</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">19</td>
+<td align="right">209</td>
+<td align="left">Netherlands</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">208</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="limit" class="section level2">
 <h2><span class="header-section-number">3.4</span> Limit</h2>
 <p>If you have a large table with thousands of rows, returning all the records
 will take time. Use LIMIT to specify the number of records to return.</p>
-<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * FROM ecom limit 10&quot;</span>)</a></code></pre></div>
-<pre><code>##    id referrer device bouncers n_visit n_pages duration        country
-## 1   1   google laptop        1      10       1      693 Czech Republic
-## 2   2    yahoo tablet        1       9       1      459          Yemen
-## 3   3   direct laptop        1       0       1      996         Brazil
-## 4   4     bing tablet        0       3      18      468          China
-##    purchase order_items order_value
-## 1         0           0           0
-## 2         0           0           0
-## 3         0           0           0
-## 4         1           6         434
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 6 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * <span class="kw">FROM</span> ecom <span class="kw">limit</span> <span class="dv">10</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-5">Table 3.4: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="left">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">693</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">459</td>
+<td align="left">Yemen</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">996</td>
+<td align="left">Brazil</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">18</td>
+<td align="right">468</td>
+<td align="left">China</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">434</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">6</td>
+<td align="left">yahoo</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">135</td>
+<td align="left">South Africa</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">7</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">75</td>
+<td align="left">Bangladesh</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">8</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">908</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">9</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">19</td>
+<td align="right">209</td>
+<td align="left">Netherlands</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">10</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">208</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="distinct" class="section level2">
 <h2><span class="header-section-number">3.5</span> Distinct</h2>
 <p>A column in a table may often contain many duplicate values; and we might be interested only in the
 distinct/unique values. In such cases, we can use the SELECT DISTINCT statement to return only distinct values.</p>
-<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT distinct referrer FROM ecom&quot;</span>)</a></code></pre></div>
-<pre><code>##   referrer
-## 1   google
-## 2    yahoo
-## 3   direct
-## 4     bing
-## 5   social</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> <span class="kw">distinct</span> referrer <span class="kw">FROM</span> ecom</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-6">Table 3.5: </span>5 records</caption>
+<thead>
+<tr class="header">
+<th align="left">referrer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">google</td>
+</tr>
+<tr class="even">
+<td align="left">yahoo</td>
+</tr>
+<tr class="odd">
+<td align="left">direct</td>
+</tr>
+<tr class="even">
+<td align="left">bing</td>
+</tr>
+<tr class="odd">
+<td align="left">social</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="filter" class="section level2">
 <h2><span class="header-section-number">3.6</span> Filter</h2>
@@ -408,36 +751,318 @@ distinct/unique values. In such cases, we can use the SELECT DISTINCT statement 
 </ul>
 <p>The following SQL statement filters all rows from the <code>ecom</code> table where the <code>duration</code> field
 is greater than 300.</p>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb81-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb81-3" data-line-number="3"><span class="st">                 WHERE duration &gt; 300&quot;</span>)</a></code></pre></div>
-<pre><code>##      id referrer device bouncers n_visit n_pages duration
-## 1     1   google laptop        1      10       1      693
-## 2     2    yahoo tablet        1       9       1      459
-## 3     3   direct laptop        1       0       1      996
-## 4     4     bing tablet        0       3      18      468
-##                              country purchase order_items order_value
-## 1                     Czech Republic        0           0           0
-## 2                              Yemen        0           0           0
-## 3                             Brazil        0           0           0
-## 4                              China        1           6         434
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 472 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> duration &gt; <span class="dv">300</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-7">Table 3.6: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">693</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">459</td>
+<td align="left">Yemen</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">996</td>
+<td align="left">Brazil</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">4</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">18</td>
+<td align="right">468</td>
+<td align="left">China</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">434</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">8</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">908</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">738</td>
+<td align="left">Jamaica</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">13</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">406</td>
+<td align="left">Ireland</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">651</td>
+</tr>
+<tr class="odd">
+<td align="right">16</td>
+<td align="left">bing</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">995</td>
+<td align="left">United States</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">17</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">16</td>
+<td align="right">368</td>
+<td align="left">Peru</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1049</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Let us filter data based on a text value. In the following example, we filter all rows
 from the <code>ecom</code> table where the <code>device</code> used is <code>mobile</code>.</p>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb83-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb83-3" data-line-number="3"><span class="st">                 WHERE device == &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
-<pre><code>##       id referrer device bouncers n_visit n_pages duration
-## 1      5    yahoo mobile        1       9       1      955
-## 2      7    yahoo mobile        1      10       1       75
-## 3      8   direct mobile        1      10       1      908
-## 4      9     bing mobile        0       3      19      209
-##                   country purchase order_items order_value
-## 1                  Poland        0           0           0
-## 2              Bangladesh        0           0           0
-## 3               Indonesia        0           0           0
-## 4             Netherlands        0           0           0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 340 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> device == <span class="st">&#39;mobile&#39;</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-8">Table 3.7: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">75</td>
+<td align="left">Bangladesh</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">908</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">19</td>
+<td align="right">209</td>
+<td align="left">Netherlands</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">10</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">208</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">13</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">406</td>
+<td align="left">Ireland</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">651</td>
+</tr>
+<tr class="odd">
+<td align="right">15</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">19</td>
+<td align="left">France</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">2423</td>
+</tr>
+<tr class="even">
+<td align="right">22</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">147</td>
+<td align="left">Brazil</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">23</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">196</td>
+<td align="left">Russia</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">237</td>
+</tr>
+<tr class="even">
+<td align="right">29</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">338</td>
+<td align="left">Russia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="and-or-not" class="section level2">
 <h2><span class="header-section-number">3.7</span> And, Or &amp; Not</h2>
@@ -451,60 +1076,483 @@ from the <code>ecom</code> table where the <code>device</code> used is <code>mob
 <p>In the following example, we filter all the rows from the <code>ecom</code> table where
 <code>n_visit</code> (visit count) is greater than 3 and <code>duration</code> (time spent on the site)
 is greater than 100. We use AND to create multiple conditions.</p>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb85-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb85-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb85-3" data-line-number="3"><span class="st">                 WHERE n_visit &gt; 3 AND duration &gt; 100&quot;</span>)</a></code></pre></div>
-<pre><code>##       id referrer device bouncers n_visit n_pages duration
-## 1      1   google laptop        1      10       1      693
-## 2      2    yahoo tablet        1       9       1      459
-## 3      5    yahoo mobile        1       9       1      955
-## 4      6    yahoo laptop        0       5       5      135
-##                              country purchase order_items order_value
-## 1                     Czech Republic        0           0           0
-## 2                              Yemen        0           0           0
-## 3                             Poland        0           0           0
-## 4                       South Africa        0           0           0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 509 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> n_visit &gt; <span class="dv">3</span> <span class="kw">AND</span> duration &gt; <span class="dv">100</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-9">Table 3.8: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">693</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">459</td>
+<td align="left">Yemen</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">yahoo</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">135</td>
+<td align="left">South Africa</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">908</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">208</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">11</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">738</td>
+<td align="left">Jamaica</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">direct</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">12</td>
+<td align="right">132</td>
+<td align="left">Estonia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">13</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">406</td>
+<td align="left">Ireland</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">651</td>
+</tr>
+<tr class="even">
+<td align="right">17</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">16</td>
+<td align="right">368</td>
+<td align="left">Peru</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1049</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>In the next example, we will use both AND &amp; OR. Our goal is to filter all
 rows from the <code>ecom</code> table that follow the below conditions:</p>
 <ul>
 <li><code>n_visit</code> (visit count) is either equal to 3 or 5</li>
 <li><code>device</code> used to visit the website is either <code>mobile</code> or <code>tablet</code></li>
 </ul>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb87-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb87-2" data-line-number="2"><span class="st">                 FROM ecom WHERE (n_visit == 5 OR n_visit == 3)  </span></a>
-<a class="sourceLine" id="cb87-3" data-line-number="3"><span class="st">                 AND (device = &#39;mobile&#39; OR device = &#39;tablet&#39;)&quot;</span>)</a></code></pre></div>
-<pre><code>##      id referrer device bouncers n_visit n_pages duration
-## 1     4     bing tablet        0       3      18      468
-## 2     9     bing mobile        0       3      19      209
-## 3    14    yahoo tablet        0       5       8       80
-## 4    17     bing tablet        0       5      16      368
-##                   country purchase order_items order_value
-## 1                   China        1           6         434
-## 2             Netherlands        0           0           0
-## 3             Philippines        0           2         362
-## 4                    Peru        1           6        1049
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 130 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom <span class="kw">WHERE</span> (n_visit == <span class="dv">5</span> <span class="kw">OR</span> n_visit == <span class="dv">3</span>)  
+<span class="kw">AND</span> (device = <span class="st">&#39;mobile&#39;</span> <span class="kw">OR</span> device = <span class="st">&#39;tablet&#39;</span>)</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-10">Table 3.9: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">4</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">18</td>
+<td align="right">468</td>
+<td align="left">China</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">434</td>
+</tr>
+<tr class="even">
+<td align="right">9</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">19</td>
+<td align="right">209</td>
+<td align="left">Netherlands</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">14</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">80</td>
+<td align="left">Philippines</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">362</td>
+</tr>
+<tr class="even">
+<td align="right">17</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">16</td>
+<td align="right">368</td>
+<td align="left">Peru</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1049</td>
+</tr>
+<tr class="odd">
+<td align="right">22</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">147</td>
+<td align="left">Brazil</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">38</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">700</td>
+<td align="left">Canada</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">50</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">831</td>
+<td align="left">Iran</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">53</td>
+<td align="left">social</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">12</td>
+<td align="right">324</td>
+<td align="left">China</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">64</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">140</td>
+<td align="left">Latvia</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">2798</td>
+</tr>
+<tr class="even">
+<td align="right">67</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">332</td>
+<td align="left">France</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="between" class="section level2">
 <h2><span class="header-section-number">3.8</span> BETWEEN</h2>
 <p>The BETWEEN operator selects values within a given range and is inclusive: begin and end values are included. The values can be numbers, text, or dates. In the following example, we filter rows from
 the <code>ecom</code> table where the visit count is between 1 and 3, and the <code>device</code> used to visit the website is
 <code>mobile</code>.</p>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb89-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb89-2" data-line-number="2"><span class="st">                 FROM ecom</span></a>
-<a class="sourceLine" id="cb89-3" data-line-number="3"><span class="st">                 WHERE n_visit BETWEEN 1 AND 3 AND device = &#39;mobile&#39;&quot;</span>)</a></code></pre></div>
-<pre><code>##     id referrer device bouncers n_visit n_pages duration
-## 1    9     bing mobile        0       3      19      209
-## 2   32   direct mobile        1       2       1      501
-## 3   36     bing mobile        0       1       1       25
-## 4   38    yahoo mobile        1       3       1      700
-##                  country purchase order_items order_value
-## 1            Netherlands        0           0           0
-## 2            El Salvador        0           0           0
-## 3                Ireland        0          10        1885
-## 4                 Canada        0           0           0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 86 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom
+<span class="kw">WHERE</span> n_visit <span class="kw">BETWEEN</span> <span class="dv">1</span> <span class="kw">AND</span> <span class="dv">3</span> <span class="kw">AND</span> device = <span class="st">&#39;mobile&#39;</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-11">Table 3.10: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">9</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">19</td>
+<td align="right">209</td>
+<td align="left">Netherlands</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">32</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">501</td>
+<td align="left">El Salvador</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">36</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">25</td>
+<td align="left">Ireland</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">1885</td>
+</tr>
+<tr class="even">
+<td align="right">38</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">700</td>
+<td align="left">Canada</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">42</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">13</td>
+<td align="right">234</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">49</td>
+<td align="left">social</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">44</td>
+<td align="left">France</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">1515</td>
+</tr>
+<tr class="odd">
+<td align="right">98</td>
+<td align="left">bing</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">18</td>
+<td align="right">288</td>
+<td align="left">Portugal</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">764</td>
+</tr>
+<tr class="even">
+<td align="right">99</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">73</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">102</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">69</td>
+<td align="left">Bahamas</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">583</td>
+</tr>
+<tr class="even">
+<td align="right">105</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">423</td>
+<td align="left">Mexico</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="in" class="section level2">
 <h2><span class="header-section-number">3.9</span> IN</h2>
@@ -512,32 +1560,174 @@ the <code>ecom</code> table where the visit count is between 1 and 3, and the <c
 for multiple OR conditions. In the below example, we filter rows from the <code>ecom</code> table where
 the visit count is either 2 or 4 or 6 or 8 or 10. Instead of using multiple OR conditions,
 we use the IN operator.</p>
-<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb91-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb91-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb91-3" data-line-number="3"><span class="st">                 WHERE n_visit IN (2, 4, 6, 8, 10)&quot;</span>)</a></code></pre></div>
-<pre><code>##      id referrer device bouncers n_visit n_pages duration
-## 1     1   google laptop        1      10       1      693
-## 2     7    yahoo mobile        1      10       1       75
-## 3     8   direct mobile        1      10       1      908
-## 4    10   google mobile        1       6       1      208
-##                              country purchase order_items order_value
-## 1                     Czech Republic        0           0           0
-## 2                         Bangladesh        0           0           0
-## 3                          Indonesia        0           0           0
-## 4                     Czech Republic        0           0           0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 443 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> n_visit <span class="kw">IN</span> (<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>)</code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-12">Table 3.11: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">693</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">75</td>
+<td align="left">Bangladesh</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">8</td>
+<td align="left">direct</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">908</td>
+<td align="left">Indonesia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">10</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">208</td>
+<td align="left">Czech Republic</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="left">direct</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">12</td>
+<td align="right">132</td>
+<td align="left">Estonia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">social</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">28</td>
+<td align="left">Namibia</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">2077</td>
+</tr>
+<tr class="odd">
+<td align="right">21</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">384</td>
+<td align="left">China</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">24</td>
+<td align="left">social</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">850</td>
+<td align="left">Ukraine</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">27</td>
+<td align="left">direct</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">19</td>
+<td align="right">342</td>
+<td align="left">Japan</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">622</td>
+</tr>
+<tr class="even">
+<td align="right">29</td>
+<td align="left">google</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">10</td>
+<td align="right">1</td>
+<td align="right">338</td>
+<td align="left">Russia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="is-null" class="section level2">
 <h2><span class="header-section-number">3.10</span> IS NULL</h2>
 <p>A field with a NULL value is a field with no value. If a field in a table is optional, it is possible to insert a new record or update a record without adding a value to this field. Then, the field will be saved with a NULL value. In the next example, we filter all rows from the <code>ecom</code> table where the <code>device</code> column
 has NULL values.</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb93-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb93-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb93-3" data-line-number="3"><span class="st">                 WHERE device IS NULL&quot;</span>)</a></code></pre></div>
-<pre><code>##  [1] id          referrer    device      bouncers    n_visit    
-##  [6] n_pages     duration    country     purchase    order_items
-## [11] order_value
-## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> device <span class="kw">IS</span> <span class="kw">NULL</span></code></pre>
+<div class="knitsql-table">
+<p>Table: (#tab:unnamed-chunk-13)0 records</p>
+<p>id referrer device bouncers n_visit n_pages duration country purchase order_items order_value
+— ——— ——- ——— ——– ——– ——— ——– ——— ———— ————</p>
+</div>
 </div>
 <div id="like" class="section level2">
 <h2><span class="header-section-number">3.11</span> LIKE</h2>
@@ -547,20 +1737,161 @@ has NULL values.</p>
 <li>_ : represents a single character</li>
 </ul>
 <p>In the following example, we filter all rows from the <code>ecom</code> table where the name of the <code>country</code> starts with <code>P</code>. We use <code>%</code> after <code>P</code> to indicate that it can be followed by any number or type of characters.</p>
-<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb95-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb95-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb95-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;P%&#39;&quot;</span>)</a></code></pre></div>
-<pre><code>##      id referrer device bouncers n_visit n_pages duration
-## 1     5    yahoo mobile        1       9       1      955
-## 2    14    yahoo tablet        0       5       8       80
-## 3    17     bing tablet        0       5      16      368
-## 4    43     bing laptop        1       0       1      456
-##                   country purchase order_items order_value
-## 1                  Poland        0           0           0
-## 2             Philippines        0           2         362
-## 3                    Peru        1           6        1049
-## 4                Portugal        0           0           0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 135 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> country <span class="kw">LIKE</span> <span class="st">&#39;P%&#39;</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-14">Table 3.13: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">14</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">80</td>
+<td align="left">Philippines</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">362</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">bing</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">16</td>
+<td align="right">368</td>
+<td align="left">Peru</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">1049</td>
+</tr>
+<tr class="even">
+<td align="right">43</td>
+<td align="left">bing</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">456</td>
+<td align="left">Portugal</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">59</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">706</td>
+<td align="left">Philippines</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">62</td>
+<td align="left">direct</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">8</td>
+<td align="right">1</td>
+<td align="right">814</td>
+<td align="left">Philippines</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">72</td>
+<td align="left">social</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">16</td>
+<td align="right">176</td>
+<td align="left">Panama</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">2216</td>
+</tr>
+<tr class="even">
+<td align="right">77</td>
+<td align="left">yahoo</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">928</td>
+<td align="left">Peru</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">88</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">11</td>
+<td align="right">176</td>
+<td align="left">Philippines</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">93</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">869</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 <p>Let us look at another example where we filter all rows from the <code>ecom</code> table where the name of the
 country should follow the below conditions:</p>
 <ul>
@@ -568,20 +1899,161 @@ country should follow the below conditions:</p>
 <li>the second character must be <code>o</code></li>
 <li>it can have any type or number of characters after the second character</li>
 </ul>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb97-1" data-line-number="1"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;SELECT * </span></a>
-<a class="sourceLine" id="cb97-2" data-line-number="2"><span class="st">                 FROM ecom </span></a>
-<a class="sourceLine" id="cb97-3" data-line-number="3"><span class="st">                 WHERE country LIKE &#39;_o%&#39;&quot;</span>)</a></code></pre></div>
-<pre><code>##      id referrer device bouncers n_visit n_pages duration
-## 1     5    yahoo mobile        1       9       1      955
-## 2     6    yahoo laptop        0       5       5      135
-## 3    19   social tablet        0       7      10      290
-## 4    30    yahoo mobile        0       8       9      225
-##                    country purchase order_items order_value
-## 1                   Poland        0           0           0
-## 2             South Africa        0           0           0
-## 3                 Colombia        1           9        1304
-## 4                 Colombia        0           0           0
-##  [ reached getOption(&quot;max.print&quot;) -- omitted 117 rows ]</code></pre>
+<pre class="sourceCode sql"><code class="sourceCode sql"><span class="kw">SELECT</span> * 
+<span class="kw">FROM</span> ecom 
+<span class="kw">WHERE</span> country <span class="kw">LIKE</span> <span class="st">&#39;_o%&#39;</span></code></pre>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-15">Table 3.14: </span>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th align="right">id</th>
+<th align="left">referrer</th>
+<th align="left">device</th>
+<th align="right">bouncers</th>
+<th align="right">n_visit</th>
+<th align="right">n_pages</th>
+<th align="right">duration</th>
+<th align="left">country</th>
+<th align="right">purchase</th>
+<th align="right">order_items</th>
+<th align="right">order_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">5</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">955</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">6</td>
+<td align="left">yahoo</td>
+<td align="left">laptop</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">5</td>
+<td align="right">135</td>
+<td align="left">South Africa</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="left">social</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">10</td>
+<td align="right">290</td>
+<td align="left">Colombia</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1304</td>
+</tr>
+<tr class="even">
+<td align="right">30</td>
+<td align="left">yahoo</td>
+<td align="left">mobile</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">225</td>
+<td align="left">Colombia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">33</td>
+<td align="left">direct</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">8</td>
+<td align="right">1</td>
+<td align="right">658</td>
+<td align="left">Colombia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">43</td>
+<td align="left">bing</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">456</td>
+<td align="left">Portugal</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">44</td>
+<td align="left">yahoo</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">11</td>
+<td align="right">264</td>
+<td align="left">Somalia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">56</td>
+<td align="left">google</td>
+<td align="left">tablet</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">19</td>
+<td align="right">304</td>
+<td align="left">Colombia</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">93</td>
+<td align="left">google</td>
+<td align="left">laptop</td>
+<td align="right">1</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">869</td>
+<td align="left">Poland</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">95</td>
+<td align="left">social</td>
+<td align="left">tablet</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">566</td>
+<td align="left">Portugal</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
 
 </div>
 </div>
@@ -611,7 +2083,7 @@ gitbook.start({
 "google": false,
 "linkedin": false,
 "weibo": false,
-"instapper": false,
+"instapaper": false,
 "vk": false,
 "all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
 },
@@ -621,6 +2093,10 @@ gitbook.start({
 "size": 2
 },
 "edit": {
+"link": null,
+"text": null
+},
+"history": {
 "link": null,
 "text": null
 },

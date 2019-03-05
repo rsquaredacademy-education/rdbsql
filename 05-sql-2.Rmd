@@ -24,6 +24,10 @@ All the data sets used in this chapter can be found [here](https://github.com/rs
 
 ## Set Up
 
+In order to be able to use the `ecom` data set for our case study, we will read 
+it using the **readr** package and then copy it to an in memory database using the 
+`copy_to()` function from **dplyr**.
+
 ```{r setup2, message=FALSE}
 ecom <- readr::read_csv('https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv')
 con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
@@ -36,42 +40,50 @@ Let us combine the aggregate statements with WHERE statement to filter data.
 
 - SUM()  : returns the total sum of a numeric column
 
-```{r sql45}
-dbGetQuery(con, "SELECT SUM(n_visit) FROM ecom")
+```{sql, connection=con}
+SELECT SUM(n_visit) FROM ecom
+```
 
-dbGetQuery(con, "SELECT SUM(n_visit) 
-	             FROM ecom 
-	             WHERE n_visit > 5")
+```{sql, connection=con}
+SELECT SUM(n_visit) 
+FROM ecom 
+WHERE n_visit > 5
 ```
 
 - AVG()  : returns the average value of a numeric column
 
-```{r sql46}
-dbGetQuery(con, "SELECT AVG(n_visit) FROM ecom")
+```{sql, connection=con}
+SELECT AVG(n_visit) FROM ecom
+```
 
-dbGetQuery(con, "SELECT AVG(n_visit) 
-	             FROM ecom 
-	             WHERE country LIKE 'P%'")
+```{sql, connection=con}
+SELECT AVG(n_visit) 
+FROM ecom 
+WHERE country LIKE 'P%'
 ```
 
 - MAX()  : returns the largest value of the selected column
 
-```{r sql47}
-dbGetQuery(con, "SELECT MAX(n_visit) FROM ecom")
+```{sql, connection=con}
+SELECT MAX(n_visit) FROM ecom
+```
 
-dbGetQuery(con, "SELECT MAX(n_visit) 
-	             FROM ecom 
-	             WHERE device == 'tablet'")
+```{sql, connection=con}
+SELECT MAX(n_visit) 
+FROM ecom 
+WHERE device == 'tablet'
 ```
 
 - MIN()  : returns the smallest value of the selected column
 
-```{r sql48}
-dbGetQuery(con, "SELECT MIN(n_visit) FROM ecom")
+```{sql, connection=con}
+SELECT MIN(n_visit) FROM ecom
+```
 
-dbGetQuery(con, "SELECT MIN(n_visit) 
-	             FROM ecom 
-	             WHERE duration BETWEEN 600 AND 900")
+```{sql, connection=con}
+SELECT MIN(n_visit) 
+FROM ecom 
+WHERE duration BETWEEN 600 AND 900
 ```
 
 ## Alias 
@@ -79,49 +91,59 @@ dbGetQuery(con, "SELECT MIN(n_visit)
 SQL aliases are used to give a table, or a column in a table, a temporary name. They are often used to make column names more readable. An alias only exists for the duration of the query. Below are a
 few examples:
 
-```{r sql49}
-dbGetQuery(con, "SELECT AVG(n_visit) AS avg_mobile 
-	             FROM ecom 
-	             WHERE device == 'mobile'")
+```{sql, connection=con}
+SELECT AVG(n_visit) AS avg_mobile 
+FROM ecom 
+WHERE device == 'mobile'
+```
 
-dbGetQuery(con, "SELECT MAX(n_visit) AS max_visit 
-	             FROM ecom")
+```{sql, connection=con}
+SELECT MAX(n_visit) AS max_visit 
+FROM ecom
+```
 
-dbGetQuery(con, "SELECT MIN(duration) AS min_duration 
-	             FROM ecom")
+```{sql, connection=con}
+SELECT MIN(duration) AS min_duration 
+FROM ecom
 ```
 
 ## Order By
 
 The ORDER BY keyword is used to sort the records in ascending or descending order. By default, the records are sorted in ascending order. Use the DESC keyword if you want to sort the records in descending order, 
 
-```{r sql150}
-dbGetQuery(con, "SELECT * 
-	             FROM ecom 
-	             ORDER BY country")
+```{sql, connection=con}
+SELECT * 
+FROM ecom 
+ORDER BY country
+```
 
-dbGetQuery(con, "SELECT *  
-	             FROM ecom 
-	             ORDER BY duration")
+```{sql, connection=con}
+SELECT *  
+FROM ecom 
+ORDER BY duration
+```
 
-dbGetQuery(con, "SELECT * 
-	             FROM ecom 
-	             ORDER BY n_visit DESC")
+```{sql, connection=con}
+SELECT * 
+FROM ecom 
+ORDER BY n_visit DESC
 ```
 
 ## Group By 
 
 The GROUP BY statement is used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result by one or more columns.
 
-```{r sql151}
-dbGetQuery(con, "SELECT device, 
-	             count(*) AS visits 
-	             FROM ecom 
-	             GROUP BY device 
-	             ORDER by visits DESC")
+```{sql, connection=con}
+SELECT device, 
+count(*) AS visits 
+FROM ecom 
+GROUP BY device 
+ORDER by visits DESC
+```
 
-dbGetQuery(con, "SELECT device, MAX(duration) AS max_duration 
-	             FROM ecom 
-	             GROUP BY device 
-	             ORDER by max_duration DESC")
+```{sql, connection=con}
+SELECT device, MAX(duration) AS max_duration 
+FROM ecom 
+GROUP BY device 
+ORDER by max_duration DESC
 ```
