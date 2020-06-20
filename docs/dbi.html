@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html >
-
+<html lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 1 DBI | R, Databases &amp; SQL</title>
-  <meta name="description" content="Introduction to databases and SQL.">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta name="description" content="Introduction to databases and SQL." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 1 DBI | R, Databases &amp; SQL" />
   <meta property="og:type" content="book" />
@@ -22,18 +21,18 @@
   <meta name="twitter:description" content="Introduction to databases and SQL." />
   
 
-<meta name="author" content="Aravind Hebbali">
+<meta name="author" content="Aravind Hebbali" />
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2020-06-20" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="about-the-author.html">
-<link rel="next" href="dbplyr.html">
+<link rel="prev" href="about-the-author.html"/>
+<link rel="next" href="dbplyr.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -41,6 +40,7 @@
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
 
 
 
@@ -48,31 +48,41 @@
 
 
 
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-57270671-37"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-57270671-37');
+</script>
 
 
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -81,9 +91,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -250,11 +260,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2><span class="header-section-number">1.2</span> Connection</h2>
 <p>The first step is to connect to a database. We will connect to an in memory
 SQLite databse using <code>dbConnect()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">con &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="dbi.html#cb3-1"></a>con &lt;-<span class="st"> </span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</span></code></pre></div>
 <div id="connection-summary" class="section level3">
 <h3><span class="header-section-number">1.2.1</span> Connection Summary</h3>
 <p>We can get the more information about the connection using <code>summary()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(con)</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="dbi.html#cb4-1"></a><span class="kw">summary</span>(con)</span></code></pre></div>
 <pre><code>##           Length            Class             Mode 
 ##                1 SQLiteConnection               S4</code></pre>
 </div>
@@ -262,14 +272,14 @@ SQLite databse using <code>dbConnect()</code>.</p>
 <h3><span class="header-section-number">1.2.2</span> List Tables</h3>
 <p>Now that we are connected to a database, let us list all the tables present in it using
 <code>dbListTables()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbListTables</span>(con)</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="dbi.html#cb6-1"></a><span class="kw">dbListTables</span>(con)</span></code></pre></div>
 <pre><code>## [1] &quot;ecom&quot;         &quot;sqlite_stat1&quot; &quot;sqlite_stat4&quot;</code></pre>
 </div>
 <div id="list-fields" class="section level3">
 <h3><span class="header-section-number">1.2.3</span> List Fields</h3>
 <p>Time to explore the <code>ecom</code> table in the database. Use <code>dbListFields()</code> to list all
 the fields in the table.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbListFields</span>(con, <span class="st">&quot;ecom&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="dbi.html#cb8-1"></a><span class="kw">dbListFields</span>(con, <span class="st">&quot;ecom&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;referrer&quot; &quot;device&quot;   &quot;bouncers&quot; &quot;n_visit&quot;  &quot;n_pages&quot;  &quot;duration&quot;</code></pre>
 </div>
 </div>
@@ -291,7 +301,7 @@ the fields in the table.</p>
 <div id="entire-table" class="section level3">
 <h3><span class="header-section-number">1.3.1</span> Entire Table</h3>
 <p>We can read an entire table from a database using <code>dbReadTable()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbReadTable</span>(con, <span class="st">&#39;ecom&#39;</span>)</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="dbi.html#cb10-1"></a><span class="kw">dbReadTable</span>(con, <span class="st">&#39;ecom&#39;</span>)</span></code></pre></div>
 <pre><code>##    referrer device bouncers n_visit n_pages duration
 ## 1    google laptop        1      10       1      693
 ## 2     yahoo tablet        1       9       1      459
@@ -320,7 +330,7 @@ the <code>ecom</code> table.</p>
 </div>
 <div id="few-rows" class="section level3">
 <h3><span class="header-section-number">1.3.2</span> Few Rows</h3>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from ecom limit 10&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="dbi.html#cb12-1"></a><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from ecom limit 10&quot;</span>)</span></code></pre></div>
 <pre><code>##    referrer device bouncers n_visit n_pages duration
 ## 1    google laptop        1      10       1      693
 ## 2     yahoo tablet        1       9       1      459
@@ -338,9 +348,9 @@ data using the query generated by <code>dbGetQuery()</code>.</p>
 </div>
 <div id="read-data-in-batches" class="section level3">
 <h3><span class="header-section-number">1.3.3</span> Read Data in Batches</h3>
-<pre class="sourceCode r"><code class="sourceCode r">query &lt;-<span class="st"> </span><span class="kw">dbSendQuery</span>(con, <span class="st">&#39;select * from ecom&#39;</span>)
-result &lt;-<span class="st"> </span><span class="kw">dbFetch</span>(query, <span class="dt">n =</span> <span class="dv">15</span>)
-result</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="dbi.html#cb14-1"></a>query &lt;-<span class="st"> </span><span class="kw">dbSendQuery</span>(con, <span class="st">&#39;select * from ecom&#39;</span>)</span>
+<span id="cb14-2"><a href="dbi.html#cb14-2"></a>result &lt;-<span class="st"> </span><span class="kw">dbFetch</span>(query, <span class="dt">n =</span> <span class="dv">15</span>)</span>
+<span id="cb14-3"><a href="dbi.html#cb14-3"></a>result</span></code></pre></div>
 <pre><code>##    referrer device bouncers n_visit n_pages duration
 ## 1    google laptop        1      10       1      693
 ## 2     yahoo tablet        1       9       1      459
@@ -365,7 +375,7 @@ result</code></pre>
 <h3><span class="header-section-number">1.4.1</span> Query Status</h3>
 <p>To know the status of a query, use <code>dbHasCompleted()</code>. It is very useful in
 cases of queries that might take a long time to complete.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbHasCompleted</span>(query)</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="dbi.html#cb16-1"></a><span class="kw">dbHasCompleted</span>(query)</span></code></pre></div>
 <pre><code>## [1] FALSE</code></pre>
 </div>
 <div id="query-info" class="section level3">
@@ -377,7 +387,7 @@ cases of queries that might take a long time to complete.</p>
 <li>number of rows modified/affected</li>
 <li>status of the query</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetInfo</span>(query)</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="dbi.html#cb18-1"></a><span class="kw">dbGetInfo</span>(query)</span></code></pre></div>
 <pre><code>## $statement
 ## [1] &quot;select * from ecom&quot;
 ## 
@@ -393,25 +403,25 @@ cases of queries that might take a long time to complete.</p>
 <div id="latest-query" class="section level3">
 <h3><span class="header-section-number">1.4.3</span> Latest Query</h3>
 <p>To get the latest query, use <code>dbGetStatement()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetStatement</span>(query)</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="dbi.html#cb20-1"></a><span class="kw">dbGetStatement</span>(query)</span></code></pre></div>
 <pre><code>## [1] &quot;select * from ecom&quot;</code></pre>
 </div>
 <div id="rows-fetched" class="section level3">
 <h3><span class="header-section-number">1.4.4</span> Rows Fetched</h3>
 <p>To check the number of rows of data returned by a query, use <code>dbGetRowCount()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetRowCount</span>(query)</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="dbi.html#cb22-1"></a><span class="kw">dbGetRowCount</span>(query)</span></code></pre></div>
 <pre><code>## [1] 15</code></pre>
 </div>
 <div id="rows-affected" class="section level3">
 <h3><span class="header-section-number">1.4.5</span> Rows Affected</h3>
 <p>To know the number of rows modified or affected in the table, use <code>dbGetRowsAffected()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetRowsAffected</span>(query)</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="dbi.html#cb24-1"></a><span class="kw">dbGetRowsAffected</span>(query)</span></code></pre></div>
 <pre><code>## [1] 0</code></pre>
 </div>
 <div id="column-info" class="section level3">
 <h3><span class="header-section-number">1.4.6</span> Column Info</h3>
 <p>To know the name of the columns and their data types, use <code>dbColumnInfo()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbColumnInfo</span>(query)</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="dbi.html#cb26-1"></a><span class="kw">dbColumnInfo</span>(query)</span></code></pre></div>
 <pre><code>##       name      type
 ## 1 referrer character
 ## 2   device character
@@ -433,18 +443,18 @@ attention to creating new tables in the database.</p>
 <li>name of the new table</li>
 <li>data for the new table</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
-y &lt;-<span class="st"> </span>letters[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]
-trial &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(x, y)
-<span class="kw">dbWriteTable</span>(con, <span class="st">&quot;trial&quot;</span>, trial)</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="dbi.html#cb28-1"></a>x &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">10</span></span>
+<span id="cb28-2"><a href="dbi.html#cb28-2"></a>y &lt;-<span class="st"> </span>letters[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>]</span>
+<span id="cb28-3"><a href="dbi.html#cb28-3"></a>trial &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(x, y)</span>
+<span id="cb28-4"><a href="dbi.html#cb28-4"></a><span class="kw">dbWriteTable</span>(con, <span class="st">&quot;trial&quot;</span>, trial)</span></code></pre></div>
 <pre><code>## Warning: Closing open result set, pending rows</code></pre>
 <p>Let us check if the new table has been created.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbListTables</span>(con)</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="dbi.html#cb30-1"></a><span class="kw">dbListTables</span>(con)</span></code></pre></div>
 <pre><code>## [1] &quot;ecom&quot;         &quot;sqlite_stat1&quot; &quot;sqlite_stat4&quot; &quot;trial&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbExistsTable</span>(con, <span class="st">&quot;trial&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="dbi.html#cb32-1"></a><span class="kw">dbExistsTable</span>(con, <span class="st">&quot;trial&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 <p>Let us query data from the new table.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from trial limit 5&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="dbi.html#cb34-1"></a><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from trial limit 5&quot;</span>)</span></code></pre></div>
 <pre><code>##   x y
 ## 1 1 a
 ## 2 2 b
@@ -456,53 +466,53 @@ trial &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class=
 <h4><span class="header-section-number">1.5.0.2</span> Overwrite Table</h4>
 <p>In some cases, you may want to overwrite the data in an existing table. Use the
 <code>overwrite</code> argument in <code>dbWriteTable()</code> and set it to <code>TRUE</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">100</span>, <span class="dv">10</span>)
-y &lt;-<span class="st"> </span>letters[<span class="dv">11</span><span class="op">:</span><span class="dv">20</span>]
-trial2 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(x, y)
-<span class="kw">dbWriteTable</span>(con, <span class="st">&quot;trial&quot;</span>, trial2, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="dbi.html#cb36-1"></a>x &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">100</span>, <span class="dv">10</span>)</span>
+<span id="cb36-2"><a href="dbi.html#cb36-2"></a>y &lt;-<span class="st"> </span>letters[<span class="dv">11</span><span class="op">:</span><span class="dv">20</span>]</span>
+<span id="cb36-3"><a href="dbi.html#cb36-3"></a>trial2 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(x, y)</span>
+<span id="cb36-4"><a href="dbi.html#cb36-4"></a><span class="kw">dbWriteTable</span>(con, <span class="st">&quot;trial&quot;</span>, trial2, <span class="dt">overwrite =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p>Let us see if the <strong>trial</strong> table has been overwritten.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from trial limit 5&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="dbi.html#cb37-1"></a><span class="kw">dbGetQuery</span>(con, <span class="st">&quot;select * from trial limit 5&quot;</span>)</span></code></pre></div>
 <pre><code>##    x y
-## 1 63 k
-## 2 90 l
-## 3  2 m
-## 4 74 n
-## 5 84 o</code></pre>
+## 1 59 k
+## 2 72 l
+## 3 94 m
+## 4 24 n
+## 5 30 o</code></pre>
 </div>
 </div>
 <div id="append-data" class="section level2">
 <h2><span class="header-section-number">1.6</span> Append Data</h2>
 <p>You can append data to an existing table by setting the <code>append</code> argument in
 <code>dbWriteTable()</code> to <code>TRUE</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">100</span>, <span class="dv">10</span>)
-y &lt;-<span class="st"> </span>letters[<span class="dv">5</span><span class="op">:</span><span class="dv">14</span>]
-trial3 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(x, y)
-<span class="kw">dbWriteTable</span>(con, <span class="st">&quot;trial&quot;</span>, trial3, <span class="dt">append =</span> <span class="ot">TRUE</span>)</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="dbi.html#cb39-1"></a>x &lt;-<span class="st"> </span><span class="kw">sample</span>(<span class="dv">100</span>, <span class="dv">10</span>)</span>
+<span id="cb39-2"><a href="dbi.html#cb39-2"></a>y &lt;-<span class="st"> </span>letters[<span class="dv">5</span><span class="op">:</span><span class="dv">14</span>]</span>
+<span id="cb39-3"><a href="dbi.html#cb39-3"></a>trial3 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class="kw">tibble</span>(x, y)</span>
+<span id="cb39-4"><a href="dbi.html#cb39-4"></a><span class="kw">dbWriteTable</span>(con, <span class="st">&quot;trial&quot;</span>, trial3, <span class="dt">append =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
 <p>Let us quickly check if the new data has been appended to the <strong>trial</strong> table.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbReadTable</span>(con, <span class="st">&quot;trial&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="dbi.html#cb40-1"></a><span class="kw">dbReadTable</span>(con, <span class="st">&quot;trial&quot;</span>)</span></code></pre></div>
 <pre><code>##     x y
-## 1  63 k
-## 2  90 l
-## 3   2 m
-## 4  74 n
-## 5  84 o
-## 6  20 p
-## 7  67 q
-## 8  18 r
-## 9  35 s
-## 10 55 t
-## 11 34 e
-## 12 84 f
-## 13 87 g
-## 14 20 h
-## 15 52 i
-## 16 56 j
-## 17 15 k
-## 18  9 l
-## 19 60 m
-## 20 40 n</code></pre>
+## 1  59 k
+## 2  72 l
+## 3  94 m
+## 4  24 n
+## 5  30 o
+## 6  29 p
+## 7  43 q
+## 8  66 r
+## 9  84 s
+## 10 32 t
+## 11 86 e
+## 12 89 f
+## 13 80 g
+## 14 71 h
+## 15 25 i
+## 16 16 j
+## 17 43 k
+## 18 10 l
+## 19 11 m
+## 20 75 n</code></pre>
 <p>We can also use <code>sqlAppendTable()</code> to append data to an existing table.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sqlAppendTable</span>(con, <span class="st">&quot;ecom&quot;</span>, <span class="kw">head</span>(ecom))</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="dbi.html#cb42-1"></a><span class="kw">sqlAppendTable</span>(con, <span class="st">&quot;ecom&quot;</span>, <span class="kw">head</span>(ecom))</span></code></pre></div>
 <pre><code>## Warning: Do not rely on the default value of the row.names argument for
 ## sqlAppendTable(), it will change in the future.</code></pre>
 <pre><code>## &lt;SQL&gt; INSERT INTO `ecom`
@@ -529,43 +539,43 @@ trial3 &lt;-<span class="st"> </span>tibble<span class="op">::</span><span class
 <li>connection name</li>
 <li>sql statement</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># use dbExecute</span>
-<span class="kw">dbExecute</span>(con,
-  <span class="st">&quot;INSERT into trial (x, y) VALUES (32, &#39;c&#39;), (45, &#39;k&#39;), (61, &#39;h&#39;)&quot;</span>
-)
-## [1] 3
-
-<span class="co"># use dbSendStatement</span>
-<span class="kw">dbSendStatement</span>(con,
-  <span class="st">&quot;INSERT into trial (x, y) VALUES (25, &#39;m&#39;), (54, &#39;l&#39;), (16, &#39;y&#39;)&quot;</span>
-)
-## &lt;SQLiteResult&gt;
-##   SQL  INSERT into trial (x, y) VALUES (25, &#39;m&#39;), (54, &#39;l&#39;), (16, &#39;y&#39;)
-##   ROWS Fetched: 0 [complete]
-##        Changed: 3</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="dbi.html#cb45-1"></a><span class="co"># use dbExecute</span></span>
+<span id="cb45-2"><a href="dbi.html#cb45-2"></a><span class="kw">dbExecute</span>(con,</span>
+<span id="cb45-3"><a href="dbi.html#cb45-3"></a>  <span class="st">&quot;INSERT into trial (x, y) VALUES (32, &#39;c&#39;), (45, &#39;k&#39;), (61, &#39;h&#39;)&quot;</span></span>
+<span id="cb45-4"><a href="dbi.html#cb45-4"></a>)</span>
+<span id="cb45-5"><a href="dbi.html#cb45-5"></a><span class="co">## [1] 3</span></span>
+<span id="cb45-6"><a href="dbi.html#cb45-6"></a></span>
+<span id="cb45-7"><a href="dbi.html#cb45-7"></a><span class="co"># use dbSendStatement</span></span>
+<span id="cb45-8"><a href="dbi.html#cb45-8"></a><span class="kw">dbSendStatement</span>(con,</span>
+<span id="cb45-9"><a href="dbi.html#cb45-9"></a>  <span class="st">&quot;INSERT into trial (x, y) VALUES (25, &#39;m&#39;), (54, &#39;l&#39;), (16, &#39;y&#39;)&quot;</span></span>
+<span id="cb45-10"><a href="dbi.html#cb45-10"></a>)</span>
+<span id="cb45-11"><a href="dbi.html#cb45-11"></a><span class="co">## &lt;SQLiteResult&gt;</span></span>
+<span id="cb45-12"><a href="dbi.html#cb45-12"></a><span class="co">##   SQL  INSERT into trial (x, y) VALUES (25, &#39;m&#39;), (54, &#39;l&#39;), (16, &#39;y&#39;)</span></span>
+<span id="cb45-13"><a href="dbi.html#cb45-13"></a><span class="co">##   ROWS Fetched: 0 [complete]</span></span>
+<span id="cb45-14"><a href="dbi.html#cb45-14"></a><span class="co">##        Changed: 3</span></span></code></pre></div>
 </div>
 </div>
 <div id="remove-table" class="section level2">
 <h2><span class="header-section-number">1.8</span> Remove Table</h2>
 <p>If you want to delete/remove a table from the database, use <code>dbRemoveTable()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbRemoveTable</span>(con, <span class="st">&quot;trial&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="dbi.html#cb46-1"></a><span class="kw">dbRemoveTable</span>(con, <span class="st">&quot;trial&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning: Closing open result set, pending rows</code></pre>
 </div>
 <div id="sqlite-data-type" class="section level2">
 <h2><span class="header-section-number">1.9</span> SQLite Data Type</h2>
 <p>If you want to know the data type, use <code>dbDataType()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbDataType</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;a&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="dbi.html#cb48-1"></a><span class="kw">dbDataType</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;a&quot;</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;TEXT&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbDataType</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="dbi.html#cb50-1"></a><span class="kw">dbDataType</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;INTEGER&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbDataType</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="fl">1.5</span>)</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="dbi.html#cb52-1"></a><span class="kw">dbDataType</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="fl">1.5</span>)</span></code></pre></div>
 <pre><code>## [1] &quot;REAL&quot;</code></pre>
 </div>
 <div id="close-connection" class="section level2">
 <h2><span class="header-section-number">1.10</span> Close Connection</h2>
 <p>It is a good practice to close connection to a database when you no longer need to
 read/write data from/to it. Use <code>dbDisconnect()</code> to close the database connection.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dbDisconnect</span>(con)</code></pre>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="dbi.html#cb54-1"></a><span class="kw">dbDisconnect</span>(con)</span></code></pre></div>
 
 </div>
 </div>
@@ -580,11 +590,13 @@ read/write data from/to it. Use <code>dbDisconnect()</code> to close the databas
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
 <script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
@@ -592,12 +604,11 @@ gitbook.start({
 "github": false,
 "facebook": true,
 "twitter": true,
-"google": false,
 "linkedin": false,
 "weibo": false,
 "instapaper": false,
 "vk": false,
-"all": ["facebook", "google", "twitter", "linkedin", "weibo", "instapaper"]
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
 },
 "fontsettings": {
 "theme": "white",
@@ -609,6 +620,10 @@ gitbook.start({
 "text": null
 },
 "history": {
+"link": null,
+"text": null
+},
+"view": {
 "link": null,
 "text": null
 },
