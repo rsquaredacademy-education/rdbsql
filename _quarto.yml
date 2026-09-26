@@ -1,6 +1,14 @@
 project:
   type: book
   output-dir: docs
+  resources:
+    - "google02e424888b5e2def.html"
+    - "sitemap.xml"
+    - "robots.txt"
+    - "cheatsheet/dbi-cheatsheet.pdf"
+
+execute:
+  warning: false
 
 book:
   title: "R, Databases & SQL"
