@@ -1,0 +1,522 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "R, Databases & SQL",
+    "section": "",
+    "text": "Preface\nLast verified: 2026-09-26 · R 4.5.2 · DBI · dbplyr 2.6.0 · RSQLite 2.4.6 · duckdb.\nNew here? Grab the one-page DBI cheatsheet, then work Chapters 1–5 in order — runnable code for each chapter lives in code/.\nThis work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#structure-of-the-book",
+    "href": "index.html#structure-of-the-book",
+    "title": "R, Databases & SQL",
+    "section": "Structure of the book",
+    "text": "Structure of the book\nChapter 1  DBI introduces the DBI package. Chapter 2  dbplyr explores data wrangling within database using the dplyr package. Chapters 3  SQL Basics and 4  SQL Advanced introduce basic and advanced SQL. Chapter 5  JOINs combines tables with JOINs in SQL and dbplyr.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#software-information",
+    "href": "index.html#software-information",
+    "title": "R, Databases & SQL",
+    "section": "Software information",
+    "text": "Software information\nThe R session information when compiling this book is shown below:\n\nsessionInfo()\n\nR version 4.5.2 (2025-10-31 ucrt)\nPlatform: x86_64-w64-mingw32/x64\nRunning under: Windows 10 x64 (build 19045)\n\nMatrix products: default\n  LAPACK version 3.12.1\n\nlocale:\n[1] LC_COLLATE=English_India.utf8  LC_CTYPE=English_India.utf8   \n[3] LC_MONETARY=English_India.utf8 LC_NUMERIC=C                  \n[5] LC_TIME=English_India.utf8    \n\ntime zone: Asia/Calcutta\ntzcode source: internal\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nloaded via a namespace (and not attached):\n [1] htmlwidgets_1.6.4 compiler_4.5.2    fastmap_1.2.0     cli_3.6.5        \n [5] tools_4.5.2       htmltools_0.5.9   rmarkdown_2.30    knitr_1.50       \n [9] jsonlite_2.0.0    xfun_0.61         digest_0.6.39     rlang_1.2.0      \n[13] evaluate_1.0.5   \n\n\nWe do not add prompts (&gt; and +) to R source code in this book, and we comment out the text output with two hashes ## by default, as you can see from the R session information above. This is for your convenience when you want to copy and run the code (the text output will be ignored since it is commented out). Package names are in bold text (e.g., rmarkdown), and function names are followed by parentheses (e.g., bookdown::render_book()). The double-colon operator :: means accessing an object from a package.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About the Author",
+    "section": "",
+    "text": "Aravind Hebbali is the founder of Rsquared Academy. He earned his Masters in Economics from Madras School of Economics. As an active R user, he has authored several R packages such as\n\nolsrr\nrfm\ndescriptr\nblorr\nxplorerr\n\nIn 2015, he founded Rsquared Academy, a free and open source education initiative with focus on data science and analytics. Apart from self paced online courses, Rsquared Academy offers customized learning modules for corporates and universities.\nYou can find him on GitHub.",
+    "crumbs": [
+      "About the Author"
+    ]
+  },
+  {
+    "objectID": "dbi.html",
+    "href": "dbi.html",
+    "title": "1  DBI",
+    "section": "",
+    "text": "1.1 Introduction\nIn this chapter, we will learn to:\nWe will use the following R packages:\nAll the data sets used in this chapter can be found here and code can be downloaded from here or run from code/ch1-dbi.R in this repo.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#introduction",
+    "href": "dbi.html#introduction",
+    "title": "1  DBI",
+    "section": "",
+    "text": "connect to a SQLite database from R\ndisplay database information\nlist tables in the database\nquery data\n\nread entire table\nread few rows\nread data in batches\n\ncreate table in database\noverwrite table in database\nappend data to table in database\nremove table from database\ngenerate SQL query\nclose database connection\n\n\n\nDBI\nRSQLite",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#connection",
+    "href": "dbi.html#connection",
+    "title": "1  DBI",
+    "section": "1.2 Connection",
+    "text": "1.2 Connection\nThe first step is to connect to a database. We will connect to an in memory SQLite databse using dbConnect().\n\ncon &lt;- dbConnect(RSQLite::SQLite(), \":memory:\")\n\n\nNOTE: We use SQLite here because it needs zero setup — no server to install. The exact same DBI commands work with DuckDB, a high-speed analytical engine, for larger analytical queries (see R4DS Ch. 21 at scale):\n\n\n# install.packages(\"duckdb\")  # once; high-speed analytical engine\ncon_duck &lt;- dbConnect(duckdb::duckdb())\ndbWriteTable(con_duck, \"ecom\", ecom)\ndbGetQuery(con_duck, \"SELECT referrer, AVG(duration) FROM ecom GROUP BY referrer\")\n\n\n1.2.1 Connection Summary\nWe can get the more information about the connection using summary().\n\nsummary(con)\n\n          Length            Class             Mode \n               1 SQLiteConnection               S4 \n\n\n\n\n1.2.2 List Tables\nNow that we are connected to a database, let us list all the tables present in it using dbListTables().\n\ndbListTables(con)\n\n[1] \"ecom\"         \"sqlite_stat1\" \"sqlite_stat4\"\n\n\n\n\n1.2.3 List Fields\nTime to explore the ecom table in the database. Use dbListFields() to list all the fields in the table.\n\ndbListFields(con, \"ecom\")\n\n[1] \"referrer\" \"device\"   \"bouncers\" \"n_visit\"  \"n_pages\"  \"duration\"",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#querying-data",
+    "href": "dbi.html#querying-data",
+    "title": "1  DBI",
+    "section": "1.3 Querying Data",
+    "text": "1.3 Querying Data\nThe main objectives of connecting to a database are to:\n\nquery data from the tables already present\ncreate new tables\noverwrite existing tables\ndelete existing tables\n\nLet us begin with querying data. We can do this in the following ways:\n\nread an entire table at once\nread few rows from a table\nread data in batches\n\n\n1.3.1 Entire Table\nWe can read an entire table from a database using dbReadTable().\n\ndbReadTable(con, 'ecom')\n\n   referrer device bouncers n_visit n_pages duration\n1    google laptop        1      10       1      693\n2     yahoo tablet        1       9       1      459\n3    direct laptop        1       0       1      996\n4      bing tablet        0       3      18      468\n5     yahoo mobile        1       9       1      955\n6     yahoo laptop        0       5       5      135\n7     yahoo mobile        1      10       1       75\n8    direct mobile        1      10       1      908\n9      bing mobile        0       3      19      209\n10   google mobile        1       6       1      208\n11   direct laptop        1       9       1      738\n12   direct tablet        0       6      12      132\n13   direct mobile        0       9      14      406\n14    yahoo tablet        0       5       8       80\n15    yahoo mobile        0       7       1       19\n16     bing laptop        1       1       1      995\n17     bing tablet        0       5      16      368\n18   google tablet        1       7       1      406\n19   social tablet        0       7      10      290\n20   social tablet        0       2       1       28\n\n\nIn some cases, we may not need the entire table but only a specific number of rows. Use dbGetQuery() and supply a SQL statement specifying the number of rows of data to be read from the table. In the below example, we read ten rows of data from the ecom table.\n\n\n1.3.2 Few Rows\n\ndbGetQuery(con, \"select * from ecom limit 10\")\n\n   referrer device bouncers n_visit n_pages duration\n1    google laptop        1      10       1      693\n2     yahoo tablet        1       9       1      459\n3    direct laptop        1       0       1      996\n4      bing tablet        0       3      18      468\n5     yahoo mobile        1       9       1      955\n6     yahoo laptop        0       5       5      135\n7     yahoo mobile        1      10       1       75\n8    direct mobile        1      10       1      908\n9      bing mobile        0       3      19      209\n10   google mobile        1       6       1      208\n\n\nIn case of very large table, we can read data in batches using dbSendQuery() and dbFetch(). We can mention the number of rows of data to be read while fetching the data using the query generated by dbGetQuery().\n\n\n1.3.3 Read Data in Batches\n\nquery &lt;- dbSendQuery(con, 'select * from ecom')\nresult &lt;- dbFetch(query, n = 15)\nresult\n\n   referrer device bouncers n_visit n_pages duration\n1    google laptop        1      10       1      693\n2     yahoo tablet        1       9       1      459\n3    direct laptop        1       0       1      996\n4      bing tablet        0       3      18      468\n5     yahoo mobile        1       9       1      955\n6     yahoo laptop        0       5       5      135\n7     yahoo mobile        1      10       1       75\n8    direct mobile        1      10       1      908\n9      bing mobile        0       3      19      209\n10   google mobile        1       6       1      208\n11   direct laptop        1       9       1      738\n12   direct tablet        0       6      12      132\n13   direct mobile        0       9      14      406\n14    yahoo tablet        0       5       8       80\n15    yahoo mobile        0       7       1       19",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#query",
+    "href": "dbi.html#query",
+    "title": "1  DBI",
+    "section": "1.4 Query",
+    "text": "1.4 Query\n\n1.4.1 Query Status\nTo know the status of a query, use dbHasCompleted(). It is very useful in cases of queries that might take a long time to complete.\n\ndbHasCompleted(query)\n\n[1] FALSE\n\n\n\n\n1.4.2 Query Info\ndbGetInfo() will return the following:\n\nthe sql staement\nnumber of rows fetched\nnumber of rows modified/affected\nstatus of the query\n\n\ndbGetInfo(query)\n\n$statement\n[1] \"select * from ecom\"\n\n$row.count\n[1] 15\n\n$rows.affected\n[1] 0\n\n$has.completed\n[1] FALSE\n\n\n\n\n1.4.3 Latest Query\nTo get the latest query, use dbGetStatement().\n\ndbGetStatement(query)\n\n[1] \"select * from ecom\"\n\n\n\n\n1.4.4 Rows Fetched\nTo check the number of rows of data returned by a query, use dbGetRowCount().\n\ndbGetRowCount(query)\n\n[1] 15\n\n\n\n\n1.4.5 Rows Affected\nTo know the number of rows modified or affected in the table, use dbGetRowsAffected().\n\ndbGetRowsAffected(query)\n\n[1] 0\n\n\n\n\n1.4.6 Column Info\nTo know the name of the columns and their data types, use dbColumnInfo().\n\ndbColumnInfo(query)\n\n      name      type\n1 referrer character\n2   device character\n3 bouncers   integer\n4  n_visit    double\n5  n_pages    double\n6 duration    double\n\n\nAlways clear the result set once you are done fetching and inspecting it.\n\ndbClearResult(query)",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#create-table",
+    "href": "dbi.html#create-table",
+    "title": "1  DBI",
+    "section": "1.5 Create Table",
+    "text": "1.5 Create Table\nSo far we have explored querying data from an existing table. Now, let us turn our attention to creating new tables in the database.\n\n1.5.0.1 Introduction\nTo create a new table, use dbWriteTable(). It takes the following 3 arguments:\n\nconnection name\nname of the new table\ndata for the new table\n\n\nx &lt;- 1:10\ny &lt;- letters[1:10]\ntrial &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial)\n\nLet us check if the new table has been created.\n\ndbListTables(con)\n\n[1] \"ecom\"         \"sqlite_stat1\" \"sqlite_stat4\" \"trial\"       \n\ndbExistsTable(con, \"trial\")\n\n[1] TRUE\n\n\nLet us query data from the new table.\n\ndbGetQuery(con, \"select * from trial limit 5\")\n\n  x y\n1 1 a\n2 2 b\n3 3 c\n4 4 d\n5 5 e\n\n\n\n\n1.5.0.2 Overwrite Table\nIn some cases, you may want to overwrite the data in an existing table. Use the overwrite argument in dbWriteTable() and set it to TRUE.\n\nx &lt;- sample(100, 10)\ny &lt;- letters[11:20]\ntrial2 &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial2, overwrite = TRUE)\n\nLet us see if the trial table has been overwritten.\n\ndbGetQuery(con, \"select * from trial limit 5\")\n\n   x y\n1 86 k\n2 85 l\n3 89 m\n4 25 n\n5 83 o",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#append-data",
+    "href": "dbi.html#append-data",
+    "title": "1  DBI",
+    "section": "1.6 Append Data",
+    "text": "1.6 Append Data\nYou can append data to an existing table by setting the append argument in dbWriteTable() to TRUE.\n\nx &lt;- sample(100, 10)\ny &lt;- letters[5:14]\ntrial3 &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial3, append = TRUE)\n\nLet us quickly check if the new data has been appended to the trial table.\n\ndbReadTable(con, \"trial\")\n\n    x y\n1  86 k\n2  85 l\n3  89 m\n4  25 n\n5  83 o\n6  20 p\n7  35 q\n8  55 r\n9  67 s\n10 31 t\n11 42 e\n12 21 f\n13 10 g\n14 16 h\n15 92 i\n16 93 j\n17 26 k\n18 53 l\n19 32 m\n20 50 n\n\n\nWe can also use sqlAppendTable() to append data to an existing table.\n\nsqlAppendTable(con, \"ecom\", head(ecom))\n\n&lt;SQL&gt; INSERT INTO `ecom`\n  (`referrer`, `device`, `bouncers`, `n_visit`, `n_pages`, `duration`)\nVALUES\n  ('google', 'laptop', TRUE, 10, 1, 693),\n  ('yahoo', 'tablet', TRUE, 9, 1, 459),\n  ('direct', 'laptop', TRUE, 0, 1, 996),\n  ('bing', 'tablet', FALSE, 3, 18, 468),\n  ('yahoo', 'mobile', TRUE, 9, 1, 955),\n  ('yahoo', 'laptop', FALSE, 5, 5, 135)",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#insert-rows",
+    "href": "dbi.html#insert-rows",
+    "title": "1  DBI",
+    "section": "1.7 Insert Rows",
+    "text": "1.7 Insert Rows\n\n1.7.0.1 Introduction\nWe can insert new rows into existing tables using:\n\ndbExecute()\ndbSendStatement()\n\nBoth the function take 2 arguments:\n\nconnection name\nsql statement\n\n\n# use dbExecute\ndbExecute(con,\n  \"INSERT into trial (x, y) VALUES (32, 'c'), (45, 'k'), (61, 'h')\"\n)\n## [1] 3\n\n# use dbSendStatement\nres &lt;- dbSendStatement(con,\n  \"INSERT into trial (x, y) VALUES (25, 'm'), (54, 'l'), (16, 'y')\"\n)\ndbClearResult(res)",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#remove-table",
+    "href": "dbi.html#remove-table",
+    "title": "1  DBI",
+    "section": "1.8 Remove Table",
+    "text": "1.8 Remove Table\nIf you want to delete/remove a table from the database, use dbRemoveTable().\n\ndbRemoveTable(con, \"trial\")",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#sqlite-data-type",
+    "href": "dbi.html#sqlite-data-type",
+    "title": "1  DBI",
+    "section": "1.9 SQLite Data Type",
+    "text": "1.9 SQLite Data Type\nIf you want to know the data type, use dbDataType().\n\ndbDataType(RSQLite::SQLite(), \"a\")\n\n[1] \"TEXT\"\n\ndbDataType(RSQLite::SQLite(), 1:5)\n\n[1] \"INTEGER\"\n\ndbDataType(RSQLite::SQLite(), 1.5)\n\n[1] \"REAL\"",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbi.html#close-connection",
+    "href": "dbi.html#close-connection",
+    "title": "1  DBI",
+    "section": "1.10 Close Connection",
+    "text": "1.10 Close Connection\nIt is a good practice to close connection to a database when you no longer need to read/write data from/to it. Use dbDisconnect() to close the database connection.\n\ndbDisconnect(con)",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html",
+    "href": "dbplyr.html",
+    "title": "2  dbplyr",
+    "section": "",
+    "text": "2.1 Introduction\nIn this chapter, we will learn to query data from a database using dplyr.\nWe will use the following R packages:\nAll the data sets used in this chapter can be found here and code can be downloaded from here or run from code/ch2-dbplyr.R in this repo.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html#introduction",
+    "href": "dbplyr.html#introduction",
+    "title": "2  dbplyr",
+    "section": "",
+    "text": "DBI\nRSQLite\ndbplyr\ndplyr",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html#connect-to-database",
+    "href": "dbplyr.html#connect-to-database",
+    "title": "2  dbplyr",
+    "section": "2.2 Connect to Database",
+    "text": "2.2 Connect to Database\nLet us connect to an in memory SQLite database using dbConnect().\n\ncon &lt;- dbConnect(RSQLite::SQLite(), \":memory:\")\n\nWe will copy the ecom data to the database so that we can use it for running dplyr statements. We read the same ecom data set used across chapters (1000 rows, 8 columns including country and purchase) from the local data/web.csv snapshot, falling back to the online copy if needed.\n\nweb_path &lt;- if (file.exists(\"data/web.csv\")) \"data/web.csv\" else \"https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv\"\necom &lt;- readr::read_csv(web_path, show_col_types = FALSE)\necom &lt;- dplyr::select(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)\ndplyr::copy_to(con, ecom)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html#reference-data",
+    "href": "dbplyr.html#reference-data",
+    "title": "2  dbplyr",
+    "section": "2.3 Reference Data",
+    "text": "2.3 Reference Data\nIn order to use dplyr functions, we need to reference the table in the database using tbl().\n\necom2 &lt;- dplyr::tbl(con, \"ecom\")\necom2\n\n# A query:  ?? x 8\n# Database: sqlite 3.51.2 [:memory:]\n   referrer device bouncers n_visit n_pages duration country        purchase\n   &lt;chr&gt;    &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;             &lt;int&gt;\n 1 google   laptop        1      10       1      693 Czech Republic        0\n 2 yahoo    tablet        1       9       1      459 Yemen                 0\n 3 direct   laptop        1       0       1      996 Brazil                0\n 4 bing     tablet        0       3      18      468 China                 1\n 5 yahoo    mobile        1       9       1      955 Poland                0\n 6 yahoo    laptop        0       5       5      135 South Africa          0\n 7 yahoo    mobile        1      10       1       75 Bangladesh            0\n 8 direct   mobile        1      10       1      908 Indonesia             0\n 9 bing     mobile        0       3      19      209 Netherlands           0\n10 google   mobile        1       6       1      208 Czech Republic        0\n# ℹ more rows",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html#query-data",
+    "href": "dbplyr.html#query-data",
+    "title": "2  dbplyr",
+    "section": "2.4 Query Data",
+    "text": "2.4 Query Data\nWe will look at some simple examples. Let us start by selecting referrer, device and duration columns from ecom2.\n\nselect(ecom2, referrer, device, duration)\n\n# A query:  ?? x 3\n# Database: sqlite 3.51.2 [:memory:]\n   referrer device duration\n   &lt;chr&gt;    &lt;chr&gt;     &lt;dbl&gt;\n 1 google   laptop      693\n 2 yahoo    tablet      459\n 3 direct   laptop      996\n 4 bing     tablet      468\n 5 yahoo    mobile      955\n 6 yahoo    laptop      135\n 7 yahoo    mobile       75\n 8 direct   mobile      908\n 9 bing     mobile      209\n10 google   mobile      208\n# ℹ more rows\n\n\nWe can filter data as well. Filter all the rows from ecom2 where duration is greater than 300.\n\nfilter(ecom2, duration &gt; 300)\n\n# A query:  ?? x 8\n# Database: sqlite 3.51.2 [:memory:]\n   referrer device bouncers n_visit n_pages duration country        purchase\n   &lt;chr&gt;    &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt; &lt;chr&gt;             &lt;int&gt;\n 1 google   laptop        1      10       1      693 Czech Republic        0\n 2 yahoo    tablet        1       9       1      459 Yemen                 0\n 3 direct   laptop        1       0       1      996 Brazil                0\n 4 bing     tablet        0       3      18      468 China                 1\n 5 yahoo    mobile        1       9       1      955 Poland                0\n 6 direct   mobile        1      10       1      908 Indonesia             0\n 7 direct   laptop        1       9       1      738 Jamaica               0\n 8 direct   mobile        0       9      14      406 Ireland               1\n 9 bing     laptop        1       1       1      995 United States         0\n10 bing     tablet        0       5      16      368 Peru                  1\n# ℹ more rows\n\n\nTime to do some grouping and summarizing. Let us compute the average time spent on the site for different types of devices.\n\necom2 %&gt;%\n  group_by(device) %&gt;%\n  summarise(avg_duration = mean(duration))\n\n# A query:  ?? x 2\n# Database: sqlite 3.51.2 [:memory:]\n  device avg_duration\n  &lt;chr&gt;         &lt;dbl&gt;\n1 laptop         376.\n2 mobile         337.\n3 tablet         354.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html#show-query",
+    "href": "dbplyr.html#show-query",
+    "title": "2  dbplyr",
+    "section": "2.5 Show Query",
+    "text": "2.5 Show Query\nIf you want to view the SQL query generated in the above step, use show_query() or explain().\n\navg_time &lt;- \n  ecom2 %&gt;%\n  group_by(device) %&gt;%\n  summarise(avg_duration = mean(duration))\n\ndplyr::show_query(avg_time)\n## &lt;SQL&gt;\n## SELECT `device`, AVG(`duration`) AS `avg_duration`\n## FROM `ecom`\n## GROUP BY `device`\n\ndplyr::explain(avg_time)\n## &lt;SQL&gt;\n## SELECT `device`, AVG(`duration`) AS `avg_duration`\n## FROM `ecom`\n## GROUP BY `device`\n## \n## &lt;PLAN&gt;\n##   id parent notused                       detail\n## 1  6      0     115                    SCAN ecom\n## 2  8      0       0 USE TEMP B-TREE FOR GROUP BY",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "dbplyr.html#collect-data",
+    "href": "dbplyr.html#collect-data",
+    "title": "2  dbplyr",
+    "section": "2.6 Collect Data",
+    "text": "2.6 Collect Data\nNow, some interesting facts. When working with databases, dplyr never pulls data into R unless you explicitly ask for it. In the previous example, dplyr will not do anything until you ask for the avg_time data. It generates the SQL and only pulls down a few rows when you try to print avg_time. So how do we pull all the data and store it for further analysis? collect() will pull all the data and store it in a tibble and you can use it for any further analysis.\n\ndplyr::collect(avg_time)\n\n# A tibble: 3 × 2\n  device avg_duration\n  &lt;chr&gt;         &lt;dbl&gt;\n1 laptop         376.\n2 mobile         337.\n3 tablet         354.\n\n\nIt is good practice to close the connection when you are done:\n\ndbDisconnect(con)",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>dbplyr</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html",
+    "href": "sql-basics.html",
+    "title": "3  SQL Basics",
+    "section": "",
+    "text": "3.1 Introduction\nIn this chapter, we will learn to:\nWe will use the following R packages:\nAll the data sets used in this chapter can be found here and code can be downloaded from here or run from code/ch3-sqlbasics.R in this repo.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#introduction",
+    "href": "sql-basics.html#introduction",
+    "title": "3  SQL Basics",
+    "section": "",
+    "text": "select\n\nsingle column\nmultiple columns\ndistinct values in a column\n\nlimit the number of records returned\nhandle NULL values\nand filter columns using the following operators\n\nWHERE\nAND, or & NOT\nBETWEEN\nIN\nLIKE\n\n\n\n\nDBI\nRSQLite\ndbplyr",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#set-up",
+    "href": "sql-basics.html#set-up",
+    "title": "3  SQL Basics",
+    "section": "3.2 Set Up",
+    "text": "3.2 Set Up\nIn order to be able to use the ecom data set for our case study, we will read it using the readr package and then copy it to an in memory database using the copy_to() function from dplyr.\n\n# Canonical ecom: 1000 rows x 8 cols (referrer, device, bouncers, n_visit,\n# n_pages, duration, country, purchase), from the local data/web.csv snapshot.\nweb_path &lt;- if (file.exists(\"data/web.csv\")) \"data/web.csv\" else \"https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv\"\necom &lt;- readr::read_csv(web_path, show_col_types = FALSE)\necom &lt;- dplyr::select(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)\ncon &lt;- DBI::dbConnect(RSQLite::SQLite(), \":memory:\")\ndplyr::copy_to(con, ecom)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#select-columns",
+    "href": "sql-basics.html#select-columns",
+    "title": "3  SQL Basics",
+    "section": "3.3 Select Columns",
+    "text": "3.3 Select Columns\nThe SQL SELECT statement is used to fetch the data from a database table.\n\n3.3.1 Syntax\nBelow is the basic syntax of the SELECT statement.\nSELECT column1, column2, columnN FROM table_name;\nHere, column1, column2… are the fields of a table whose values you want to fetch. If you want to fetch all the fields, use the following syntax.\nSELECT * FROM table_name;\n\n\n3.3.2 Select Single Column\nLet us begin by selecting the device field from the ecom table.\n\nSELECT device FROM ecom\n\n\nDisplaying records 1 - 10\n\n\ndevice\n\n\n\n\nlaptop\n\n\ntablet\n\n\nlaptop\n\n\ntablet\n\n\nmobile\n\n\nlaptop\n\n\nmobile\n\n\nmobile\n\n\nmobile\n\n\nmobile\n\n\n\n\n\n\n\n3.3.3 Select Multiple Columns\nSelect the following fields from the ecom table:\n\nreferrer\ndevice\npurchase\n\n\nSELECT referrer, device, purchase  FROM ecom\n\n\nDisplaying records 1 - 10\n\n\nreferrer\ndevice\npurchase\n\n\n\n\ngoogle\nlaptop\n0\n\n\nyahoo\ntablet\n0\n\n\ndirect\nlaptop\n0\n\n\nbing\ntablet\n1\n\n\nyahoo\nmobile\n0\n\n\nyahoo\nlaptop\n0\n\n\nyahoo\nmobile\n0\n\n\ndirect\nmobile\n0\n\n\nbing\nmobile\n0\n\n\ngoogle\nmobile\n0\n\n\n\n\n\n\n\n3.3.4 Select All Columns\nSelect all the fields from the ecom table.\n\nSELECT * FROM ecom\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\ngoogle\nlaptop\n1\n10\n1\n693\nCzech Republic\n0\n\n\nyahoo\ntablet\n1\n9\n1\n459\nYemen\n0\n\n\ndirect\nlaptop\n1\n0\n1\n996\nBrazil\n0\n\n\nbing\ntablet\n0\n3\n18\n468\nChina\n1\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\nyahoo\nlaptop\n0\n5\n5\n135\nSouth Africa\n0\n\n\nyahoo\nmobile\n1\n10\n1\n75\nBangladesh\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\nbing\nmobile\n0\n3\n19\n209\nNetherlands\n0\n\n\ngoogle\nmobile\n1\n6\n1\n208\nCzech Republic\n0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#limit",
+    "href": "sql-basics.html#limit",
+    "title": "3  SQL Basics",
+    "section": "3.4 Limit",
+    "text": "3.4 Limit\nIf you have a large table with thousands of rows, returning all the records will take time. Use LIMIT to specify the number of records to return.\n\nSELECT * FROM ecom limit 10\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\ngoogle\nlaptop\n1\n10\n1\n693\nCzech Republic\n0\n\n\nyahoo\ntablet\n1\n9\n1\n459\nYemen\n0\n\n\ndirect\nlaptop\n1\n0\n1\n996\nBrazil\n0\n\n\nbing\ntablet\n0\n3\n18\n468\nChina\n1\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\nyahoo\nlaptop\n0\n5\n5\n135\nSouth Africa\n0\n\n\nyahoo\nmobile\n1\n10\n1\n75\nBangladesh\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\nbing\nmobile\n0\n3\n19\n209\nNetherlands\n0\n\n\ngoogle\nmobile\n1\n6\n1\n208\nCzech Republic\n0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#distinct",
+    "href": "sql-basics.html#distinct",
+    "title": "3  SQL Basics",
+    "section": "3.5 Distinct",
+    "text": "3.5 Distinct\nA column in a table may often contain many duplicate values; and we might be interested only in the distinct/unique values. In such cases, we can use the SELECT DISTINCT statement to return only distinct values.\n\nSELECT distinct referrer FROM ecom\n\n\n5 records\n\n\nreferrer\n\n\n\n\ngoogle\n\n\nyahoo\n\n\ndirect\n\n\nbing\n\n\nsocial",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#filter",
+    "href": "sql-basics.html#filter",
+    "title": "3  SQL Basics",
+    "section": "3.6 Filter",
+    "text": "3.6 Filter\nNow that we know how to select columns, let us focus on filtering data. In SQL, the WHERE keyword is used to extract only those records that fulfill a specified condition. Data filter based on both text and numeric values in a table. Below are a few comparison operators we can use:\n\n= equal\n&lt;&gt; not equal\n&lt; less than\n&gt; greater than\n&lt;= less than or equal to\n&gt;= greater than or equal to\n\nThe following SQL statement filters all rows from the ecom table where the duration field is greater than 300.\n\nSELECT * \nFROM ecom \nWHERE duration &gt; 300\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\ngoogle\nlaptop\n1\n10\n1\n693\nCzech Republic\n0\n\n\nyahoo\ntablet\n1\n9\n1\n459\nYemen\n0\n\n\ndirect\nlaptop\n1\n0\n1\n996\nBrazil\n0\n\n\nbing\ntablet\n0\n3\n18\n468\nChina\n1\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\ndirect\nlaptop\n1\n9\n1\n738\nJamaica\n0\n\n\ndirect\nmobile\n0\n9\n14\n406\nIreland\n1\n\n\nbing\nlaptop\n1\n1\n1\n995\nUnited States\n0\n\n\nbing\ntablet\n0\n5\n16\n368\nPeru\n1\n\n\n\n\n\nLet us filter data based on a text value. In the following example, we filter all rows from the ecom table where the device used is mobile.\n\nSELECT * \nFROM ecom \nWHERE device = 'mobile'\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\nyahoo\nmobile\n1\n10\n1\n75\nBangladesh\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\nbing\nmobile\n0\n3\n19\n209\nNetherlands\n0\n\n\ngoogle\nmobile\n1\n6\n1\n208\nCzech Republic\n0\n\n\ndirect\nmobile\n0\n9\n14\n406\nIreland\n1\n\n\nyahoo\nmobile\n0\n7\n1\n19\nFrance\n0\n\n\ngoogle\nmobile\n1\n5\n1\n147\nBrazil\n0\n\n\nbing\nmobile\n0\n0\n7\n196\nRussia\n0\n\n\ngoogle\nmobile\n1\n10\n1\n338\nRussia\n0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#and-or-not",
+    "href": "sql-basics.html#and-or-not",
+    "title": "3  SQL Basics",
+    "section": "3.7 And, Or & Not",
+    "text": "3.7 And, Or & Not\nThe WHERE clause can be combined with other operators such as\n\nAND - displays a record if all the conditions separated by AND is TRUE\nOR - displays a record if any of the conditions separated by OR is TRUE\nNOT - displays a record if the condition(s) is NOT TRUE\n\nto filter data based on more than one condition or to create more complex conditions.\nIn the following example, we filter all the rows from the ecom table where n_visit (visit count) is greater than 3 and duration (time spent on the site) is greater than 100. We use AND to create multiple conditions.\n\nSELECT * \nFROM ecom \nWHERE n_visit &gt; 3 AND duration &gt; 100\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\ngoogle\nlaptop\n1\n10\n1\n693\nCzech Republic\n0\n\n\nyahoo\ntablet\n1\n9\n1\n459\nYemen\n0\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\nyahoo\nlaptop\n0\n5\n5\n135\nSouth Africa\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\ngoogle\nmobile\n1\n6\n1\n208\nCzech Republic\n0\n\n\ndirect\nlaptop\n1\n9\n1\n738\nJamaica\n0\n\n\ndirect\ntablet\n0\n6\n12\n132\nEstonia\n0\n\n\ndirect\nmobile\n0\n9\n14\n406\nIreland\n1\n\n\nbing\ntablet\n0\n5\n16\n368\nPeru\n1\n\n\n\n\n\nIn the next example, we will use both AND & OR. Our goal is to filter all rows from the ecom table that follow the below conditions:\n\nn_visit (visit count) is either equal to 3 or 5\ndevice used to visit the website is either mobile or tablet\n\n\nSELECT * \nFROM ecom WHERE (n_visit = 5 OR n_visit = 3)  \nAND (device = 'mobile' OR device = 'tablet')\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nbing\ntablet\n0\n3\n18\n468\nChina\n1\n\n\nbing\nmobile\n0\n3\n19\n209\nNetherlands\n0\n\n\nyahoo\ntablet\n0\n5\n8\n80\nPhilippines\n0\n\n\nbing\ntablet\n0\n5\n16\n368\nPeru\n1\n\n\ngoogle\nmobile\n1\n5\n1\n147\nBrazil\n0\n\n\nyahoo\nmobile\n1\n3\n1\n700\nCanada\n0\n\n\nbing\ntablet\n1\n5\n1\n831\nIran\n0\n\n\nsocial\ntablet\n0\n3\n12\n324\nChina\n0\n\n\nyahoo\ntablet\n0\n3\n5\n140\nLatvia\n0\n\n\nyahoo\ntablet\n1\n3\n1\n332\nFrance\n0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#between",
+    "href": "sql-basics.html#between",
+    "title": "3  SQL Basics",
+    "section": "3.8 BETWEEN",
+    "text": "3.8 BETWEEN\nThe BETWEEN operator selects values within a given range and is inclusive: begin and end values are included. The values can be numbers, text, or dates. In the following example, we filter rows from the ecom table where the visit count is between 1 and 3, and the device used to visit the website is mobile.\n\nSELECT * \nFROM ecom\nWHERE n_visit BETWEEN 1 AND 3 AND device = 'mobile'\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nbing\nmobile\n0\n3\n19\n209\nNetherlands\n0\n\n\ndirect\nmobile\n1\n2\n1\n501\nEl Salvador\n0\n\n\nbing\nmobile\n0\n1\n1\n25\nIreland\n0\n\n\nyahoo\nmobile\n1\n3\n1\n700\nCanada\n0\n\n\ndirect\nmobile\n0\n1\n13\n234\nIndonesia\n0\n\n\nsocial\nmobile\n0\n1\n2\n44\nFrance\n0\n\n\nbing\nmobile\n0\n3\n18\n288\nPortugal\n1\n\n\nyahoo\nmobile\n1\n1\n1\n73\nIndonesia\n0\n\n\ngoogle\nmobile\n0\n2\n3\n69\nBahamas\n0\n\n\ndirect\nmobile\n1\n1\n1\n423\nMexico\n0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#in",
+    "href": "sql-basics.html#in",
+    "title": "3  SQL Basics",
+    "section": "3.9 IN",
+    "text": "3.9 IN\nThe IN operator allows us to specify multiple values in a WHERE clause. It is a shorthand for multiple OR conditions. In the below example, we filter rows from the ecom table where the visit count is either 2 or 4 or 6 or 8 or 10. Instead of using multiple OR conditions, we use the IN operator.\n\nSELECT * \nFROM ecom \nWHERE n_visit IN (2, 4, 6, 8, 10)\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\ngoogle\nlaptop\n1\n10\n1\n693\nCzech Republic\n0\n\n\nyahoo\nmobile\n1\n10\n1\n75\nBangladesh\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\ngoogle\nmobile\n1\n6\n1\n208\nCzech Republic\n0\n\n\ndirect\ntablet\n0\n6\n12\n132\nEstonia\n0\n\n\nsocial\ntablet\n0\n2\n1\n28\nNamibia\n0\n\n\ndirect\nlaptop\n1\n2\n1\n384\nChina\n0\n\n\nsocial\nlaptop\n1\n4\n1\n850\nUkraine\n0\n\n\ndirect\ntablet\n0\n2\n19\n342\nJapan\n1\n\n\ngoogle\nmobile\n1\n10\n1\n338\nRussia\n0",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#is-null",
+    "href": "sql-basics.html#is-null",
+    "title": "3  SQL Basics",
+    "section": "3.10 IS NULL",
+    "text": "3.10 IS NULL\nA field with a NULL value is a field with no value. If a field in a table is optional, it is possible to insert a new record or update a record without adding a value to this field. Then, the field will be saved with a NULL value. In the next example, we filter all rows from the ecom table where the device column has NULL values.\n\nSELECT * \nFROM ecom \nWHERE device IS NULL\n\n\n0 records\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#like",
+    "href": "sql-basics.html#like",
+    "title": "3  SQL Basics",
+    "section": "3.11 LIKE",
+    "text": "3.11 LIKE\nThe LIKE operator is used to search for a specific pattern in a column. There are two wildcards used in conjunction with the LIKE operator:\n\n% : represents zero, one, or multiple characters\n_ : represents a single character\n\nIn the following example, we filter all rows from the ecom table where the name of the country starts with P. We use % after P to indicate that it can be followed by any number or type of characters.\n\nSELECT * \nFROM ecom \nWHERE country LIKE 'P%'\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\nyahoo\ntablet\n0\n5\n8\n80\nPhilippines\n0\n\n\nbing\ntablet\n0\n5\n16\n368\nPeru\n1\n\n\nbing\nlaptop\n1\n0\n1\n456\nPortugal\n0\n\n\nyahoo\ntablet\n1\n9\n1\n706\nPhilippines\n0\n\n\ndirect\ntablet\n1\n8\n1\n814\nPhilippines\n0\n\n\nsocial\nlaptop\n0\n5\n16\n176\nPanama\n0\n\n\nyahoo\nlaptop\n1\n4\n1\n928\nPeru\n0\n\n\nyahoo\ntablet\n0\n3\n11\n176\nPhilippines\n0\n\n\ngoogle\nlaptop\n1\n9\n1\n869\nPoland\n0\n\n\n\n\n\nLet us look at another example where we filter all rows from the ecom table where the name of the country should follow the below conditions:\n\nname can start with any character\nthe second character must be o\nit can have any type or number of characters after the second character\n\n\nSELECT * \nFROM ecom \nWHERE country LIKE '_o%'\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nyahoo\nmobile\n1\n9\n1\n955\nPoland\n0\n\n\nyahoo\nlaptop\n0\n5\n5\n135\nSouth Africa\n0\n\n\nsocial\ntablet\n0\n7\n10\n290\nColombia\n1\n\n\nyahoo\nmobile\n0\n8\n9\n225\nColombia\n0\n\n\ndirect\nlaptop\n1\n8\n1\n658\nColombia\n0\n\n\nbing\nlaptop\n1\n0\n1\n456\nPortugal\n0\n\n\nyahoo\ntablet\n0\n7\n11\n264\nSomalia\n0\n\n\ngoogle\ntablet\n0\n1\n19\n304\nColombia\n0\n\n\ngoogle\nlaptop\n1\n9\n1\n869\nPoland\n0\n\n\nsocial\ntablet\n1\n1\n1\n566\nPortugal\n0\n\n\n\n\n\n\ndbDisconnect(con)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-basics.html#exercises",
+    "href": "sql-basics.html#exercises",
+    "title": "3  SQL Basics",
+    "section": "3.12 Exercises",
+    "text": "3.12 Exercises\n\nList the referrer and device of 5 visits with more than 8 page views (n_visit &gt; 8), ordered by longest duration first.\nHow many rows are from tablet devices in countries starting with P?\nWhich distinct device values appear among bouncers (bouncers = 1)?\n\n\n\nSolutions\n\n\nSELECT referrer, device FROM ecom WHERE n_visit &gt; 8 ORDER BY duration DESC LIMIT 5 — top row: google / mobile.\nSELECT COUNT(*) FROM ecom WHERE device = 'tablet' AND country LIKE 'P%' — 51 rows.\nSELECT DISTINCT device FROM ecom WHERE bouncers = 1 — laptop, tablet, mobile (all three).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html",
+    "href": "sql-advanced.html",
+    "title": "4  SQL Advanced",
+    "section": "",
+    "text": "4.1 Introduction\nIn this chapter, we will learn to\nWe will use the following R packages:\nAll the data sets used in this chapter can be found here and code can be downloaded from here or run from code/ch4-sqladvanced.R in this repo.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#introduction",
+    "href": "sql-advanced.html#introduction",
+    "title": "4  SQL Advanced",
+    "section": "",
+    "text": "aggregate data\norder data\nand group data\n\n\n\nDBI\nRSQLite\ndbplyr",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#set-up",
+    "href": "sql-advanced.html#set-up",
+    "title": "4  SQL Advanced",
+    "section": "4.2 Set Up",
+    "text": "4.2 Set Up\nIn order to be able to use the ecom data set for our case study, we will read it using the readr package and then copy it to an in memory database using the copy_to() function from dplyr.\n\n# Canonical ecom: 1000 rows x 8 cols (referrer, device, bouncers, n_visit,\n# n_pages, duration, country, purchase), from the local data/web.csv snapshot.\nweb_path &lt;- if (file.exists(\"data/web.csv\")) \"data/web.csv\" else \"https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv\"\necom &lt;- readr::read_csv(web_path, show_col_types = FALSE)\necom &lt;- dplyr::select(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)\ncon &lt;- DBI::dbConnect(RSQLite::SQLite(), \":memory:\")\ndplyr::copy_to(con, ecom)",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#aggregate",
+    "href": "sql-advanced.html#aggregate",
+    "title": "4  SQL Advanced",
+    "section": "4.3 Aggregate",
+    "text": "4.3 Aggregate\nLet us combine the aggregate statements with WHERE statement to filter data.\n\nSUM() : returns the total sum of a numeric column\n\n\nSELECT SUM(n_visit) FROM ecom\n\n\n1 records\n\n\nSUM(n_visit)\n\n\n\n\n4972\n\n\n\n\n\n\nSELECT SUM(n_visit) \nFROM ecom \nWHERE n_visit &gt; 5\n\n\n1 records\n\n\nSUM(n_visit)\n\n\n\n\n3574\n\n\n\n\n\n\nAVG() : returns the average value of a numeric column\n\n\nSELECT AVG(n_visit) FROM ecom\n\n\n1 records\n\n\nAVG(n_visit)\n\n\n\n\n4.972\n\n\n\n\n\n\nSELECT AVG(n_visit) \nFROM ecom \nWHERE country LIKE 'P%'\n\n\n1 records\n\n\nAVG(n_visit)\n\n\n\n\n5.079137\n\n\n\n\n\n\nMAX() : returns the largest value of the selected column\n\n\nSELECT MAX(n_visit) FROM ecom\n\n\n1 records\n\n\nMAX(n_visit)\n\n\n\n\n10\n\n\n\n\n\n\nSELECT MAX(n_visit) \nFROM ecom \nWHERE device = 'tablet'\n\n\n1 records\n\n\nMAX(n_visit)\n\n\n\n\n10\n\n\n\n\n\n\nMIN() : returns the smallest value of the selected column\n\n\nSELECT MIN(n_visit) FROM ecom\n\n\n1 records\n\n\nMIN(n_visit)\n\n\n\n\n0\n\n\n\n\n\n\nSELECT MIN(n_visit) \nFROM ecom \nWHERE duration BETWEEN 600 AND 900\n\n\n1 records\n\n\nMIN(n_visit)\n\n\n\n\n0",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#alias",
+    "href": "sql-advanced.html#alias",
+    "title": "4  SQL Advanced",
+    "section": "4.4 Alias",
+    "text": "4.4 Alias\nSQL aliases are used to give a table, or a column in a table, a temporary name. They are often used to make column names more readable. An alias only exists for the duration of the query. Below are a few examples:\n\nSELECT AVG(n_visit) AS avg_mobile \nFROM ecom \nWHERE device = 'mobile'\n\n\n1 records\n\n\navg_mobile\n\n\n\n\n5.479651\n\n\n\n\n\n\nSELECT MAX(n_visit) AS max_visit \nFROM ecom\n\n\n1 records\n\n\nmax_visit\n\n\n\n\n10\n\n\n\n\n\n\nSELECT MIN(duration) AS min_duration \nFROM ecom\n\n\n1 records\n\n\nmin_duration\n\n\n\n\n10",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#order-by",
+    "href": "sql-advanced.html#order-by",
+    "title": "4  SQL Advanced",
+    "section": "4.5 Order By",
+    "text": "4.5 Order By\nThe ORDER BY keyword is used to sort the records in ascending or descending order. By default, the records are sorted in ascending order. Use the DESC keyword if you want to sort the records in descending order,\n\nSELECT * \nFROM ecom \nORDER BY country\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nsocial\nlaptop\n0\n8\n2\n60\nAfghanistan\n0\n\n\nyahoo\nlaptop\n0\n10\n18\n180\nAfghanistan\n0\n\n\nsocial\nlaptop\n1\n2\n1\n274\nAfghanistan\n0\n\n\ndirect\ntablet\n1\n10\n1\n682\nAfghanistan\n0\n\n\ndirect\ntablet\n0\n5\n18\n414\nAfghanistan\n1\n\n\nbing\ntablet\n0\n7\n2\n34\nAfghanistan\n0\n\n\ndirect\nlaptop\n0\n6\n6\n96\nAlbania\n0\n\n\ngoogle\nlaptop\n1\n5\n1\n304\nAlbania\n0\n\n\nbing\nmobile\n0\n2\n2\n54\nAlbania\n0\n\n\nyahoo\nlaptop\n0\n3\n1\n23\nAlbania\n0\n\n\n\n\n\n\nSELECT *  \nFROM ecom \nORDER BY duration\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\nyahoo\ntablet\n1\n5\n1\n10\nPoland\n0\n\n\nsocial\nlaptop\n1\n1\n1\n10\nFinland\n0\n\n\nyahoo\nlaptop\n0\n0\n1\n12\nIndonesia\n0\n\n\nsocial\nmobile\n1\n2\n1\n12\nBotswana\n0\n\n\ndirect\nlaptop\n0\n0\n1\n13\nCzech Republic\n0\n\n\ndirect\nmobile\n0\n10\n1\n17\nChina\n0\n\n\nyahoo\ntablet\n0\n4\n1\n17\nPoland\n0\n\n\nyahoo\nmobile\n0\n7\n1\n19\nFrance\n0\n\n\nbing\nlaptop\n0\n5\n1\n20\nThailand\n0\n\n\nyahoo\nmobile\n0\n6\n1\n21\nRussia\n0\n\n\n\n\n\n\nSELECT * \nFROM ecom \nORDER BY n_visit DESC\n\n\nDisplaying records 1 - 10\n\n\n\n\n\n\n\n\n\n\n\n\nreferrer\ndevice\nbouncers\nn_visit\nn_pages\nduration\ncountry\npurchase\n\n\n\n\ngoogle\nlaptop\n1\n10\n1\n693\nCzech Republic\n0\n\n\nyahoo\nmobile\n1\n10\n1\n75\nBangladesh\n0\n\n\ndirect\nmobile\n1\n10\n1\n908\nIndonesia\n0\n\n\ngoogle\nmobile\n1\n10\n1\n338\nRussia\n0\n\n\ngoogle\nmobile\n1\n10\n1\n479\nCameroon\n0\n\n\ndirect\nmobile\n0\n10\n1\n17\nChina\n0\n\n\ndirect\ntablet\n0\n10\n3\n57\nChina\n0\n\n\nsocial\nmobile\n0\n10\n11\n242\nArgentina\n1\n\n\ndirect\nmobile\n1\n10\n1\n675\nIndonesia\n0\n\n\ngoogle\ntablet\n1\n10\n1\n86\nChina\n0",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#group-by",
+    "href": "sql-advanced.html#group-by",
+    "title": "4  SQL Advanced",
+    "section": "4.6 Group By",
+    "text": "4.6 Group By\nThe GROUP BY statement is used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result by one or more columns.\n\nSELECT device, \ncount(*) AS visits \nFROM ecom \nGROUP BY device \nORDER by visits DESC\n\n\n3 records\n\n\ndevice\nvisits\n\n\n\n\nmobile\n344\n\n\ntablet\n331\n\n\nlaptop\n325\n\n\n\n\n\n\nSELECT device, MAX(duration) AS max_duration \nFROM ecom \nGROUP BY device \nORDER by max_duration DESC\n\n\n3 records\n\n\ndevice\nmax_duration\n\n\n\n\ntablet\n999\n\n\nlaptop\n997\n\n\nmobile\n994\n\n\n\n\n\n\ndbDisconnect(con)",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "sql-advanced.html#exercises",
+    "href": "sql-advanced.html#exercises",
+    "title": "4  SQL Advanced",
+    "section": "4.7 Exercises",
+    "text": "4.7 Exercises\n\nCompute the average pages per visit (AVG(n_pages)) for each referrer, ordered highest average first. Which referrer tops the list?\nWhat is the longest duration among visits that made a purchase (purchase = 1)?\nAmong mobile visits only, count visits by country and show the top 5. Which country is first?\n\n\n\nSolutions\n\n\nSELECT referrer, AVG(n_pages) AS avg_pages FROM ecom GROUP BY referrer ORDER BY avg_pages DESC — direct (~6.38) tops the list.\nSELECT MAX(duration) FROM ecom WHERE purchase = 1 — 580.\nSELECT country, COUNT(*) AS visits FROM ecom WHERE device = 'mobile' GROUP BY country ORDER BY visits DESC LIMIT 5 — China (53) is first.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html",
+    "href": "joins.html",
+    "title": "5  JOINs",
+    "section": "",
+    "text": "5.1 Introduction\nIn this chapter, we will learn to:\nWe will use the following R packages:\nAll the data sets used in this chapter can be found here and code can be run from code/ch5-joins.R in this repo.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#introduction",
+    "href": "joins.html#introduction",
+    "title": "5  JOINs",
+    "section": "",
+    "text": "combine rows from two tables with INNER JOIN\nkeep unmatched rows with LEFT JOIN\navoid the SQLite RIGHT / FULL OUTER JOIN trap\ndo the same joins from R with dbplyr inner_join() / left_join()\nfilter with semi_join() and anti_join()\n\n\n\nDBI\nRSQLite\ndbplyr",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#set-up",
+    "href": "joins.html#set-up",
+    "title": "5  JOINs",
+    "section": "5.2 Set Up",
+    "text": "5.2 Set Up\nSo far we have worked with a single table. Real databases keep related data in separate tables. Our data/ecom.sqlite file holds two small related tables besides ecom:\n\ncustomers: 20 rows, one per customer (customer_id primary key, country)\norders: 20 rows, one per order (order_id primary key, customer_id foreign key into customers, amount)\n\nSix customers (4, 16–20) have placed no orders, and one order points at a customer_id (99) that does not exist. These deliberate mismatches make the difference between join types visible.\nLet us connect directly to the SQLite file:\n\ncon &lt;- DBI::dbConnect(RSQLite::SQLite(), \"data/ecom.sqlite\")\n\nA quick look at both tables:\n\nSELECT * FROM customers LIMIT 5\n\n\n5 records\n\n\ncustomer_id\ncountry\n\n\n\n\n1\nUnited States\n\n\n2\nUnited Kingdom\n\n\n3\nGermany\n\n\n4\nFrance\n\n\n5\nCanada\n\n\n\n\n\n\nSELECT * FROM orders LIMIT 5\n\n\n5 records\n\n\norder_id\ncustomer_id\namount\n\n\n\n\n101\n1\n459.11\n\n\n102\n1\n469.80\n\n\n103\n2\n157.35\n\n\n104\n3\n418.61\n\n\n105\n3\n328.04",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#inner-join",
+    "href": "joins.html#inner-join",
+    "title": "5  JOINs",
+    "section": "5.3 INNER JOIN",
+    "text": "5.3 INNER JOIN\nINNER JOIN returns only the rows that match in both tables. Customers without orders, and orders without customers, are dropped.\n\nSELECT c.customer_id, c.country, o.order_id, o.amount\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id\nORDER BY c.customer_id, o.order_id\nLIMIT 6\n\n\n6 records\n\n\ncustomer_id\ncountry\norder_id\namount\n\n\n\n\n1\nUnited States\n101\n459.11\n\n\n1\nUnited States\n102\n469.80\n\n\n2\nUnited Kingdom\n103\n157.35\n\n\n2\nUnited Kingdom\n118\n76.39\n\n\n3\nGermany\n104\n418.61\n\n\n3\nGermany\n105\n328.04\n\n\n\n\n\nHow many of the 20 orders survive? Nineteen – order 120 belongs to the non-existent customer 99 and is excluded:\n\nSELECT COUNT(*) AS n FROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id\n\n\n1 records\n\n\nn\n\n\n\n\n19",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#left-join",
+    "href": "joins.html#left-join",
+    "title": "5  JOINs",
+    "section": "5.4 LEFT JOIN",
+    "text": "5.4 LEFT JOIN\nLEFT JOIN keeps every row from the left table and fills NULL where the right table has no match. This is how you find customers who never ordered:\n\nSELECT c.customer_id, c.country, o.order_id, o.amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE o.order_id IS NULL\nORDER BY c.customer_id\n\n\n6 records\n\n\ncustomer_id\ncountry\norder_id\namount\n\n\n\n\n4\nFrance\nNA\nNA\n\n\n16\nItaly\nNA\nNA\n\n\n17\nPortugal\nNA\nNA\n\n\n18\nGreece\nNA\nNA\n\n\n19\nIreland\nNA\nNA\n\n\n20\nBelgium\nNA\nNA\n\n\n\n\n\nThe full left join has 25 rows: 19 matched order rows plus one NULL row for each of the 6 customers without orders.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#the-sqlite-right-full-trap",
+    "href": "joins.html#the-sqlite-right-full-trap",
+    "title": "5  JOINs",
+    "section": "5.5 The SQLite RIGHT / FULL Trap",
+    "text": "5.5 The SQLite RIGHT / FULL Trap\nSome tutorials teach RIGHT JOIN or FULL OUTER JOIN. Do not use them with RSQLite: the SQLite versions bundled with RSQLite (including recent ones) reject both with a syntax error such as near \"RIGHT\": syntax error. Postgres and other production databases accept them, so queries written against SQLite will fail silently only when you move them.\nThe portable workaround is to swap the tables and use LEFT JOIN:\n\ninstead of A RIGHT JOIN B, write B LEFT JOIN A\ninstead of A FULL OUTER JOIN B, union a LEFT JOIN in each direction\n\nWhen in doubt, LEFT JOIN is the only outer join you need for this book.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#joins-with-dbplyr",
+    "href": "joins.html#joins-with-dbplyr",
+    "title": "5  JOINs",
+    "section": "5.6 JOINs with dbplyr",
+    "text": "5.6 JOINs with dbplyr\nThe same joins work from R without writing SQL. Reference both tables and use the dplyr join verbs:\n\ncustomers &lt;- dplyr::tbl(con, \"customers\")\norders &lt;- dplyr::tbl(con, \"orders\")\n\ninner_join(customers, orders, by = \"customer_id\")\n\n# A query:  ?? x 4\n# Database: sqlite 3.51.2 [F:\\R\\ebooks\\rdbsql\\data\\ecom.sqlite]\n   customer_id country        order_id amount\n         &lt;int&gt; &lt;chr&gt;             &lt;int&gt;  &lt;dbl&gt;\n 1           1 United States       101  459. \n 2           1 United States       102  470. \n 3           2 United Kingdom      103  157. \n 4           2 United Kingdom      118   76.4\n 5           3 Germany             104  419. \n 6           3 Germany             105  328. \n 7           3 Germany             106  269. \n 8           5 Canada              107  374. \n 9           5 Canada              119  248  \n10           6 Australia           108   84.6\n11           7 Brazil              109  335. \n12           8 Japan               110  358. \n13           9 Mexico              111  240. \n14          10 Netherlands         112  365. \n15          11 Sweden              113  469. \n16          12 Norway              114  143. \n17          13 Denmark             115  242. \n18          14 Finland             116  471. \n19          15 Poland              117  490. \n\n\nUse show_query() to see the SQL dbplyr generates – it is the INNER JOIN you just wrote by hand:\n\nq_inner &lt;- inner_join(customers, orders, by = \"customer_id\")\ndplyr::show_query(q_inner)\n## &lt;SQL&gt;\n## SELECT `customers`.*, `order_id`, `amount`\n## FROM `customers`\n## INNER JOIN `orders`\n##   ON (`customers`.`customer_id` = `orders`.`customer_id`)\n\nThe left join works the same way:\n\nq_left &lt;- left_join(customers, orders, by = \"customer_id\")\ndplyr::show_query(q_left)\n## &lt;SQL&gt;\n## SELECT `customers`.*, `order_id`, `amount`\n## FROM `customers`\n## LEFT JOIN `orders`\n##   ON (`customers`.`customer_id` = `orders`.`customer_id`)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#semi_join-and-anti_join",
+    "href": "joins.html#semi_join-and-anti_join",
+    "title": "5  JOINs",
+    "section": "5.7 semi_join and anti_join",
+    "text": "5.7 semi_join and anti_join\nTwo filtering joins have no direct SQL keyword but are everyday tools:\n\nsemi_join() keeps rows of customers that have a match in orders (14 customers). The generated SQL uses WHERE EXISTS.\nanti_join() keeps rows of customers that lack a match in orders (the same 6 customers from the LEFT JOIN check above). The generated SQL uses WHERE NOT EXISTS.\n\n\nq_semi &lt;- semi_join(customers, orders, by = \"customer_id\")\ndplyr::show_query(q_semi)\n## &lt;SQL&gt;\n## SELECT `customers`.*\n## FROM `customers`\n## WHERE EXISTS (\n##   SELECT 1 FROM `orders`\n##   WHERE (`customers`.`customer_id` = `orders`.`customer_id`)\n## )\ndplyr::collect(q_semi)\n## # A tibble: 14 × 2\n##    customer_id country       \n##          &lt;int&gt; &lt;chr&gt;         \n##  1           1 United States \n##  2           2 United Kingdom\n##  3           3 Germany       \n##  4           5 Canada        \n##  5           6 Australia     \n##  6           7 Brazil        \n##  7           8 Japan         \n##  8           9 Mexico        \n##  9          10 Netherlands   \n## 10          11 Sweden        \n## 11          12 Norway        \n## 12          13 Denmark       \n## 13          14 Finland       \n## 14          15 Poland\n\n\nq_anti &lt;- anti_join(customers, orders, by = \"customer_id\")\ndplyr::show_query(q_anti)\n## &lt;SQL&gt;\n## SELECT `customers`.*\n## FROM `customers`\n## WHERE NOT EXISTS (\n##   SELECT 1 FROM `orders`\n##   WHERE (`customers`.`customer_id` = `orders`.`customer_id`)\n## )\ndplyr::collect(q_anti)\n## # A tibble: 6 × 2\n##   customer_id country \n##         &lt;int&gt; &lt;chr&gt;   \n## 1           4 France  \n## 2          16 Italy   \n## 3          17 Portugal\n## 4          18 Greece  \n## 5          19 Ireland \n## 6          20 Belgium\n\nRule of thumb: use semi_join() / anti_join() when you want to filter one table by membership in another without adding the other table’s columns.\n\ndbDisconnect(con)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "joins.html#exercises",
+    "href": "joins.html#exercises",
+    "title": "5  JOINs",
+    "section": "5.8 Exercises",
+    "text": "5.8 Exercises\n\nList the customer_id and country of customers who placed no orders. Write it both as a LEFT JOIN ... IS NULL query and as an anti_join().\nCompute total order amount per customer (highest first) with an INNER JOIN + GROUP BY. Which customer spent the most?\nFind the orphan order: which order_id points at a non-existent customer?\n\n\n\nSolutions\n\n\nSELECT c.customer_id, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL — customers 4, 16, 17, 18, 19, 20. Same result: anti_join(customers, orders, by = \"customer_id\").\nSELECT c.customer_id, c.country, SUM(o.amount) AS total FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.country ORDER BY total DESC — customer 3 (Germany, 1015.82).\nSELECT o.order_id, o.customer_id FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL — order 120 (customer 99).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  }
+]
