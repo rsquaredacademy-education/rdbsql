@@ -82,6 +82,7 @@ between
 in
 is-null
 like
+exercises
 sql2
 introduction-5
 set-up-1
@@ -89,6 +90,7 @@ aggregate
 alias
 order-by
 group-by
+exercises-1
 joins
 introduction-6
 set-up-2
@@ -97,3 +99,4 @@ left-join
 the-sqlite-right-full-trap
 joins-with-dbplyr
 semi_join-and-anti_join
+exercises-2

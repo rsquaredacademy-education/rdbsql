@@ -215,6 +215,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.9" data-path="sqlbasics.html"><a href="sqlbasics.html#in"><i class="fa fa-check"></i><b>3.9</b> IN</a></li>
 <li class="chapter" data-level="3.10" data-path="sqlbasics.html"><a href="sqlbasics.html#is-null"><i class="fa fa-check"></i><b>3.10</b> IS NULL</a></li>
 <li class="chapter" data-level="3.11" data-path="sqlbasics.html"><a href="sqlbasics.html#like"><i class="fa fa-check"></i><b>3.11</b> LIKE</a></li>
+<li class="chapter" data-level="3.12" data-path="sqlbasics.html"><a href="sqlbasics.html#exercises"><i class="fa fa-check"></i><b>3.12</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a>
 <ul>
@@ -224,6 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.4" data-path="sql2.html"><a href="sql2.html#alias"><i class="fa fa-check"></i><b>4.4</b> Alias</a></li>
 <li class="chapter" data-level="4.5" data-path="sql2.html"><a href="sql2.html#order-by"><i class="fa fa-check"></i><b>4.5</b> Order By</a></li>
 <li class="chapter" data-level="4.6" data-path="sql2.html"><a href="sql2.html#group-by"><i class="fa fa-check"></i><b>4.6</b> Group By</a></li>
+<li class="chapter" data-level="4.7" data-path="sql2.html"><a href="sql2.html#exercises-1"><i class="fa fa-check"></i><b>4.7</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="joins.html"><a href="joins.html"><i class="fa fa-check"></i><b>5</b> JOINs</a>
 <ul>
@@ -234,9 +236,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.5" data-path="joins.html"><a href="joins.html#the-sqlite-right-full-trap"><i class="fa fa-check"></i><b>5.5</b> The SQLite RIGHT / FULL Trap</a></li>
 <li class="chapter" data-level="5.6" data-path="joins.html"><a href="joins.html#joins-with-dbplyr"><i class="fa fa-check"></i><b>5.6</b> JOINs with dbplyr</a></li>
 <li class="chapter" data-level="5.7" data-path="joins.html"><a href="joins.html#semi_join-and-anti_join"><i class="fa fa-check"></i><b>5.7</b> semi_join and anti_join</a></li>
+<li class="chapter" data-level="5.8" data-path="joins.html"><a href="joins.html#exercises-2"><i class="fa fa-check"></i><b>5.8</b> Exercises</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
 </ul>
 
       </nav>
@@ -272,7 +276,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://rsqlite.r-dbi.org/">RSQLite</a></li>
 <li><a href="http://dbplyr.tidyverse.org/">dbplyr</a></li>
 </ul>
-<p>All the data sets used in this chapter can be found <a href="https://github.com/rsquaredacademy/datasets">here</a>.</p>
+<p>All the data sets used in this chapter can be found <a href="https://github.com/rsquaredacademy/datasets">here</a> and code can be run from <code>code/ch5-joins.R</code> in this repo.</p>
 </div>
 <div id="set-up-2" class="section level2 hasAnchor" number="5.2">
 <h2><span class="header-section-number">5.2</span> Set Up<a href="joins.html#set-up-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -630,6 +634,26 @@ uses <code>WHERE NOT EXISTS</code>.</li>
 <p>Rule of thumb: use <code>semi_join()</code> / <code>anti_join()</code> when you want to filter one
 table by membership in another without adding the other table’s columns.</p>
 <div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="joins.html#cb119-1" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code></pre></div>
+</div>
+<div id="exercises-2" class="section level2 hasAnchor" number="5.8">
+<h2><span class="header-section-number">5.8</span> Exercises<a href="joins.html#exercises-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ol style="list-style-type: decimal">
+<li>List the <code>customer_id</code> and <code>country</code> of customers who placed no orders.
+Write it both as a <code>LEFT JOIN ... IS NULL</code> query and as an <code>anti_join()</code>.</li>
+<li>Compute total order <code>amount</code> per customer (highest first) with an
+<code>INNER JOIN</code> + <code>GROUP BY</code>. Which customer spent the most?</li>
+<li>Find the orphan order: which <code>order_id</code> points at a non-existent customer?</li>
+</ol>
+<details>
+<summary>
+Solutions
+</summary>
+<ol style="list-style-type: decimal">
+<li><p><code>SELECT c.customer_id, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL</code> — customers 4, 16, 17, 18, 19, 20. Same result: <code>anti_join(customers, orders, by = "customer_id")</code>.</p></li>
+<li><p><code>SELECT c.customer_id, c.country, SUM(o.amount) AS total FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.country ORDER BY total DESC</code> — customer 3 (Germany, 1015.82).</p></li>
+<li><p><code>SELECT o.order_id, o.customer_id FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL</code> — order 120 (customer 99).</p></li>
+</ol>
+</details>
 
 </div>
 </div>
@@ -681,7 +705,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": null,
+  "download": ["databases-and-sql.pdf"],
   "search": {
     "engine": "fuse",
     "options": null

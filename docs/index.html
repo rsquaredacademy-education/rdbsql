@@ -215,6 +215,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.9" data-path="sqlbasics.html"><a href="sqlbasics.html#in"><i class="fa fa-check"></i><b>3.9</b> IN</a></li>
 <li class="chapter" data-level="3.10" data-path="sqlbasics.html"><a href="sqlbasics.html#is-null"><i class="fa fa-check"></i><b>3.10</b> IS NULL</a></li>
 <li class="chapter" data-level="3.11" data-path="sqlbasics.html"><a href="sqlbasics.html#like"><i class="fa fa-check"></i><b>3.11</b> LIKE</a></li>
+<li class="chapter" data-level="3.12" data-path="sqlbasics.html"><a href="sqlbasics.html#exercises"><i class="fa fa-check"></i><b>3.12</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a>
 <ul>
@@ -224,6 +225,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="4.4" data-path="sql2.html"><a href="sql2.html#alias"><i class="fa fa-check"></i><b>4.4</b> Alias</a></li>
 <li class="chapter" data-level="4.5" data-path="sql2.html"><a href="sql2.html#order-by"><i class="fa fa-check"></i><b>4.5</b> Order By</a></li>
 <li class="chapter" data-level="4.6" data-path="sql2.html"><a href="sql2.html#group-by"><i class="fa fa-check"></i><b>4.6</b> Group By</a></li>
+<li class="chapter" data-level="4.7" data-path="sql2.html"><a href="sql2.html#exercises-1"><i class="fa fa-check"></i><b>4.7</b> Exercises</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="joins.html"><a href="joins.html"><i class="fa fa-check"></i><b>5</b> JOINs</a>
 <ul>
@@ -234,9 +236,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.5" data-path="joins.html"><a href="joins.html#the-sqlite-right-full-trap"><i class="fa fa-check"></i><b>5.5</b> The SQLite RIGHT / FULL Trap</a></li>
 <li class="chapter" data-level="5.6" data-path="joins.html"><a href="joins.html#joins-with-dbplyr"><i class="fa fa-check"></i><b>5.6</b> JOINs with dbplyr</a></li>
 <li class="chapter" data-level="5.7" data-path="joins.html"><a href="joins.html#semi_join-and-anti_join"><i class="fa fa-check"></i><b>5.7</b> semi_join and anti_join</a></li>
+<li class="chapter" data-level="5.8" data-path="joins.html"><a href="joins.html#exercises-2"><i class="fa fa-check"></i><b>5.8</b> Exercises</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
 </ul>
 
       </nav>
@@ -261,6 +265,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="preface" class="section level1 unnumbered hasAnchor">
 <h1>Preface<a href="index.html#preface" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><em>Last verified: 2026-09-26 · R 4.5.2 · DBI · dbplyr 2.6.0 · RSQLite 2.4.6 · duckdb.</em></p>
+<p>New here? Grab the <a href="cheatsheet/dbi-cheatsheet.pdf">one-page DBI cheatsheet</a>,
+then work Chapters 1–5 in order — runnable code for each chapter lives in <code>code/</code>.</p>
 <p><img src="img/rdbsql.png" width="60%" style="display: block; margin: auto;" /></p>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</p>
 <div id="structure-of-the-book" class="section level2 unnumbered hasAnchor">
@@ -351,7 +358,7 @@ gitbook.start({
     "link": null,
     "text": null
   },
-  "download": null,
+  "download": ["databases-and-sql.pdf"],
   "search": {
     "engine": "fuse",
     "options": null
