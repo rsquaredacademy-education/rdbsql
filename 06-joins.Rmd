@@ -1,0 +1,165 @@
+# JOINs {#joins}
+
+```{r join-libs, echo=FALSE, message=FALSE}
+library(dplyr)
+library(DBI)
+library(RSQLite)
+library(dbplyr)
+knitr::opts_chunk$set(R.options=list(max.print=50))
+```
+
+## Introduction
+
+In this chapter, we will learn to:
+
+- combine rows from two tables with `INNER JOIN`
+- keep unmatched rows with `LEFT JOIN`
+- avoid the SQLite `RIGHT` / `FULL OUTER JOIN` trap
+- do the same joins from R with dbplyr `inner_join()` / `left_join()`
+- filter with `semi_join()` and `anti_join()`
+
+We will use the following R packages:
+
+- [DBI](https://dbi.r-dbi.org/)
+- [RSQLite](https://rsqlite.r-dbi.org/)
+- [dbplyr](http://dbplyr.tidyverse.org/)
+
+All the data sets used in this chapter can be found [here](https://github.com/rsquaredacademy/datasets).
+
+## Set Up
+
+So far we have worked with a single table. Real databases keep related data in
+separate tables. Our `data/ecom.sqlite` file holds two small related tables
+besides `ecom`:
+
+- `customers`: 20 rows, one per customer (`customer_id` primary key, `country`)
+- `orders`: 20 rows, one per order (`order_id` primary key, `customer_id`
+  foreign key into `customers`, `amount`)
+
+Six customers (4, 16--20) have placed no orders, and one order points at a
+`customer_id` (99) that does not exist. These deliberate mismatches make the
+difference between join types visible.
+
+Let us connect directly to the SQLite file:
+
+```{r join-setup, message=FALSE}
+con <- DBI::dbConnect(RSQLite::SQLite(), "data/ecom.sqlite")
+```
+
+A quick look at both tables:
+
+```{sql, connection=con}
+SELECT * FROM customers LIMIT 5
+```
+
+```{sql, connection=con}
+SELECT * FROM orders LIMIT 5
+```
+
+## INNER JOIN
+
+`INNER JOIN` returns only the rows that match in **both** tables. Customers
+without orders, and orders without customers, are dropped.
+
+```{sql, connection=con}
+SELECT c.customer_id, c.country, o.order_id, o.amount
+FROM customers c
+INNER JOIN orders o ON c.customer_id = o.customer_id
+ORDER BY c.customer_id, o.order_id
+LIMIT 6
+```
+
+How many of the 20 orders survive? Nineteen -- order 120 belongs to the
+non-existent customer 99 and is excluded:
+
+```{sql, connection=con}
+SELECT COUNT(*) AS n FROM customers c
+INNER JOIN orders o ON c.customer_id = o.customer_id
+```
+
+## LEFT JOIN
+
+`LEFT JOIN` keeps **every** row from the left table and fills `NULL` where the
+right table has no match. This is how you find customers who never ordered:
+
+```{sql, connection=con}
+SELECT c.customer_id, c.country, o.order_id, o.amount
+FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_id IS NULL
+ORDER BY c.customer_id
+```
+
+The full left join has 25 rows: 19 matched order rows plus one `NULL` row for
+each of the 6 customers without orders.
+
+## The SQLite RIGHT / FULL Trap
+
+Some tutorials teach `RIGHT JOIN` or `FULL OUTER JOIN`. Do not use them with
+RSQLite: the SQLite versions bundled with RSQLite (including recent ones)
+reject both with a syntax error such as `near "RIGHT": syntax error`.
+Postgres and other production databases accept them, so queries written
+against SQLite will fail silently only when you move them.
+
+The portable workaround is to swap the tables and use `LEFT JOIN`:
+
+- instead of `A RIGHT JOIN B`, write `B LEFT JOIN A`
+- instead of `A FULL OUTER JOIN B`, union a `LEFT JOIN` in each direction
+
+When in doubt, `LEFT JOIN` is the only outer join you need for this book.
+
+## JOINs with dbplyr
+
+The same joins work from R without writing SQL. Reference both tables and use
+the dplyr join verbs:
+
+```{r join-dbplyr, message=FALSE}
+customers <- dplyr::tbl(con, "customers")
+orders <- dplyr::tbl(con, "orders")
+
+inner_join(customers, orders, by = "customer_id")
+```
+
+Use `show_query()` to see the SQL dbplyr generates -- it is the `INNER JOIN`
+you just wrote by hand:
+
+```{r join-show-inner, collapse=TRUE}
+q_inner <- inner_join(customers, orders, by = "customer_id")
+dplyr::show_query(q_inner)
+```
+
+The left join works the same way:
+
+```{r join-show-left, collapse=TRUE}
+q_left <- left_join(customers, orders, by = "customer_id")
+dplyr::show_query(q_left)
+```
+
+## semi_join and anti_join
+
+Two filtering joins have no direct SQL keyword but are everyday tools:
+
+- `semi_join()` keeps rows of `customers` that **have** a match in `orders`
+  (14 customers). The generated SQL uses `WHERE EXISTS`.
+- `anti_join()` keeps rows of `customers` that **lack** a match in `orders`
+  (the same 6 customers from the `LEFT JOIN` check above). The generated SQL
+  uses `WHERE NOT EXISTS`.
+
+```{r join-semi, collapse=TRUE}
+q_semi <- semi_join(customers, orders, by = "customer_id")
+dplyr::show_query(q_semi)
+dplyr::collect(q_semi)
+```
+
+```{r join-anti, collapse=TRUE}
+q_anti <- anti_join(customers, orders, by = "customer_id")
+dplyr::show_query(q_anti)
+dplyr::collect(q_anti)
+```
+
+Rule of thumb: use `semi_join()` / `anti_join()` when you want to filter one
+table by membership in another without adding the other table's columns.
+
+```{r join-close}
+dbDisconnect(con)
+```
