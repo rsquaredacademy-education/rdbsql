@@ -41,6 +41,17 @@ SQLite databse using `dbConnect()`.
 con <- dbConnect(RSQLite::SQLite(), ":memory:")
 ```
 
+> **NOTE:** We use SQLite here because it needs zero setup — no server to
+> install. The exact same DBI commands work with DuckDB, a high-speed
+> analytical engine, for larger analytical queries (see R4DS Ch. 21 at scale):
+
+```{r duck-callout, eval=FALSE}
+# install.packages("duckdb")  # once; high-speed analytical engine
+con_duck <- dbConnect(duckdb::duckdb())
+dbWriteTable(con_duck, "ecom", ecom)
+dbGetQuery(con_duck, "SELECT referrer, AVG(duration) FROM ecom GROUP BY referrer")
+```
+
 ```{r data, echo=FALSE, message=FALSE}
 # Canonical ecom: 1000 rows x 8 cols (referrer, device, bouncers, n_visit,
 # n_pages, duration, country, purchase). This chapter uses a 20-row x 6-col
