@@ -42,10 +42,15 @@ con <- dbConnect(RSQLite::SQLite(), ":memory:")
 ```
 
 ```{r data, echo=FALSE, message=FALSE}
-ecom1 <- readr::read_csv('https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv')
-ecom <- ecom1 %>% 
-  slice(1:20) %>% 
-  select(referrer, device, bouncers, n_visit, n_pages, duration)
+# Canonical ecom: 1000 rows x 8 cols (referrer, device, bouncers, n_visit,
+# n_pages, duration, country, purchase). This chapter uses a 20-row x 6-col
+# slice for brevity; Chapters 2-4 use the full table.
+web_path <- if (file.exists("data/web.csv")) "data/web.csv" else "https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv"
+ecom1 <- readr::read_csv(web_path, show_col_types = FALSE)
+ecom <- ecom1 %>%
+  dplyr::select(referrer, device, bouncers, n_visit, n_pages, duration, country, purchase) %>%
+  dplyr::slice(1:20) %>%
+  dplyr::select(referrer, device, bouncers, n_visit, n_pages, duration)
 copy_to(con, ecom)
 ```
 

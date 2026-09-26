@@ -45,7 +45,11 @@ it using the **readr** package and then copy it to an in memory database using t
 `copy_to()` function from **dplyr**.
 
 ```{r setup2a, message=FALSE}
-ecom <- readr::read_csv('https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv')
+# Canonical ecom: 1000 rows x 8 cols (referrer, device, bouncers, n_visit,
+# n_pages, duration, country, purchase), from the local data/web.csv snapshot.
+web_path <- if (file.exists("data/web.csv")) "data/web.csv" else "https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv"
+ecom <- readr::read_csv(web_path, show_col_types = FALSE)
+ecom <- dplyr::select(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)
 con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
 copy_to(con, ecom)
 ```

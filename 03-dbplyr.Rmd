@@ -28,11 +28,16 @@ Let us connect to an in memory SQLite database using `dbConnect()`.
 con <- dbConnect(RSQLite::SQLite(), ":memory:")
 ```
 
-We will copy the `mtcars` data to the database so that we can use it for running
-dplyr statements.
+We will copy the `ecom` data to the database so that we can use it for running
+dplyr statements. We read the same `ecom` data set used across chapters
+(1000 rows, 8 columns including `country` and `purchase`) from the local
+`data/web.csv` snapshot, falling back to the online copy if needed.
 
-```{r dbply2}
-dplyr::copy_to(con, mtcars)
+```{r dbply2, message=FALSE}
+web_path <- if (file.exists("data/web.csv")) "data/web.csv" else "https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv"
+ecom <- readr::read_csv(web_path, show_col_types = FALSE)
+ecom <- dplyr::select(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)
+dplyr::copy_to(con, ecom)
 ```
 
 ## Reference Data 
@@ -41,33 +46,33 @@ In order to use dplyr functions, we need to reference the table in the database 
 `tbl()`.
 
 ```{r dbply3}
-mtcars2 <- dplyr::tbl(con, "mtcars")
-mtcars2
+ecom2 <- dplyr::tbl(con, "ecom")
+ecom2
 ```
 
 ## Query Data 
 
-We will look at some simple examples. Let us start by selecting `mpg`, `cyl` and `drat` 
-columns from `mtcars2`.
+We will look at some simple examples. Let us start by selecting `referrer`, `device` and `duration` 
+columns from `ecom2`.
 
 ```{r dbply4}
-select(mtcars2, mpg, cyl, drat)
+select(ecom2, referrer, device, duration)
 ```
 
-We can filter data as well. Filter all the rows from `mtcars2` where `mpg` is 
-greater than 25.
+We can filter data as well. Filter all the rows from `ecom2` where `duration` 
+is greater than 300.
 
 ```{r dbply5}
-filter(mtcars2, mpg > 25)
+filter(ecom2, duration > 300)
 ```
 
-Time to do some grouping and summarizing. Let us compute the average mileage for
-different types of cylinders.
+Time to do some grouping and summarizing. Let us compute the average time spent
+on the site for different types of devices.
 
 ```{r dbply6}
-mtcars2 %>%
-  group_by(cyl) %>%
-  summarise(mileage = mean(mpg))
+ecom2 %>%
+  group_by(device) %>%
+  summarise(avg_duration = mean(duration))
 ```
 
 ## Show Query
@@ -75,22 +80,22 @@ mtcars2 %>%
 If you want to view the SQL query generated in the above step, use `show_query()` or `explain()`.
 
 ```{r dbply7, collapse=TRUE}
-mileages <- 
-  mtcars2 %>%
-  group_by(cyl) %>%
-  summarise(mileage = mean(mpg))
+avg_time <- 
+  ecom2 %>%
+  group_by(device) %>%
+  summarise(avg_duration = mean(duration))
 
-dplyr::show_query(mileages)
+dplyr::show_query(avg_time)
 
-dplyr::explain(mileages)
+dplyr::explain(avg_time)
 ```
 
 ## Collect Data
 
-Now, some interesting facts. When working with databases, **dplyr** never pulls data into R unless you explicitly ask for it. In the previous example, dplyr will not do anything until you ask for the mileages data. It generates the SQL and only pulls down a few rows when you try to print `mileages`. 
+Now, some interesting facts. When working with databases, **dplyr** never pulls data into R unless you explicitly ask for it. In the previous example, dplyr will not do anything until you ask for the `avg_time` data. It generates the SQL and only pulls down a few rows when you try to print `avg_time`. 
 So how do we pull all the data and store it for further analysis? `collect()` will pull all 
 the data and store it in a tibble and you can use it for any further analysis.
 
 ```{r dbply9}
-dplyr::collect(mileages)
+dplyr::collect(avg_time)
 ```
