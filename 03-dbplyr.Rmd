@@ -6,8 +6,8 @@ In this chapter, we will learn to query data from a database using dplyr.
 
 We will use the following R packages:
 
-- [DBI](http://readr.tidyverse.org/)
-- [RSQLite](https://rstats-db.github.io/RSQLite/)
+- [DBI](https://dbi.r-dbi.org/)
+- [RSQLite](https://rsqlite.r-dbi.org/)
 - [dbplyr](http://dbplyr.tidyverse.org/)
 - [dplyr](http://dplyr.tidyverse.org/)
 
