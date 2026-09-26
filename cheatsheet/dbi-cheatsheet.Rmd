@@ -1,0 +1,53 @@
+---
+title: "DBI Cheatsheet — R + Databases in 7 Functions"
+fontsize: 10pt
+geometry: margin=1.5cm
+output:
+  pdf_document:
+    latex_engine: pdflatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+## Connect, query, disconnect
+
+```{r pipeline}
+library(DBI)
+con <- dbConnect(RSQLite::SQLite(), ":memory:")  # or duckdb::duckdb()
+dbListTables(con)                                # what is in the database?
+dbReadTable(con, "ecom")                         # whole table (small only!)
+dbGetQuery(con, "SELECT * FROM ecom LIMIT 10")   # SQL, first rows
+res <- dbSendQuery(con, "SELECT * FROM ecom")    # big tables: fetch in batches
+x <- dbFetch(res, n = 100)
+dbClearResult(res)                               # always clear when done
+dbDisconnect(con)                                # always disconnect
+```
+
+## Write data
+
+```{r write}
+dbWriteTable(con, "trial", df)                   # create (overwrite / append args)
+dbExecute(con, "INSERT INTO trial (x) VALUES (1)")  # statements, no cleanup needed
+dbRemoveTable(con, "trial")                      # delete table
+```
+
+## Inspect a query
+
+`dbHasCompleted()` `dbGetStatement()` `dbGetRowCount()` `dbGetRowsAffected()` `dbColumnInfo()` — status, SQL, counts, column types of a `dbSendQuery()` result.
+
+## dbplyr in 4 verbs
+
+```{r dbplyr}
+e <- dplyr::tbl(con, "ecom")                     # lazy reference, pulls nothing
+e %>% dplyr::filter(duration > 300)              # WHERE
+e %>% dplyr::group_by(device) %>%                # GROUP BY + aggregates
+  dplyr::summarise(avg = mean(duration))
+dplyr::show_query(q)                             # see the generated SQL
+dplyr::collect(q)                                # pull results into a tibble
+inner_join(a, b) / left_join(a, b)               # JOINs; semi/anti_join filter
+```
+
+\vfill
+\footnotesize CC BY-NC-SA 4.0 — companion to *R, Databases \& SQL* (rdbsql.rsquaredacademy.com). Full runnable code in `code/` in the book repo.
