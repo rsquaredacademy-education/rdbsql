@@ -177,6 +177,12 @@ To know the name of the columns and their data types, use `dbColumnInfo()`.
 dbColumnInfo(query)
 ```
 
+Always clear the result set once you are done fetching and inspecting it.
+
+```{r lite14}
+dbClearResult(query)
+```
+
 ## Create Table
 
 So far we have explored querying data from an existing table. Now, let us turn our
@@ -273,9 +279,10 @@ dbExecute(con,
 )
 
 # use dbSendStatement
-dbSendStatement(con,
+res <- dbSendStatement(con,
   "INSERT into trial (x, y) VALUES (25, 'm'), (54, 'l'), (16, 'y')"
 )
+dbClearResult(res)
 ```
 
 ## Remove Table
