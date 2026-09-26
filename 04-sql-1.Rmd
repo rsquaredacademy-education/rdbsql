@@ -137,7 +137,7 @@ from the `ecom` table where the `device` used is `mobile`.
 ```{sql, connection=con}
 SELECT * 
 FROM ecom 
-WHERE device == 'mobile'
+WHERE device = 'mobile'
 ```
 
 ## And, Or & Not
@@ -168,7 +168,7 @@ rows from the `ecom` table that follow the below conditions:
 
 ```{sql, connection=con}
 SELECT * 
-FROM ecom WHERE (n_visit == 5 OR n_visit == 3)  
+FROM ecom WHERE (n_visit = 5 OR n_visit = 3)  
 AND (device = 'mobile' OR device = 'tablet')
 ```
 

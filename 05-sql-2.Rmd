@@ -71,7 +71,7 @@ SELECT MAX(n_visit) FROM ecom
 ```{sql, connection=con}
 SELECT MAX(n_visit) 
 FROM ecom 
-WHERE device == 'tablet'
+WHERE device = 'tablet'
 ```
 
 - MIN()  : returns the smallest value of the selected column
@@ -94,7 +94,7 @@ few examples:
 ```{sql, connection=con}
 SELECT AVG(n_visit) AS avg_mobile 
 FROM ecom 
-WHERE device == 'mobile'
+WHERE device = 'mobile'
 ```
 
 ```{sql, connection=con}
