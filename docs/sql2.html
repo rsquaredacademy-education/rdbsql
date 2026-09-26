@@ -5,26 +5,25 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Chapter 4 SQL Advanced | R, Databases &amp; SQL</title>
-  <meta name="description" content="Introduction to databases and SQL." />
-  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+  <meta name="description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
+  <meta name="generator" content="bookdown 0.48 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Chapter 4 SQL Advanced | R, Databases &amp; SQL" />
   <meta property="og:type" content="book" />
   
-  
-  <meta property="og:description" content="Introduction to databases and SQL." />
+  <meta property="og:description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
   
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 4 SQL Advanced | R, Databases &amp; SQL" />
   
-  <meta name="twitter:description" content="Introduction to databases and SQL." />
+  <meta name="twitter:description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
   
 
 <meta name="author" content="Aravind Hebbali" />
 
 
-<meta name="date" content="2020-06-20" />
+<meta name="date" content="2026-09-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,8 +31,9 @@
   
   
 <link rel="prev" href="sqlbasics.html"/>
-
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link rel="next" href="joins.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -49,7 +49,9 @@
 
 
 
-
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-57270671-37"></script>
 <script>
@@ -62,18 +64,19 @@
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -93,13 +96,13 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -112,7 +115,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -124,6 +127,11 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -142,24 +150,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/rsquaredacademy-education/rdbsql/">R, Databases & SQL</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-information"><i class="fa fa-check"></i>Software information</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
-<li class="chapter" data-level="1" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>1</b> DBI</a><ul>
+<li class="chapter" data-level="1" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>1</b> DBI</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="dbi.html"><a href="dbi.html#introduction"><i class="fa fa-check"></i><b>1.1</b> Introduction</a></li>
-<li class="chapter" data-level="1.2" data-path="dbi.html"><a href="dbi.html#connection"><i class="fa fa-check"></i><b>1.2</b> Connection</a><ul>
+<li class="chapter" data-level="1.2" data-path="dbi.html"><a href="dbi.html#connection"><i class="fa fa-check"></i><b>1.2</b> Connection</a>
+<ul>
 <li class="chapter" data-level="1.2.1" data-path="dbi.html"><a href="dbi.html#connection-summary"><i class="fa fa-check"></i><b>1.2.1</b> Connection Summary</a></li>
 <li class="chapter" data-level="1.2.2" data-path="dbi.html"><a href="dbi.html#list-tables"><i class="fa fa-check"></i><b>1.2.2</b> List Tables</a></li>
 <li class="chapter" data-level="1.2.3" data-path="dbi.html"><a href="dbi.html#list-fields"><i class="fa fa-check"></i><b>1.2.3</b> List Fields</a></li>
 </ul></li>
-<li class="chapter" data-level="1.3" data-path="dbi.html"><a href="dbi.html#querying-data"><i class="fa fa-check"></i><b>1.3</b> Querying Data</a><ul>
+<li class="chapter" data-level="1.3" data-path="dbi.html"><a href="dbi.html#querying-data"><i class="fa fa-check"></i><b>1.3</b> Querying Data</a>
+<ul>
 <li class="chapter" data-level="1.3.1" data-path="dbi.html"><a href="dbi.html#entire-table"><i class="fa fa-check"></i><b>1.3.1</b> Entire Table</a></li>
 <li class="chapter" data-level="1.3.2" data-path="dbi.html"><a href="dbi.html#few-rows"><i class="fa fa-check"></i><b>1.3.2</b> Few Rows</a></li>
 <li class="chapter" data-level="1.3.3" data-path="dbi.html"><a href="dbi.html#read-data-in-batches"><i class="fa fa-check"></i><b>1.3.3</b> Read Data in Batches</a></li>
 </ul></li>
-<li class="chapter" data-level="1.4" data-path="dbi.html"><a href="dbi.html#query"><i class="fa fa-check"></i><b>1.4</b> Query</a><ul>
+<li class="chapter" data-level="1.4" data-path="dbi.html"><a href="dbi.html#query"><i class="fa fa-check"></i><b>1.4</b> Query</a>
+<ul>
 <li class="chapter" data-level="1.4.1" data-path="dbi.html"><a href="dbi.html#query-status"><i class="fa fa-check"></i><b>1.4.1</b> Query Status</a></li>
 <li class="chapter" data-level="1.4.2" data-path="dbi.html"><a href="dbi.html#query-info"><i class="fa fa-check"></i><b>1.4.2</b> Query Info</a></li>
 <li class="chapter" data-level="1.4.3" data-path="dbi.html"><a href="dbi.html#latest-query"><i class="fa fa-check"></i><b>1.4.3</b> Latest Query</a></li>
@@ -174,7 +187,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.9" data-path="dbi.html"><a href="dbi.html#sqlite-data-type"><i class="fa fa-check"></i><b>1.9</b> SQLite Data Type</a></li>
 <li class="chapter" data-level="1.10" data-path="dbi.html"><a href="dbi.html#close-connection"><i class="fa fa-check"></i><b>1.10</b> Close Connection</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>2</b> dbplyr</a><ul>
+<li class="chapter" data-level="2" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>2</b> dbplyr</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="dbplyr.html"><a href="dbplyr.html#introduction-3"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
 <li class="chapter" data-level="2.2" data-path="dbplyr.html"><a href="dbplyr.html#connect-to-database"><i class="fa fa-check"></i><b>2.2</b> Connect to Database</a></li>
 <li class="chapter" data-level="2.3" data-path="dbplyr.html"><a href="dbplyr.html#reference-data"><i class="fa fa-check"></i><b>2.3</b> Reference Data</a></li>
@@ -182,10 +196,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.5" data-path="dbplyr.html"><a href="dbplyr.html#show-query"><i class="fa fa-check"></i><b>2.5</b> Show Query</a></li>
 <li class="chapter" data-level="2.6" data-path="dbplyr.html"><a href="dbplyr.html#collect-data"><i class="fa fa-check"></i><b>2.6</b> Collect Data</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>3</b> SQL Basics</a><ul>
+<li class="chapter" data-level="3" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>3</b> SQL Basics</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="sqlbasics.html"><a href="sqlbasics.html#introduction-4"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
 <li class="chapter" data-level="3.2" data-path="sqlbasics.html"><a href="sqlbasics.html#set-up"><i class="fa fa-check"></i><b>3.2</b> Set Up</a></li>
-<li class="chapter" data-level="3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-columns"><i class="fa fa-check"></i><b>3.3</b> Select Columns</a><ul>
+<li class="chapter" data-level="3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-columns"><i class="fa fa-check"></i><b>3.3</b> Select Columns</a>
+<ul>
 <li class="chapter" data-level="3.3.1" data-path="sqlbasics.html"><a href="sqlbasics.html#syntax"><i class="fa fa-check"></i><b>3.3.1</b> Syntax</a></li>
 <li class="chapter" data-level="3.3.2" data-path="sqlbasics.html"><a href="sqlbasics.html#select-single-column"><i class="fa fa-check"></i><b>3.3.2</b> Select Single Column</a></li>
 <li class="chapter" data-level="3.3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-multiple-columns"><i class="fa fa-check"></i><b>3.3.3</b> Select Multiple Columns</a></li>
@@ -200,13 +216,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.10" data-path="sqlbasics.html"><a href="sqlbasics.html#is-null"><i class="fa fa-check"></i><b>3.10</b> IS NULL</a></li>
 <li class="chapter" data-level="3.11" data-path="sqlbasics.html"><a href="sqlbasics.html#like"><i class="fa fa-check"></i><b>3.11</b> LIKE</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a><ul>
+<li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="sql2.html"><a href="sql2.html#introduction-5"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
 <li class="chapter" data-level="4.2" data-path="sql2.html"><a href="sql2.html#set-up-1"><i class="fa fa-check"></i><b>4.2</b> Set Up</a></li>
 <li class="chapter" data-level="4.3" data-path="sql2.html"><a href="sql2.html#aggregate"><i class="fa fa-check"></i><b>4.3</b> Aggregate</a></li>
 <li class="chapter" data-level="4.4" data-path="sql2.html"><a href="sql2.html#alias"><i class="fa fa-check"></i><b>4.4</b> Alias</a></li>
 <li class="chapter" data-level="4.5" data-path="sql2.html"><a href="sql2.html#order-by"><i class="fa fa-check"></i><b>4.5</b> Order By</a></li>
 <li class="chapter" data-level="4.6" data-path="sql2.html"><a href="sql2.html#group-by"><i class="fa fa-check"></i><b>4.6</b> Group By</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="joins.html"><a href="joins.html"><i class="fa fa-check"></i><b>5</b> JOINs</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="joins.html"><a href="joins.html#introduction-6"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="joins.html"><a href="joins.html#set-up-2"><i class="fa fa-check"></i><b>5.2</b> Set Up</a></li>
+<li class="chapter" data-level="5.3" data-path="joins.html"><a href="joins.html#inner-join"><i class="fa fa-check"></i><b>5.3</b> INNER JOIN</a></li>
+<li class="chapter" data-level="5.4" data-path="joins.html"><a href="joins.html#left-join"><i class="fa fa-check"></i><b>5.4</b> LEFT JOIN</a></li>
+<li class="chapter" data-level="5.5" data-path="joins.html"><a href="joins.html#the-sqlite-right-full-trap"><i class="fa fa-check"></i><b>5.5</b> The SQLite RIGHT / FULL Trap</a></li>
+<li class="chapter" data-level="5.6" data-path="joins.html"><a href="joins.html#joins-with-dbplyr"><i class="fa fa-check"></i><b>5.6</b> JOINs with dbplyr</a></li>
+<li class="chapter" data-level="5.7" data-path="joins.html"><a href="joins.html#semi_join-and-anti_join"><i class="fa fa-check"></i><b>5.7</b> semi_join and anti_join</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -227,10 +254,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="sql2" class="section level1">
-<h1><span class="header-section-number">Chapter 4</span> SQL Advanced</h1>
-<div id="introduction-5" class="section level2">
-<h2><span class="header-section-number">4.1</span> Introduction</h2>
+<div id="sql2" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> SQL Advanced<a href="sql2.html#sql2" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="introduction-5" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Introduction<a href="sql2.html#introduction-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In this chapter, we will learn to</p>
 <ul>
 <li>aggregate data</li>
@@ -239,57 +266,61 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>We will use the following R packages:</p>
 <ul>
-<li><a href="http://readr.tidyverse.org/">DBI</a></li>
-<li><a href="https://rstats-db.github.io/RSQLite/">RSQLite</a></li>
+<li><a href="https://dbi.r-dbi.org/">DBI</a></li>
+<li><a href="https://rsqlite.r-dbi.org/">RSQLite</a></li>
 <li><a href="http://dbplyr.tidyverse.org/">dbplyr</a></li>
 </ul>
 <p>All the data sets used in this chapter can be found <a href="https://github.com/rsquaredacademy/datasets">here</a> and code can be downloaded from <a href="https://gist.github.com/rsquaredacademy/691dba8e13873c648bfdb91aba65d4d7">here</a>.</p>
 </div>
-<div id="set-up-1" class="section level2">
-<h2><span class="header-section-number">4.2</span> Set Up</h2>
+<div id="set-up-1" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Set Up<a href="sql2.html#set-up-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>In order to be able to use the <code>ecom</code> data set for our case study, we will read
 it using the <strong>readr</strong> package and then copy it to an in memory database using the
 <code>copy_to()</code> function from <strong>dplyr</strong>.</p>
-<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="sql2.html#cb84-1"></a>ecom &lt;-<span class="st"> </span>readr<span class="op">::</span><span class="kw">read_csv</span>(<span class="st">&#39;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&#39;</span>)</span>
-<span id="cb84-2"><a href="sql2.html#cb84-2"></a>con &lt;-<span class="st"> </span>DBI<span class="op">::</span><span class="kw">dbConnect</span>(RSQLite<span class="op">::</span><span class="kw">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</span>
-<span id="cb84-3"><a href="sql2.html#cb84-3"></a><span class="kw">copy_to</span>(con, ecom)</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="sql2.html#cb89-1" tabindex="-1"></a><span class="co"># Canonical ecom: 1000 rows x 8 cols (referrer, device, bouncers, n_visit,</span></span>
+<span id="cb89-2"><a href="sql2.html#cb89-2" tabindex="-1"></a><span class="co"># n_pages, duration, country, purchase), from the local data/web.csv snapshot.</span></span>
+<span id="cb89-3"><a href="sql2.html#cb89-3" tabindex="-1"></a>web_path <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">file.exists</span>(<span class="st">&quot;data/web.csv&quot;</span>)) <span class="st">&quot;data/web.csv&quot;</span> <span class="cf">else</span> <span class="st">&quot;https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv&quot;</span></span>
+<span id="cb89-4"><a href="sql2.html#cb89-4" tabindex="-1"></a>ecom <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(web_path, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb89-5"><a href="sql2.html#cb89-5" tabindex="-1"></a>ecom <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)</span>
+<span id="cb89-6"><a href="sql2.html#cb89-6" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="st">&quot;:memory:&quot;</span>)</span>
+<span id="cb89-7"><a href="sql2.html#cb89-7" tabindex="-1"></a><span class="fu">copy_to</span>(con, ecom)</span></code></pre></div>
 </div>
-<div id="aggregate" class="section level2">
-<h2><span class="header-section-number">4.3</span> Aggregate</h2>
+<div id="aggregate" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Aggregate<a href="sql2.html#aggregate" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Let us combine the aggregate statements with WHERE statement to filter data.</p>
 <ul>
 <li>SUM() : returns the total sum of a numeric column</li>
 </ul>
-<div class="sourceCode" id="cb85"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb85-1"><a href="sql2.html#cb85-1"></a><span class="kw">SELECT</span> <span class="fu">SUM</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb90-1"><a href="sql2.html#cb90-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">SUM</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-16">Table 4.1: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">SUM(n_visit)</th>
+<th align="right">SUM(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">4972</td>
+<td align="right">4972</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb86"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb86-1"><a href="sql2.html#cb86-1"></a><span class="kw">SELECT</span> <span class="fu">SUM</span>(n_visit) </span>
-<span id="cb86-2"><a href="sql2.html#cb86-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb86-3"><a href="sql2.html#cb86-3"></a><span class="kw">WHERE</span> n_visit <span class="op">&gt;</span> <span class="dv">5</span></span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb91-1"><a href="sql2.html#cb91-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">SUM</span>(n_visit) </span>
+<span id="cb91-2"><a href="sql2.html#cb91-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb91-3"><a href="sql2.html#cb91-3" tabindex="-1"></a><span class="kw">WHERE</span> n_visit <span class="op">&gt;</span> <span class="dv">5</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-17">Table 4.2: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">SUM(n_visit)</th>
+<th align="right">SUM(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">3574</td>
+<td align="right">3574</td>
 </tr>
 </tbody>
 </table>
@@ -297,36 +328,36 @@ it using the <strong>readr</strong> package and then copy it to an in memory dat
 <ul>
 <li>AVG() : returns the average value of a numeric column</li>
 </ul>
-<div class="sourceCode" id="cb87"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb87-1"><a href="sql2.html#cb87-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb92-1"><a href="sql2.html#cb92-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-18">Table 4.3: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">AVG(n_visit)</th>
+<th align="right">AVG(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">4.972</td>
+<td align="right">4.972</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb88"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb88-1"><a href="sql2.html#cb88-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(n_visit) </span>
-<span id="cb88-2"><a href="sql2.html#cb88-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb88-3"><a href="sql2.html#cb88-3"></a><span class="kw">WHERE</span> country <span class="kw">LIKE</span> <span class="st">&#39;P%&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb93-1"><a href="sql2.html#cb93-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(n_visit) </span>
+<span id="cb93-2"><a href="sql2.html#cb93-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb93-3"><a href="sql2.html#cb93-3" tabindex="-1"></a><span class="kw">WHERE</span> country <span class="kw">LIKE</span> <span class="st">&#39;P%&#39;</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-19">Table 4.4: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">AVG(n_visit)</th>
+<th align="right">AVG(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">5.07913669064748</td>
+<td align="right">5.079137</td>
 </tr>
 </tbody>
 </table>
@@ -334,36 +365,36 @@ it using the <strong>readr</strong> package and then copy it to an in memory dat
 <ul>
 <li>MAX() : returns the largest value of the selected column</li>
 </ul>
-<div class="sourceCode" id="cb89"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb89-1"><a href="sql2.html#cb89-1"></a><span class="kw">SELECT</span> <span class="fu">MAX</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb94-1"><a href="sql2.html#cb94-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">MAX</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-20">Table 4.5: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">MAX(n_visit)</th>
+<th align="right">MAX(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">10</td>
+<td align="right">10</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb90"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb90-1"><a href="sql2.html#cb90-1"></a><span class="kw">SELECT</span> <span class="fu">MAX</span>(n_visit) </span>
-<span id="cb90-2"><a href="sql2.html#cb90-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb90-3"><a href="sql2.html#cb90-3"></a><span class="kw">WHERE</span> device <span class="op">==</span> <span class="st">&#39;tablet&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb95-1"><a href="sql2.html#cb95-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">MAX</span>(n_visit) </span>
+<span id="cb95-2"><a href="sql2.html#cb95-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb95-3"><a href="sql2.html#cb95-3" tabindex="-1"></a><span class="kw">WHERE</span> device <span class="op">=</span> <span class="st">&#39;tablet&#39;</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-21">Table 4.6: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">MAX(n_visit)</th>
+<th align="right">MAX(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">10</td>
+<td align="right">10</td>
 </tr>
 </tbody>
 </table>
@@ -371,110 +402,119 @@ it using the <strong>readr</strong> package and then copy it to an in memory dat
 <ul>
 <li>MIN() : returns the smallest value of the selected column</li>
 </ul>
-<div class="sourceCode" id="cb91"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb91-1"><a href="sql2.html#cb91-1"></a><span class="kw">SELECT</span> <span class="fu">MIN</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb96-1"><a href="sql2.html#cb96-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">MIN</span>(n_visit) <span class="kw">FROM</span> ecom</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-22">Table 4.7: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">MIN(n_visit)</th>
+<th align="right">MIN(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">0</td>
+<td align="right">0</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb92"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb92-1"><a href="sql2.html#cb92-1"></a><span class="kw">SELECT</span> <span class="fu">MIN</span>(n_visit) </span>
-<span id="cb92-2"><a href="sql2.html#cb92-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb92-3"><a href="sql2.html#cb92-3"></a><span class="kw">WHERE</span> duration <span class="kw">BETWEEN</span> <span class="dv">600</span> <span class="kw">AND</span> <span class="dv">900</span></span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb97-1"><a href="sql2.html#cb97-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">MIN</span>(n_visit) </span>
+<span id="cb97-2"><a href="sql2.html#cb97-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb97-3"><a href="sql2.html#cb97-3" tabindex="-1"></a><span class="kw">WHERE</span> duration <span class="kw">BETWEEN</span> <span class="dv">600</span> <span class="kw">AND</span> <span class="dv">900</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-23">Table 4.8: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">MIN(n_visit)</th>
+<th align="right">MIN(n_visit)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">0</td>
+<td align="right">0</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<div id="alias" class="section level2">
-<h2><span class="header-section-number">4.4</span> Alias</h2>
+<div id="alias" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Alias<a href="sql2.html#alias" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>SQL aliases are used to give a table, or a column in a table, a temporary name. They are often used to make column names more readable. An alias only exists for the duration of the query. Below are a
 few examples:</p>
-<div class="sourceCode" id="cb93"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb93-1"><a href="sql2.html#cb93-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(n_visit) <span class="kw">AS</span> avg_mobile </span>
-<span id="cb93-2"><a href="sql2.html#cb93-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb93-3"><a href="sql2.html#cb93-3"></a><span class="kw">WHERE</span> device <span class="op">==</span> <span class="st">&#39;mobile&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb98-1"><a href="sql2.html#cb98-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">AVG</span>(n_visit) <span class="kw">AS</span> avg_mobile </span>
+<span id="cb98-2"><a href="sql2.html#cb98-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb98-3"><a href="sql2.html#cb98-3" tabindex="-1"></a><span class="kw">WHERE</span> device <span class="op">=</span> <span class="st">&#39;mobile&#39;</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-24">Table 4.9: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">avg_mobile</th>
+<th align="right">avg_mobile</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">5.4796511627907</td>
+<td align="right">5.479651</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb94"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb94-1"><a href="sql2.html#cb94-1"></a><span class="kw">SELECT</span> <span class="fu">MAX</span>(n_visit) <span class="kw">AS</span> max_visit </span>
-<span id="cb94-2"><a href="sql2.html#cb94-2"></a><span class="kw">FROM</span> ecom</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb99-1"><a href="sql2.html#cb99-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">MAX</span>(n_visit) <span class="kw">AS</span> max_visit </span>
+<span id="cb99-2"><a href="sql2.html#cb99-2" tabindex="-1"></a><span class="kw">FROM</span> ecom</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-25">Table 4.10: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">max_visit</th>
+<th align="right">max_visit</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">10</td>
+<td align="right">10</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb95"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb95-1"><a href="sql2.html#cb95-1"></a><span class="kw">SELECT</span> <span class="fu">MIN</span>(duration) <span class="kw">AS</span> min_duration </span>
-<span id="cb95-2"><a href="sql2.html#cb95-2"></a><span class="kw">FROM</span> ecom</span></code></pre></div>
+<div class="sourceCode" id="cb100"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb100-1"><a href="sql2.html#cb100-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">MIN</span>(duration) <span class="kw">AS</span> min_duration </span>
+<span id="cb100-2"><a href="sql2.html#cb100-2" tabindex="-1"></a><span class="kw">FROM</span> ecom</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-26">Table 4.11: </span>1 records</caption>
 <thead>
 <tr class="header">
-<th align="left">min_duration</th>
+<th align="right">min_duration</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="left">10</td>
+<td align="right">10</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<div id="order-by" class="section level2">
-<h2><span class="header-section-number">4.5</span> Order By</h2>
+<div id="order-by" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Order By<a href="sql2.html#order-by" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The ORDER BY keyword is used to sort the records in ascending or descending order. By default, the records are sorted in ascending order. Use the DESC keyword if you want to sort the records in descending order,</p>
-<div class="sourceCode" id="cb96"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb96-1"><a href="sql2.html#cb96-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
-<span id="cb96-2"><a href="sql2.html#cb96-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb96-3"><a href="sql2.html#cb96-3"></a><span class="kw">ORDER</span> <span class="kw">BY</span> country</span></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb101-1"><a href="sql2.html#cb101-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb101-2"><a href="sql2.html#cb101-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb101-3"><a href="sql2.html#cb101-3" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> country</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-27">Table 4.12: </span>Displaying records 1 - 10</caption>
+<colgroup>
+<col width="12%" />
+<col width="9%" />
+<col width="12%" />
+<col width="11%" />
+<col width="11%" />
+<col width="12%" />
+<col width="16%" />
+<col width="12%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th align="right">id</th>
 <th align="left">referrer</th>
 <th align="left">device</th>
 <th align="right">bouncers</th>
@@ -483,13 +523,10 @@ few examples:</p>
 <th align="right">duration</th>
 <th align="left">country</th>
 <th align="right">purchase</th>
-<th align="right">order_items</th>
-<th align="right">order_value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">232</td>
 <td align="left">social</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -498,11 +535,8 @@ few examples:</p>
 <td align="right">60</td>
 <td align="left">Afghanistan</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">299</td>
 <td align="left">yahoo</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -511,11 +545,8 @@ few examples:</p>
 <td align="right">180</td>
 <td align="left">Afghanistan</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">570</td>
 <td align="left">social</td>
 <td align="left">laptop</td>
 <td align="right">1</td>
@@ -524,11 +555,8 @@ few examples:</p>
 <td align="right">274</td>
 <td align="left">Afghanistan</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">677</td>
 <td align="left">direct</td>
 <td align="left">tablet</td>
 <td align="right">1</td>
@@ -537,11 +565,8 @@ few examples:</p>
 <td align="right">682</td>
 <td align="left">Afghanistan</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">682</td>
 <td align="left">direct</td>
 <td align="left">tablet</td>
 <td align="right">0</td>
@@ -550,11 +575,8 @@ few examples:</p>
 <td align="right">414</td>
 <td align="left">Afghanistan</td>
 <td align="right">1</td>
-<td align="right">8</td>
-<td align="right">2006</td>
 </tr>
 <tr class="even">
-<td align="right">853</td>
 <td align="left">bing</td>
 <td align="left">tablet</td>
 <td align="right">0</td>
@@ -563,11 +585,8 @@ few examples:</p>
 <td align="right">34</td>
 <td align="left">Afghanistan</td>
 <td align="right">0</td>
-<td align="right">10</td>
-<td align="right">2122</td>
 </tr>
 <tr class="odd">
-<td align="right">169</td>
 <td align="left">direct</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -576,11 +595,8 @@ few examples:</p>
 <td align="right">96</td>
 <td align="left">Albania</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">423</td>
 <td align="left">google</td>
 <td align="left">laptop</td>
 <td align="right">1</td>
@@ -589,11 +605,8 @@ few examples:</p>
 <td align="right">304</td>
 <td align="left">Albania</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">456</td>
 <td align="left">bing</td>
 <td align="left">mobile</td>
 <td align="right">0</td>
@@ -602,11 +615,8 @@ few examples:</p>
 <td align="right">54</td>
 <td align="left">Albania</td>
 <td align="right">0</td>
-<td align="right">10</td>
-<td align="right">2182</td>
 </tr>
 <tr class="even">
-<td align="right">492</td>
 <td align="left">yahoo</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -615,21 +625,28 @@ few examples:</p>
 <td align="right">23</td>
 <td align="left">Albania</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb97"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb97-1"><a href="sql2.html#cb97-1"></a><span class="kw">SELECT</span> <span class="op">*</span>  </span>
-<span id="cb97-2"><a href="sql2.html#cb97-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb97-3"><a href="sql2.html#cb97-3"></a><span class="kw">ORDER</span> <span class="kw">BY</span> duration</span></code></pre></div>
+<div class="sourceCode" id="cb102"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb102-1"><a href="sql2.html#cb102-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span>  </span>
+<span id="cb102-2"><a href="sql2.html#cb102-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb102-3"><a href="sql2.html#cb102-3" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> duration</span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-28">Table 4.13: </span>Displaying records 1 - 10</caption>
+<colgroup>
+<col width="12%" />
+<col width="9%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="20%" />
+<col width="12%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th align="right">id</th>
 <th align="left">referrer</th>
 <th align="left">device</th>
 <th align="right">bouncers</th>
@@ -638,13 +655,10 @@ few examples:</p>
 <th align="right">duration</th>
 <th align="left">country</th>
 <th align="right">purchase</th>
-<th align="right">order_items</th>
-<th align="right">order_value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">236</td>
 <td align="left">yahoo</td>
 <td align="left">tablet</td>
 <td align="right">1</td>
@@ -653,11 +667,8 @@ few examples:</p>
 <td align="right">10</td>
 <td align="left">Poland</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">615</td>
 <td align="left">social</td>
 <td align="left">laptop</td>
 <td align="right">1</td>
@@ -666,11 +677,8 @@ few examples:</p>
 <td align="right">10</td>
 <td align="left">Finland</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">392</td>
 <td align="left">yahoo</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -679,11 +687,8 @@ few examples:</p>
 <td align="right">12</td>
 <td align="left">Indonesia</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">688</td>
 <td align="left">social</td>
 <td align="left">mobile</td>
 <td align="right">1</td>
@@ -692,11 +697,8 @@ few examples:</p>
 <td align="right">12</td>
 <td align="left">Botswana</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">468</td>
 <td align="left">direct</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -705,11 +707,8 @@ few examples:</p>
 <td align="right">13</td>
 <td align="left">Czech Republic</td>
 <td align="right">0</td>
-<td align="right">5</td>
-<td align="right">1598</td>
 </tr>
 <tr class="even">
-<td align="right">63</td>
 <td align="left">direct</td>
 <td align="left">mobile</td>
 <td align="right">0</td>
@@ -718,11 +717,8 @@ few examples:</p>
 <td align="right">17</td>
 <td align="left">China</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">951</td>
 <td align="left">yahoo</td>
 <td align="left">tablet</td>
 <td align="right">0</td>
@@ -731,11 +727,8 @@ few examples:</p>
 <td align="right">17</td>
 <td align="left">Poland</td>
 <td align="right">0</td>
-<td align="right">3</td>
-<td align="right">1478</td>
 </tr>
 <tr class="even">
-<td align="right">15</td>
 <td align="left">yahoo</td>
 <td align="left">mobile</td>
 <td align="right">0</td>
@@ -744,11 +737,8 @@ few examples:</p>
 <td align="right">19</td>
 <td align="left">France</td>
 <td align="right">0</td>
-<td align="right">7</td>
-<td align="right">2423</td>
 </tr>
 <tr class="odd">
-<td align="right">177</td>
 <td align="left">bing</td>
 <td align="left">laptop</td>
 <td align="right">0</td>
@@ -757,11 +747,8 @@ few examples:</p>
 <td align="right">20</td>
 <td align="left">Thailand</td>
 <td align="right">0</td>
-<td align="right">3</td>
-<td align="right">1252</td>
 </tr>
 <tr class="even">
-<td align="right">432</td>
 <td align="left">yahoo</td>
 <td align="left">mobile</td>
 <td align="right">0</td>
@@ -770,21 +757,28 @@ few examples:</p>
 <td align="right">21</td>
 <td align="left">Russia</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb98"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb98-1"><a href="sql2.html#cb98-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
-<span id="cb98-2"><a href="sql2.html#cb98-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb98-3"><a href="sql2.html#cb98-3"></a><span class="kw">ORDER</span> <span class="kw">BY</span> n_visit <span class="kw">DESC</span></span></code></pre></div>
+<div class="sourceCode" id="cb103"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb103-1"><a href="sql2.html#cb103-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb103-2"><a href="sql2.html#cb103-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb103-3"><a href="sql2.html#cb103-3" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> n_visit <span class="kw">DESC</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-29">Table 4.14: </span>Displaying records 1 - 10</caption>
+<colgroup>
+<col width="12%" />
+<col width="9%" />
+<col width="12%" />
+<col width="10%" />
+<col width="10%" />
+<col width="12%" />
+<col width="20%" />
+<col width="12%" />
+</colgroup>
 <thead>
 <tr class="header">
-<th align="right">id</th>
 <th align="left">referrer</th>
 <th align="left">device</th>
 <th align="right">bouncers</th>
@@ -793,13 +787,10 @@ few examples:</p>
 <th align="right">duration</th>
 <th align="left">country</th>
 <th align="right">purchase</th>
-<th align="right">order_items</th>
-<th align="right">order_value</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="right">1</td>
 <td align="left">google</td>
 <td align="left">laptop</td>
 <td align="right">1</td>
@@ -808,11 +799,8 @@ few examples:</p>
 <td align="right">693</td>
 <td align="left">Czech Republic</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">7</td>
 <td align="left">yahoo</td>
 <td align="left">mobile</td>
 <td align="right">1</td>
@@ -821,11 +809,8 @@ few examples:</p>
 <td align="right">75</td>
 <td align="left">Bangladesh</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">8</td>
 <td align="left">direct</td>
 <td align="left">mobile</td>
 <td align="right">1</td>
@@ -834,11 +819,8 @@ few examples:</p>
 <td align="right">908</td>
 <td align="left">Indonesia</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">29</td>
 <td align="left">google</td>
 <td align="left">mobile</td>
 <td align="right">1</td>
@@ -847,11 +829,8 @@ few examples:</p>
 <td align="right">338</td>
 <td align="left">Russia</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">40</td>
 <td align="left">google</td>
 <td align="left">mobile</td>
 <td align="right">1</td>
@@ -860,11 +839,8 @@ few examples:</p>
 <td align="right">479</td>
 <td align="left">Cameroon</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">63</td>
 <td align="left">direct</td>
 <td align="left">mobile</td>
 <td align="right">0</td>
@@ -873,11 +849,8 @@ few examples:</p>
 <td align="right">17</td>
 <td align="left">China</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="odd">
-<td align="right">96</td>
 <td align="left">direct</td>
 <td align="left">tablet</td>
 <td align="right">0</td>
@@ -886,11 +859,8 @@ few examples:</p>
 <td align="right">57</td>
 <td align="left">China</td>
 <td align="right">0</td>
-<td align="right">4</td>
-<td align="right">722</td>
 </tr>
 <tr class="even">
-<td align="right">112</td>
 <td align="left">social</td>
 <td align="left">mobile</td>
 <td align="right">0</td>
@@ -899,11 +869,8 @@ few examples:</p>
 <td align="right">242</td>
 <td align="left">Argentina</td>
 <td align="right">1</td>
-<td align="right">4</td>
-<td align="right">287</td>
 </tr>
 <tr class="odd">
-<td align="right">116</td>
 <td align="left">direct</td>
 <td align="left">mobile</td>
 <td align="right">1</td>
@@ -912,11 +879,8 @@ few examples:</p>
 <td align="right">675</td>
 <td align="left">Indonesia</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 <tr class="even">
-<td align="right">153</td>
 <td align="left">google</td>
 <td align="left">tablet</td>
 <td align="right">1</td>
@@ -925,21 +889,19 @@ few examples:</p>
 <td align="right">86</td>
 <td align="left">China</td>
 <td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<div id="group-by" class="section level2">
-<h2><span class="header-section-number">4.6</span> Group By</h2>
+<div id="group-by" class="section level2 hasAnchor" number="4.6">
+<h2><span class="header-section-number">4.6</span> Group By<a href="sql2.html#group-by" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The GROUP BY statement is used with aggregate functions (COUNT, MAX, MIN, SUM, AVG) to group the result by one or more columns.</p>
-<div class="sourceCode" id="cb99"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb99-1"><a href="sql2.html#cb99-1"></a><span class="kw">SELECT</span> device, </span>
-<span id="cb99-2"><a href="sql2.html#cb99-2"></a><span class="fu">count</span>(<span class="op">*</span>) <span class="kw">AS</span> visits </span>
-<span id="cb99-3"><a href="sql2.html#cb99-3"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb99-4"><a href="sql2.html#cb99-4"></a><span class="kw">GROUP</span> <span class="kw">BY</span> device </span>
-<span id="cb99-5"><a href="sql2.html#cb99-5"></a><span class="kw">ORDER</span> <span class="kw">by</span> visits <span class="kw">DESC</span></span></code></pre></div>
+<div class="sourceCode" id="cb104"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb104-1"><a href="sql2.html#cb104-1" tabindex="-1"></a><span class="kw">SELECT</span> device, </span>
+<span id="cb104-2"><a href="sql2.html#cb104-2" tabindex="-1"></a><span class="fu">count</span>(<span class="op">*</span>) <span class="kw">AS</span> visits </span>
+<span id="cb104-3"><a href="sql2.html#cb104-3" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb104-4"><a href="sql2.html#cb104-4" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> device </span>
+<span id="cb104-5"><a href="sql2.html#cb104-5" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">by</span> visits <span class="kw">DESC</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-30">Table 4.15: </span>3 records</caption>
@@ -965,10 +927,10 @@ few examples:</p>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb100"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb100-1"><a href="sql2.html#cb100-1"></a><span class="kw">SELECT</span> device, <span class="fu">MAX</span>(duration) <span class="kw">AS</span> max_duration </span>
-<span id="cb100-2"><a href="sql2.html#cb100-2"></a><span class="kw">FROM</span> ecom </span>
-<span id="cb100-3"><a href="sql2.html#cb100-3"></a><span class="kw">GROUP</span> <span class="kw">BY</span> device </span>
-<span id="cb100-4"><a href="sql2.html#cb100-4"></a><span class="kw">ORDER</span> <span class="kw">by</span> max_duration <span class="kw">DESC</span></span></code></pre></div>
+<div class="sourceCode" id="cb105"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb105-1"><a href="sql2.html#cb105-1" tabindex="-1"></a><span class="kw">SELECT</span> device, <span class="fu">MAX</span>(duration) <span class="kw">AS</span> max_duration </span>
+<span id="cb105-2"><a href="sql2.html#cb105-2" tabindex="-1"></a><span class="kw">FROM</span> ecom </span>
+<span id="cb105-3"><a href="sql2.html#cb105-3" tabindex="-1"></a><span class="kw">GROUP</span> <span class="kw">BY</span> device </span>
+<span id="cb105-4"><a href="sql2.html#cb105-4" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">by</span> max_duration <span class="kw">DESC</span></span></code></pre></div>
 <div class="knitsql-table">
 <table>
 <caption><span id="tab:unnamed-chunk-31">Table 4.16: </span>3 records</caption>
@@ -994,6 +956,7 @@ few examples:</p>
 </tbody>
 </table>
 </div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="sql2.html#cb106-1" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code></pre></div>
 
 </div>
 </div>
@@ -1002,12 +965,11 @@ few examples:</p>
           </div>
         </div>
       </div>
-<a href="sqlbasics.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="sqlbasics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="joins.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -1018,38 +980,43 @@ few examples:</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": null,
-"toc": {
-"collapse": "section",
-"scroll_highlight": true
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  }
 });
 });
 </script>

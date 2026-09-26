@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 JOINs | R, Databases &amp; SQL</title>
+  <meta name="description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
+  <meta name="generator" content="bookdown 0.48 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 JOINs | R, Databases &amp; SQL" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 JOINs | R, Databases &amp; SQL" />
+  
+  <meta name="twitter:description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
+  
+
+<meta name="author" content="Aravind Hebbali" />
+
+
+<meta name="date" content="2026-09-26" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="sql2.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-57270671-37"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-57270671-37');
+</script>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="https://github.com/rsquaredacademy-education/rdbsql/">R, Databases & SQL</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-information"><i class="fa fa-check"></i>Software information</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>1</b> DBI</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="dbi.html"><a href="dbi.html#introduction"><i class="fa fa-check"></i><b>1.1</b> Introduction</a></li>
+<li class="chapter" data-level="1.2" data-path="dbi.html"><a href="dbi.html#connection"><i class="fa fa-check"></i><b>1.2</b> Connection</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="dbi.html"><a href="dbi.html#connection-summary"><i class="fa fa-check"></i><b>1.2.1</b> Connection Summary</a></li>
+<li class="chapter" data-level="1.2.2" data-path="dbi.html"><a href="dbi.html#list-tables"><i class="fa fa-check"></i><b>1.2.2</b> List Tables</a></li>
+<li class="chapter" data-level="1.2.3" data-path="dbi.html"><a href="dbi.html#list-fields"><i class="fa fa-check"></i><b>1.2.3</b> List Fields</a></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="dbi.html"><a href="dbi.html#querying-data"><i class="fa fa-check"></i><b>1.3</b> Querying Data</a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="dbi.html"><a href="dbi.html#entire-table"><i class="fa fa-check"></i><b>1.3.1</b> Entire Table</a></li>
+<li class="chapter" data-level="1.3.2" data-path="dbi.html"><a href="dbi.html#few-rows"><i class="fa fa-check"></i><b>1.3.2</b> Few Rows</a></li>
+<li class="chapter" data-level="1.3.3" data-path="dbi.html"><a href="dbi.html#read-data-in-batches"><i class="fa fa-check"></i><b>1.3.3</b> Read Data in Batches</a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="dbi.html"><a href="dbi.html#query"><i class="fa fa-check"></i><b>1.4</b> Query</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="dbi.html"><a href="dbi.html#query-status"><i class="fa fa-check"></i><b>1.4.1</b> Query Status</a></li>
+<li class="chapter" data-level="1.4.2" data-path="dbi.html"><a href="dbi.html#query-info"><i class="fa fa-check"></i><b>1.4.2</b> Query Info</a></li>
+<li class="chapter" data-level="1.4.3" data-path="dbi.html"><a href="dbi.html#latest-query"><i class="fa fa-check"></i><b>1.4.3</b> Latest Query</a></li>
+<li class="chapter" data-level="1.4.4" data-path="dbi.html"><a href="dbi.html#rows-fetched"><i class="fa fa-check"></i><b>1.4.4</b> Rows Fetched</a></li>
+<li class="chapter" data-level="1.4.5" data-path="dbi.html"><a href="dbi.html#rows-affected"><i class="fa fa-check"></i><b>1.4.5</b> Rows Affected</a></li>
+<li class="chapter" data-level="1.4.6" data-path="dbi.html"><a href="dbi.html#column-info"><i class="fa fa-check"></i><b>1.4.6</b> Column Info</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="dbi.html"><a href="dbi.html#create-table"><i class="fa fa-check"></i><b>1.5</b> Create Table</a></li>
+<li class="chapter" data-level="1.6" data-path="dbi.html"><a href="dbi.html#append-data"><i class="fa fa-check"></i><b>1.6</b> Append Data</a></li>
+<li class="chapter" data-level="1.7" data-path="dbi.html"><a href="dbi.html#insert-rows"><i class="fa fa-check"></i><b>1.7</b> Insert Rows</a></li>
+<li class="chapter" data-level="1.8" data-path="dbi.html"><a href="dbi.html#remove-table"><i class="fa fa-check"></i><b>1.8</b> Remove Table</a></li>
+<li class="chapter" data-level="1.9" data-path="dbi.html"><a href="dbi.html#sqlite-data-type"><i class="fa fa-check"></i><b>1.9</b> SQLite Data Type</a></li>
+<li class="chapter" data-level="1.10" data-path="dbi.html"><a href="dbi.html#close-connection"><i class="fa fa-check"></i><b>1.10</b> Close Connection</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>2</b> dbplyr</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="dbplyr.html"><a href="dbplyr.html#introduction-3"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="dbplyr.html"><a href="dbplyr.html#connect-to-database"><i class="fa fa-check"></i><b>2.2</b> Connect to Database</a></li>
+<li class="chapter" data-level="2.3" data-path="dbplyr.html"><a href="dbplyr.html#reference-data"><i class="fa fa-check"></i><b>2.3</b> Reference Data</a></li>
+<li class="chapter" data-level="2.4" data-path="dbplyr.html"><a href="dbplyr.html#query-data"><i class="fa fa-check"></i><b>2.4</b> Query Data</a></li>
+<li class="chapter" data-level="2.5" data-path="dbplyr.html"><a href="dbplyr.html#show-query"><i class="fa fa-check"></i><b>2.5</b> Show Query</a></li>
+<li class="chapter" data-level="2.6" data-path="dbplyr.html"><a href="dbplyr.html#collect-data"><i class="fa fa-check"></i><b>2.6</b> Collect Data</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>3</b> SQL Basics</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="sqlbasics.html"><a href="sqlbasics.html#introduction-4"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="sqlbasics.html"><a href="sqlbasics.html#set-up"><i class="fa fa-check"></i><b>3.2</b> Set Up</a></li>
+<li class="chapter" data-level="3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-columns"><i class="fa fa-check"></i><b>3.3</b> Select Columns</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="sqlbasics.html"><a href="sqlbasics.html#syntax"><i class="fa fa-check"></i><b>3.3.1</b> Syntax</a></li>
+<li class="chapter" data-level="3.3.2" data-path="sqlbasics.html"><a href="sqlbasics.html#select-single-column"><i class="fa fa-check"></i><b>3.3.2</b> Select Single Column</a></li>
+<li class="chapter" data-level="3.3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-multiple-columns"><i class="fa fa-check"></i><b>3.3.3</b> Select Multiple Columns</a></li>
+<li class="chapter" data-level="3.3.4" data-path="sqlbasics.html"><a href="sqlbasics.html#select-all-columns"><i class="fa fa-check"></i><b>3.3.4</b> Select All Columns</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="sqlbasics.html"><a href="sqlbasics.html#limit"><i class="fa fa-check"></i><b>3.4</b> Limit</a></li>
+<li class="chapter" data-level="3.5" data-path="sqlbasics.html"><a href="sqlbasics.html#distinct"><i class="fa fa-check"></i><b>3.5</b> Distinct</a></li>
+<li class="chapter" data-level="3.6" data-path="sqlbasics.html"><a href="sqlbasics.html#filter"><i class="fa fa-check"></i><b>3.6</b> Filter</a></li>
+<li class="chapter" data-level="3.7" data-path="sqlbasics.html"><a href="sqlbasics.html#and-or-not"><i class="fa fa-check"></i><b>3.7</b> And, Or &amp; Not</a></li>
+<li class="chapter" data-level="3.8" data-path="sqlbasics.html"><a href="sqlbasics.html#between"><i class="fa fa-check"></i><b>3.8</b> BETWEEN</a></li>
+<li class="chapter" data-level="3.9" data-path="sqlbasics.html"><a href="sqlbasics.html#in"><i class="fa fa-check"></i><b>3.9</b> IN</a></li>
+<li class="chapter" data-level="3.10" data-path="sqlbasics.html"><a href="sqlbasics.html#is-null"><i class="fa fa-check"></i><b>3.10</b> IS NULL</a></li>
+<li class="chapter" data-level="3.11" data-path="sqlbasics.html"><a href="sqlbasics.html#like"><i class="fa fa-check"></i><b>3.11</b> LIKE</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="sql2.html"><a href="sql2.html#introduction-5"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="sql2.html"><a href="sql2.html#set-up-1"><i class="fa fa-check"></i><b>4.2</b> Set Up</a></li>
+<li class="chapter" data-level="4.3" data-path="sql2.html"><a href="sql2.html#aggregate"><i class="fa fa-check"></i><b>4.3</b> Aggregate</a></li>
+<li class="chapter" data-level="4.4" data-path="sql2.html"><a href="sql2.html#alias"><i class="fa fa-check"></i><b>4.4</b> Alias</a></li>
+<li class="chapter" data-level="4.5" data-path="sql2.html"><a href="sql2.html#order-by"><i class="fa fa-check"></i><b>4.5</b> Order By</a></li>
+<li class="chapter" data-level="4.6" data-path="sql2.html"><a href="sql2.html#group-by"><i class="fa fa-check"></i><b>4.6</b> Group By</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="joins.html"><a href="joins.html"><i class="fa fa-check"></i><b>5</b> JOINs</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="joins.html"><a href="joins.html#introduction-6"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="joins.html"><a href="joins.html#set-up-2"><i class="fa fa-check"></i><b>5.2</b> Set Up</a></li>
+<li class="chapter" data-level="5.3" data-path="joins.html"><a href="joins.html#inner-join"><i class="fa fa-check"></i><b>5.3</b> INNER JOIN</a></li>
+<li class="chapter" data-level="5.4" data-path="joins.html"><a href="joins.html#left-join"><i class="fa fa-check"></i><b>5.4</b> LEFT JOIN</a></li>
+<li class="chapter" data-level="5.5" data-path="joins.html"><a href="joins.html#the-sqlite-right-full-trap"><i class="fa fa-check"></i><b>5.5</b> The SQLite RIGHT / FULL Trap</a></li>
+<li class="chapter" data-level="5.6" data-path="joins.html"><a href="joins.html#joins-with-dbplyr"><i class="fa fa-check"></i><b>5.6</b> JOINs with dbplyr</a></li>
+<li class="chapter" data-level="5.7" data-path="joins.html"><a href="joins.html#semi_join-and-anti_join"><i class="fa fa-check"></i><b>5.7</b> semi_join and anti_join</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R, Databases &amp; SQL</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="joins" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Chapter 5</span> JOINs<a href="joins.html#joins" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="introduction-6" class="section level2 hasAnchor" number="5.1">
+<h2><span class="header-section-number">5.1</span> Introduction<a href="joins.html#introduction-6" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In this chapter, we will learn to:</p>
+<ul>
+<li>combine rows from two tables with <code>INNER JOIN</code></li>
+<li>keep unmatched rows with <code>LEFT JOIN</code></li>
+<li>avoid the SQLite <code>RIGHT</code> / <code>FULL OUTER JOIN</code> trap</li>
+<li>do the same joins from R with dbplyr <code>inner_join()</code> / <code>left_join()</code></li>
+<li>filter with <code>semi_join()</code> and <code>anti_join()</code></li>
+</ul>
+<p>We will use the following R packages:</p>
+<ul>
+<li><a href="https://dbi.r-dbi.org/">DBI</a></li>
+<li><a href="https://rsqlite.r-dbi.org/">RSQLite</a></li>
+<li><a href="http://dbplyr.tidyverse.org/">dbplyr</a></li>
+</ul>
+<p>All the data sets used in this chapter can be found <a href="https://github.com/rsquaredacademy/datasets">here</a>.</p>
+</div>
+<div id="set-up-2" class="section level2 hasAnchor" number="5.2">
+<h2><span class="header-section-number">5.2</span> Set Up<a href="joins.html#set-up-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>So far we have worked with a single table. Real databases keep related data in
+separate tables. Our <code>data/ecom.sqlite</code> file holds two small related tables
+besides <code>ecom</code>:</p>
+<ul>
+<li><code>customers</code>: 20 rows, one per customer (<code>customer_id</code> primary key, <code>country</code>)</li>
+<li><code>orders</code>: 20 rows, one per order (<code>order_id</code> primary key, <code>customer_id</code>
+foreign key into <code>customers</code>, <code>amount</code>)</li>
+</ul>
+<p>Six customers (4, 16–20) have placed no orders, and one order points at a
+<code>customer_id</code> (99) that does not exist. These deliberate mismatches make the
+difference between join types visible.</p>
+<p>Let us connect directly to the SQLite file:</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="joins.html#cb107-1" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="st">&quot;data/ecom.sqlite&quot;</span>)</span></code></pre></div>
+<p>A quick look at both tables:</p>
+<div class="sourceCode" id="cb108"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb108-1"><a href="joins.html#cb108-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> customers <span class="kw">LIMIT</span> <span class="dv">5</span></span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-32">Table 5.1: </span>5 records</caption>
+<thead>
+<tr class="header">
+<th align="left">customer_id</th>
+<th align="left">country</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1</td>
+<td align="left">United States</td>
+</tr>
+<tr class="even">
+<td align="left">2</td>
+<td align="left">United Kingdom</td>
+</tr>
+<tr class="odd">
+<td align="left">3</td>
+<td align="left">Germany</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="left">France</td>
+</tr>
+<tr class="odd">
+<td align="left">5</td>
+<td align="left">Canada</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb109"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb109-1"><a href="joins.html#cb109-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> orders <span class="kw">LIMIT</span> <span class="dv">5</span></span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-33">Table 5.2: </span>5 records</caption>
+<thead>
+<tr class="header">
+<th align="left">order_id</th>
+<th align="right">customer_id</th>
+<th align="right">amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">101</td>
+<td align="right">1</td>
+<td align="right">459.11</td>
+</tr>
+<tr class="even">
+<td align="left">102</td>
+<td align="right">1</td>
+<td align="right">469.80</td>
+</tr>
+<tr class="odd">
+<td align="left">103</td>
+<td align="right">2</td>
+<td align="right">157.35</td>
+</tr>
+<tr class="even">
+<td align="left">104</td>
+<td align="right">3</td>
+<td align="right">418.61</td>
+</tr>
+<tr class="odd">
+<td align="left">105</td>
+<td align="right">3</td>
+<td align="right">328.04</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="inner-join" class="section level2 hasAnchor" number="5.3">
+<h2><span class="header-section-number">5.3</span> INNER JOIN<a href="joins.html#inner-join" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><code>INNER JOIN</code> returns only the rows that match in <strong>both</strong> tables. Customers
+without orders, and orders without customers, are dropped.</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb110-1"><a href="joins.html#cb110-1" tabindex="-1"></a><span class="kw">SELECT</span> c.customer_id, c.country, o.order_id, o.amount</span>
+<span id="cb110-2"><a href="joins.html#cb110-2" tabindex="-1"></a><span class="kw">FROM</span> customers c</span>
+<span id="cb110-3"><a href="joins.html#cb110-3" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> orders o <span class="kw">ON</span> c.customer_id <span class="op">=</span> o.customer_id</span>
+<span id="cb110-4"><a href="joins.html#cb110-4" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> c.customer_id, o.order_id</span>
+<span id="cb110-5"><a href="joins.html#cb110-5" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">6</span></span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-34">Table 5.3: </span>6 records</caption>
+<thead>
+<tr class="header">
+<th align="right">customer_id</th>
+<th align="left">country</th>
+<th align="right">order_id</th>
+<th align="right">amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="left">United States</td>
+<td align="right">101</td>
+<td align="right">459.11</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="left">United States</td>
+<td align="right">102</td>
+<td align="right">469.80</td>
+</tr>
+<tr class="odd">
+<td align="right">2</td>
+<td align="left">United Kingdom</td>
+<td align="right">103</td>
+<td align="right">157.35</td>
+</tr>
+<tr class="even">
+<td align="right">2</td>
+<td align="left">United Kingdom</td>
+<td align="right">118</td>
+<td align="right">76.39</td>
+</tr>
+<tr class="odd">
+<td align="right">3</td>
+<td align="left">Germany</td>
+<td align="right">104</td>
+<td align="right">418.61</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="left">Germany</td>
+<td align="right">105</td>
+<td align="right">328.04</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>How many of the 20 orders survive? Nineteen – order 120 belongs to the
+non-existent customer 99 and is excluded:</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb111-1"><a href="joins.html#cb111-1" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> n <span class="kw">FROM</span> customers c</span>
+<span id="cb111-2"><a href="joins.html#cb111-2" tabindex="-1"></a><span class="kw">INNER</span> <span class="kw">JOIN</span> orders o <span class="kw">ON</span> c.customer_id <span class="op">=</span> o.customer_id</span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-35">Table 5.4: </span>1 records</caption>
+<thead>
+<tr class="header">
+<th align="right">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">19</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="left-join" class="section level2 hasAnchor" number="5.4">
+<h2><span class="header-section-number">5.4</span> LEFT JOIN<a href="joins.html#left-join" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><code>LEFT JOIN</code> keeps <strong>every</strong> row from the left table and fills <code>NULL</code> where the
+right table has no match. This is how you find customers who never ordered:</p>
+<div class="sourceCode" id="cb112"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb112-1"><a href="joins.html#cb112-1" tabindex="-1"></a><span class="kw">SELECT</span> c.customer_id, c.country, o.order_id, o.amount</span>
+<span id="cb112-2"><a href="joins.html#cb112-2" tabindex="-1"></a><span class="kw">FROM</span> customers c</span>
+<span id="cb112-3"><a href="joins.html#cb112-3" tabindex="-1"></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> orders o <span class="kw">ON</span> c.customer_id <span class="op">=</span> o.customer_id</span>
+<span id="cb112-4"><a href="joins.html#cb112-4" tabindex="-1"></a><span class="kw">WHERE</span> o.order_id <span class="kw">IS</span> <span class="kw">NULL</span></span>
+<span id="cb112-5"><a href="joins.html#cb112-5" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> c.customer_id</span></code></pre></div>
+<div class="knitsql-table">
+<table>
+<caption><span id="tab:unnamed-chunk-36">Table 5.5: </span>6 records</caption>
+<thead>
+<tr class="header">
+<th align="right">customer_id</th>
+<th align="left">country</th>
+<th align="right">order_id</th>
+<th align="right">amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">4</td>
+<td align="left">France</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">16</td>
+<td align="left">Italy</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">17</td>
+<td align="left">Portugal</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">18</td>
+<td align="left">Greece</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="right">19</td>
+<td align="left">Ireland</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">20</td>
+<td align="left">Belgium</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The full left join has 25 rows: 19 matched order rows plus one <code>NULL</code> row for
+each of the 6 customers without orders.</p>
+</div>
+<div id="the-sqlite-right-full-trap" class="section level2 hasAnchor" number="5.5">
+<h2><span class="header-section-number">5.5</span> The SQLite RIGHT / FULL Trap<a href="joins.html#the-sqlite-right-full-trap" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Some tutorials teach <code>RIGHT JOIN</code> or <code>FULL OUTER JOIN</code>. Do not use them with
+RSQLite: the SQLite versions bundled with RSQLite (including recent ones)
+reject both with a syntax error such as <code>near "RIGHT": syntax error</code>.
+Postgres and other production databases accept them, so queries written
+against SQLite will fail silently only when you move them.</p>
+<p>The portable workaround is to swap the tables and use <code>LEFT JOIN</code>:</p>
+<ul>
+<li>instead of <code>A RIGHT JOIN B</code>, write <code>B LEFT JOIN A</code></li>
+<li>instead of <code>A FULL OUTER JOIN B</code>, union a <code>LEFT JOIN</code> in each direction</li>
+</ul>
+<p>When in doubt, <code>LEFT JOIN</code> is the only outer join you need for this book.</p>
+</div>
+<div id="joins-with-dbplyr" class="section level2 hasAnchor" number="5.6">
+<h2><span class="header-section-number">5.6</span> JOINs with dbplyr<a href="joins.html#joins-with-dbplyr" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The same joins work from R without writing SQL. Reference both tables and use
+the dplyr join verbs:</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="joins.html#cb113-1" tabindex="-1"></a>customers <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">&quot;customers&quot;</span>)</span>
+<span id="cb113-2"><a href="joins.html#cb113-2" tabindex="-1"></a>orders <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">&quot;orders&quot;</span>)</span>
+<span id="cb113-3"><a href="joins.html#cb113-3" tabindex="-1"></a></span>
+<span id="cb113-4"><a href="joins.html#cb113-4" tabindex="-1"></a><span class="fu">inner_join</span>(customers, orders, <span class="at">by =</span> <span class="st">&quot;customer_id&quot;</span>)</span></code></pre></div>
+<pre><code>## # A query:  ?? x 4
+## # Database: sqlite 3.51.2 [F:\R\ebooks\rdbsql\data\ecom.sqlite]
+##    customer_id country        order_id amount
+##          &lt;int&gt; &lt;chr&gt;             &lt;int&gt;  &lt;dbl&gt;
+##  1           1 United States       101  459. 
+##  2           1 United States       102  470. 
+##  3           2 United Kingdom      103  157. 
+##  4           2 United Kingdom      118   76.4
+##  5           3 Germany             104  419. 
+##  6           3 Germany             105  328. 
+##  7           3 Germany             106  269. 
+##  8           5 Canada              107  374. 
+##  9           5 Canada              119  248  
+## 10           6 Australia           108   84.6
+## 11           7 Brazil              109  335. 
+## 12           8 Japan               110  358. 
+## 13           9 Mexico              111  240. 
+## 14          10 Netherlands         112  365. 
+## 15          11 Sweden              113  469. 
+## 16          12 Norway              114  143. 
+## 17          13 Denmark             115  242. 
+## 18          14 Finland             116  471. 
+## 19          15 Poland              117  490.</code></pre>
+<p>Use <code>show_query()</code> to see the SQL dbplyr generates – it is the <code>INNER JOIN</code>
+you just wrote by hand:</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="joins.html#cb115-1" tabindex="-1"></a>q_inner <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(customers, orders, <span class="at">by =</span> <span class="st">&quot;customer_id&quot;</span>)</span>
+<span id="cb115-2"><a href="joins.html#cb115-2" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q_inner)</span>
+<span id="cb115-3"><a href="joins.html#cb115-3" tabindex="-1"></a><span class="do">## &lt;SQL&gt;</span></span>
+<span id="cb115-4"><a href="joins.html#cb115-4" tabindex="-1"></a><span class="do">## SELECT `customers`.*, `order_id`, `amount`</span></span>
+<span id="cb115-5"><a href="joins.html#cb115-5" tabindex="-1"></a><span class="do">## FROM `customers`</span></span>
+<span id="cb115-6"><a href="joins.html#cb115-6" tabindex="-1"></a><span class="do">## INNER JOIN `orders`</span></span>
+<span id="cb115-7"><a href="joins.html#cb115-7" tabindex="-1"></a><span class="do">##   ON (`customers`.`customer_id` = `orders`.`customer_id`)</span></span></code></pre></div>
+<p>The left join works the same way:</p>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="joins.html#cb116-1" tabindex="-1"></a>q_left <span class="ot">&lt;-</span> <span class="fu">left_join</span>(customers, orders, <span class="at">by =</span> <span class="st">&quot;customer_id&quot;</span>)</span>
+<span id="cb116-2"><a href="joins.html#cb116-2" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q_left)</span>
+<span id="cb116-3"><a href="joins.html#cb116-3" tabindex="-1"></a><span class="do">## &lt;SQL&gt;</span></span>
+<span id="cb116-4"><a href="joins.html#cb116-4" tabindex="-1"></a><span class="do">## SELECT `customers`.*, `order_id`, `amount`</span></span>
+<span id="cb116-5"><a href="joins.html#cb116-5" tabindex="-1"></a><span class="do">## FROM `customers`</span></span>
+<span id="cb116-6"><a href="joins.html#cb116-6" tabindex="-1"></a><span class="do">## LEFT JOIN `orders`</span></span>
+<span id="cb116-7"><a href="joins.html#cb116-7" tabindex="-1"></a><span class="do">##   ON (`customers`.`customer_id` = `orders`.`customer_id`)</span></span></code></pre></div>
+</div>
+<div id="semi_join-and-anti_join" class="section level2 hasAnchor" number="5.7">
+<h2><span class="header-section-number">5.7</span> semi_join and anti_join<a href="joins.html#semi_join-and-anti_join" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Two filtering joins have no direct SQL keyword but are everyday tools:</p>
+<ul>
+<li><code>semi_join()</code> keeps rows of <code>customers</code> that <strong>have</strong> a match in <code>orders</code>
+(14 customers). The generated SQL uses <code>WHERE EXISTS</code>.</li>
+<li><code>anti_join()</code> keeps rows of <code>customers</code> that <strong>lack</strong> a match in <code>orders</code>
+(the same 6 customers from the <code>LEFT JOIN</code> check above). The generated SQL
+uses <code>WHERE NOT EXISTS</code>.</li>
+</ul>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="joins.html#cb117-1" tabindex="-1"></a>q_semi <span class="ot">&lt;-</span> <span class="fu">semi_join</span>(customers, orders, <span class="at">by =</span> <span class="st">&quot;customer_id&quot;</span>)</span>
+<span id="cb117-2"><a href="joins.html#cb117-2" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q_semi)</span>
+<span id="cb117-3"><a href="joins.html#cb117-3" tabindex="-1"></a><span class="do">## &lt;SQL&gt;</span></span>
+<span id="cb117-4"><a href="joins.html#cb117-4" tabindex="-1"></a><span class="do">## SELECT `customers`.*</span></span>
+<span id="cb117-5"><a href="joins.html#cb117-5" tabindex="-1"></a><span class="do">## FROM `customers`</span></span>
+<span id="cb117-6"><a href="joins.html#cb117-6" tabindex="-1"></a><span class="do">## WHERE EXISTS (</span></span>
+<span id="cb117-7"><a href="joins.html#cb117-7" tabindex="-1"></a><span class="do">##   SELECT 1 FROM `orders`</span></span>
+<span id="cb117-8"><a href="joins.html#cb117-8" tabindex="-1"></a><span class="do">##   WHERE (`customers`.`customer_id` = `orders`.`customer_id`)</span></span>
+<span id="cb117-9"><a href="joins.html#cb117-9" tabindex="-1"></a><span class="do">## )</span></span>
+<span id="cb117-10"><a href="joins.html#cb117-10" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">collect</span>(q_semi)</span>
+<span id="cb117-11"><a href="joins.html#cb117-11" tabindex="-1"></a><span class="do">## # A tibble: 14 × 2</span></span>
+<span id="cb117-12"><a href="joins.html#cb117-12" tabindex="-1"></a><span class="do">##    customer_id country       </span></span>
+<span id="cb117-13"><a href="joins.html#cb117-13" tabindex="-1"></a><span class="do">##          &lt;int&gt; &lt;chr&gt;         </span></span>
+<span id="cb117-14"><a href="joins.html#cb117-14" tabindex="-1"></a><span class="do">##  1           1 United States </span></span>
+<span id="cb117-15"><a href="joins.html#cb117-15" tabindex="-1"></a><span class="do">##  2           2 United Kingdom</span></span>
+<span id="cb117-16"><a href="joins.html#cb117-16" tabindex="-1"></a><span class="do">##  3           3 Germany       </span></span>
+<span id="cb117-17"><a href="joins.html#cb117-17" tabindex="-1"></a><span class="do">##  4           5 Canada        </span></span>
+<span id="cb117-18"><a href="joins.html#cb117-18" tabindex="-1"></a><span class="do">##  5           6 Australia     </span></span>
+<span id="cb117-19"><a href="joins.html#cb117-19" tabindex="-1"></a><span class="do">##  6           7 Brazil        </span></span>
+<span id="cb117-20"><a href="joins.html#cb117-20" tabindex="-1"></a><span class="do">##  7           8 Japan         </span></span>
+<span id="cb117-21"><a href="joins.html#cb117-21" tabindex="-1"></a><span class="do">##  8           9 Mexico        </span></span>
+<span id="cb117-22"><a href="joins.html#cb117-22" tabindex="-1"></a><span class="do">##  9          10 Netherlands   </span></span>
+<span id="cb117-23"><a href="joins.html#cb117-23" tabindex="-1"></a><span class="do">## 10          11 Sweden        </span></span>
+<span id="cb117-24"><a href="joins.html#cb117-24" tabindex="-1"></a><span class="do">## 11          12 Norway        </span></span>
+<span id="cb117-25"><a href="joins.html#cb117-25" tabindex="-1"></a><span class="do">## 12          13 Denmark       </span></span>
+<span id="cb117-26"><a href="joins.html#cb117-26" tabindex="-1"></a><span class="do">## 13          14 Finland       </span></span>
+<span id="cb117-27"><a href="joins.html#cb117-27" tabindex="-1"></a><span class="do">## 14          15 Poland</span></span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="joins.html#cb118-1" tabindex="-1"></a>q_anti <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(customers, orders, <span class="at">by =</span> <span class="st">&quot;customer_id&quot;</span>)</span>
+<span id="cb118-2"><a href="joins.html#cb118-2" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q_anti)</span>
+<span id="cb118-3"><a href="joins.html#cb118-3" tabindex="-1"></a><span class="do">## &lt;SQL&gt;</span></span>
+<span id="cb118-4"><a href="joins.html#cb118-4" tabindex="-1"></a><span class="do">## SELECT `customers`.*</span></span>
+<span id="cb118-5"><a href="joins.html#cb118-5" tabindex="-1"></a><span class="do">## FROM `customers`</span></span>
+<span id="cb118-6"><a href="joins.html#cb118-6" tabindex="-1"></a><span class="do">## WHERE NOT EXISTS (</span></span>
+<span id="cb118-7"><a href="joins.html#cb118-7" tabindex="-1"></a><span class="do">##   SELECT 1 FROM `orders`</span></span>
+<span id="cb118-8"><a href="joins.html#cb118-8" tabindex="-1"></a><span class="do">##   WHERE (`customers`.`customer_id` = `orders`.`customer_id`)</span></span>
+<span id="cb118-9"><a href="joins.html#cb118-9" tabindex="-1"></a><span class="do">## )</span></span>
+<span id="cb118-10"><a href="joins.html#cb118-10" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">collect</span>(q_anti)</span>
+<span id="cb118-11"><a href="joins.html#cb118-11" tabindex="-1"></a><span class="do">## # A tibble: 6 × 2</span></span>
+<span id="cb118-12"><a href="joins.html#cb118-12" tabindex="-1"></a><span class="do">##   customer_id country </span></span>
+<span id="cb118-13"><a href="joins.html#cb118-13" tabindex="-1"></a><span class="do">##         &lt;int&gt; &lt;chr&gt;   </span></span>
+<span id="cb118-14"><a href="joins.html#cb118-14" tabindex="-1"></a><span class="do">## 1           4 France  </span></span>
+<span id="cb118-15"><a href="joins.html#cb118-15" tabindex="-1"></a><span class="do">## 2          16 Italy   </span></span>
+<span id="cb118-16"><a href="joins.html#cb118-16" tabindex="-1"></a><span class="do">## 3          17 Portugal</span></span>
+<span id="cb118-17"><a href="joins.html#cb118-17" tabindex="-1"></a><span class="do">## 4          18 Greece  </span></span>
+<span id="cb118-18"><a href="joins.html#cb118-18" tabindex="-1"></a><span class="do">## 5          19 Ireland </span></span>
+<span id="cb118-19"><a href="joins.html#cb118-19" tabindex="-1"></a><span class="do">## 6          20 Belgium</span></span></code></pre></div>
+<p>Rule of thumb: use <code>semi_join()</code> / <code>anti_join()</code> when you want to filter one
+table by membership in another without adding the other table’s columns.</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="joins.html#cb119-1" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="sql2.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  }
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -5,26 +5,25 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>R, Databases &amp; SQL</title>
-  <meta name="description" content="Introduction to databases and SQL." />
-  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+  <meta name="description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
+  <meta name="generator" content="bookdown 0.48 and GitBook 2.6.7" />
 
   <meta property="og:title" content="R, Databases &amp; SQL" />
   <meta property="og:type" content="book" />
   
-  
-  <meta property="og:description" content="Introduction to databases and SQL." />
+  <meta property="og:description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
   
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="R, Databases &amp; SQL" />
   
-  <meta name="twitter:description" content="Introduction to databases and SQL." />
+  <meta name="twitter:description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS." />
   
 
 <meta name="author" content="Aravind Hebbali" />
 
 
-<meta name="date" content="2020-06-20" />
+<meta name="date" content="2026-09-26" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -33,7 +32,8 @@
   
 
 <link rel="next" href="about-the-author.html"/>
-<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -49,7 +49,9 @@
 
 
 
-
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-57270671-37"></script>
 <script>
@@ -62,18 +64,19 @@
 
 
 <style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -93,13 +96,13 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -112,7 +115,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -124,6 +127,11 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -142,24 +150,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://github.com/rsquaredacademy-education/rdbsql/">R, Databases & SQL</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a><ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Preface</a>
+<ul>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#structure-of-the-book"><i class="fa fa-check"></i>Structure of the book</a></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html#software-information"><i class="fa fa-check"></i>Software information</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="about-the-author.html"><a href="about-the-author.html"><i class="fa fa-check"></i>About the Author</a></li>
-<li class="chapter" data-level="1" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>1</b> DBI</a><ul>
+<li class="chapter" data-level="1" data-path="dbi.html"><a href="dbi.html"><i class="fa fa-check"></i><b>1</b> DBI</a>
+<ul>
 <li class="chapter" data-level="1.1" data-path="dbi.html"><a href="dbi.html#introduction"><i class="fa fa-check"></i><b>1.1</b> Introduction</a></li>
-<li class="chapter" data-level="1.2" data-path="dbi.html"><a href="dbi.html#connection"><i class="fa fa-check"></i><b>1.2</b> Connection</a><ul>
+<li class="chapter" data-level="1.2" data-path="dbi.html"><a href="dbi.html#connection"><i class="fa fa-check"></i><b>1.2</b> Connection</a>
+<ul>
 <li class="chapter" data-level="1.2.1" data-path="dbi.html"><a href="dbi.html#connection-summary"><i class="fa fa-check"></i><b>1.2.1</b> Connection Summary</a></li>
 <li class="chapter" data-level="1.2.2" data-path="dbi.html"><a href="dbi.html#list-tables"><i class="fa fa-check"></i><b>1.2.2</b> List Tables</a></li>
 <li class="chapter" data-level="1.2.3" data-path="dbi.html"><a href="dbi.html#list-fields"><i class="fa fa-check"></i><b>1.2.3</b> List Fields</a></li>
 </ul></li>
-<li class="chapter" data-level="1.3" data-path="dbi.html"><a href="dbi.html#querying-data"><i class="fa fa-check"></i><b>1.3</b> Querying Data</a><ul>
+<li class="chapter" data-level="1.3" data-path="dbi.html"><a href="dbi.html#querying-data"><i class="fa fa-check"></i><b>1.3</b> Querying Data</a>
+<ul>
 <li class="chapter" data-level="1.3.1" data-path="dbi.html"><a href="dbi.html#entire-table"><i class="fa fa-check"></i><b>1.3.1</b> Entire Table</a></li>
 <li class="chapter" data-level="1.3.2" data-path="dbi.html"><a href="dbi.html#few-rows"><i class="fa fa-check"></i><b>1.3.2</b> Few Rows</a></li>
 <li class="chapter" data-level="1.3.3" data-path="dbi.html"><a href="dbi.html#read-data-in-batches"><i class="fa fa-check"></i><b>1.3.3</b> Read Data in Batches</a></li>
 </ul></li>
-<li class="chapter" data-level="1.4" data-path="dbi.html"><a href="dbi.html#query"><i class="fa fa-check"></i><b>1.4</b> Query</a><ul>
+<li class="chapter" data-level="1.4" data-path="dbi.html"><a href="dbi.html#query"><i class="fa fa-check"></i><b>1.4</b> Query</a>
+<ul>
 <li class="chapter" data-level="1.4.1" data-path="dbi.html"><a href="dbi.html#query-status"><i class="fa fa-check"></i><b>1.4.1</b> Query Status</a></li>
 <li class="chapter" data-level="1.4.2" data-path="dbi.html"><a href="dbi.html#query-info"><i class="fa fa-check"></i><b>1.4.2</b> Query Info</a></li>
 <li class="chapter" data-level="1.4.3" data-path="dbi.html"><a href="dbi.html#latest-query"><i class="fa fa-check"></i><b>1.4.3</b> Latest Query</a></li>
@@ -174,7 +187,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="1.9" data-path="dbi.html"><a href="dbi.html#sqlite-data-type"><i class="fa fa-check"></i><b>1.9</b> SQLite Data Type</a></li>
 <li class="chapter" data-level="1.10" data-path="dbi.html"><a href="dbi.html#close-connection"><i class="fa fa-check"></i><b>1.10</b> Close Connection</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>2</b> dbplyr</a><ul>
+<li class="chapter" data-level="2" data-path="dbplyr.html"><a href="dbplyr.html"><i class="fa fa-check"></i><b>2</b> dbplyr</a>
+<ul>
 <li class="chapter" data-level="2.1" data-path="dbplyr.html"><a href="dbplyr.html#introduction-3"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
 <li class="chapter" data-level="2.2" data-path="dbplyr.html"><a href="dbplyr.html#connect-to-database"><i class="fa fa-check"></i><b>2.2</b> Connect to Database</a></li>
 <li class="chapter" data-level="2.3" data-path="dbplyr.html"><a href="dbplyr.html#reference-data"><i class="fa fa-check"></i><b>2.3</b> Reference Data</a></li>
@@ -182,10 +196,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="2.5" data-path="dbplyr.html"><a href="dbplyr.html#show-query"><i class="fa fa-check"></i><b>2.5</b> Show Query</a></li>
 <li class="chapter" data-level="2.6" data-path="dbplyr.html"><a href="dbplyr.html#collect-data"><i class="fa fa-check"></i><b>2.6</b> Collect Data</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>3</b> SQL Basics</a><ul>
+<li class="chapter" data-level="3" data-path="sqlbasics.html"><a href="sqlbasics.html"><i class="fa fa-check"></i><b>3</b> SQL Basics</a>
+<ul>
 <li class="chapter" data-level="3.1" data-path="sqlbasics.html"><a href="sqlbasics.html#introduction-4"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
 <li class="chapter" data-level="3.2" data-path="sqlbasics.html"><a href="sqlbasics.html#set-up"><i class="fa fa-check"></i><b>3.2</b> Set Up</a></li>
-<li class="chapter" data-level="3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-columns"><i class="fa fa-check"></i><b>3.3</b> Select Columns</a><ul>
+<li class="chapter" data-level="3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-columns"><i class="fa fa-check"></i><b>3.3</b> Select Columns</a>
+<ul>
 <li class="chapter" data-level="3.3.1" data-path="sqlbasics.html"><a href="sqlbasics.html#syntax"><i class="fa fa-check"></i><b>3.3.1</b> Syntax</a></li>
 <li class="chapter" data-level="3.3.2" data-path="sqlbasics.html"><a href="sqlbasics.html#select-single-column"><i class="fa fa-check"></i><b>3.3.2</b> Select Single Column</a></li>
 <li class="chapter" data-level="3.3.3" data-path="sqlbasics.html"><a href="sqlbasics.html#select-multiple-columns"><i class="fa fa-check"></i><b>3.3.3</b> Select Multiple Columns</a></li>
@@ -200,13 +216,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="3.10" data-path="sqlbasics.html"><a href="sqlbasics.html#is-null"><i class="fa fa-check"></i><b>3.10</b> IS NULL</a></li>
 <li class="chapter" data-level="3.11" data-path="sqlbasics.html"><a href="sqlbasics.html#like"><i class="fa fa-check"></i><b>3.11</b> LIKE</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a><ul>
+<li class="chapter" data-level="4" data-path="sql2.html"><a href="sql2.html"><i class="fa fa-check"></i><b>4</b> SQL Advanced</a>
+<ul>
 <li class="chapter" data-level="4.1" data-path="sql2.html"><a href="sql2.html#introduction-5"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
 <li class="chapter" data-level="4.2" data-path="sql2.html"><a href="sql2.html#set-up-1"><i class="fa fa-check"></i><b>4.2</b> Set Up</a></li>
 <li class="chapter" data-level="4.3" data-path="sql2.html"><a href="sql2.html#aggregate"><i class="fa fa-check"></i><b>4.3</b> Aggregate</a></li>
 <li class="chapter" data-level="4.4" data-path="sql2.html"><a href="sql2.html#alias"><i class="fa fa-check"></i><b>4.4</b> Alias</a></li>
 <li class="chapter" data-level="4.5" data-path="sql2.html"><a href="sql2.html#order-by"><i class="fa fa-check"></i><b>4.5</b> Order By</a></li>
 <li class="chapter" data-level="4.6" data-path="sql2.html"><a href="sql2.html#group-by"><i class="fa fa-check"></i><b>4.6</b> Group By</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="joins.html"><a href="joins.html"><i class="fa fa-check"></i><b>5</b> JOINs</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="joins.html"><a href="joins.html#introduction-6"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="joins.html"><a href="joins.html#set-up-2"><i class="fa fa-check"></i><b>5.2</b> Set Up</a></li>
+<li class="chapter" data-level="5.3" data-path="joins.html"><a href="joins.html#inner-join"><i class="fa fa-check"></i><b>5.3</b> INNER JOIN</a></li>
+<li class="chapter" data-level="5.4" data-path="joins.html"><a href="joins.html#left-join"><i class="fa fa-check"></i><b>5.4</b> LEFT JOIN</a></li>
+<li class="chapter" data-level="5.5" data-path="joins.html"><a href="joins.html#the-sqlite-right-full-trap"><i class="fa fa-check"></i><b>5.5</b> The SQLite RIGHT / FULL Trap</a></li>
+<li class="chapter" data-level="5.6" data-path="joins.html"><a href="joins.html#joins-with-dbplyr"><i class="fa fa-check"></i><b>5.6</b> JOINs with dbplyr</a></li>
+<li class="chapter" data-level="5.7" data-path="joins.html"><a href="joins.html#semi_join-and-anti_join"><i class="fa fa-check"></i><b>5.7</b> semi_join and anti_join</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -230,41 +257,48 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">R, Databases &amp; SQL</h1>
 <p class="author"><em>Aravind Hebbali</em></p>
-<p class="date"><em>2020-06-20</em></p>
+<p class="date"><em>2026-09-26</em></p>
 </div>
-<div id="preface" class="section level1 unnumbered">
-<h1>Preface</h1>
+<div id="preface" class="section level1 unnumbered hasAnchor">
+<h1>Preface<a href="index.html#preface" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <p><img src="img/rdbsql.png" width="60%" style="display: block; margin: auto;" /></p>
 <p><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.</p>
-<div id="structure-of-the-book" class="section level2 unnumbered">
-<h2>Structure of the book</h2>
+<div id="structure-of-the-book" class="section level2 unnumbered hasAnchor">
+<h2>Structure of the book<a href="index.html#structure-of-the-book" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Chapter <a href="dbi.html#dbi">1</a> introduces the <strong>DBI</strong> package. Chapter <a href="dbplyr.html#dbplyr">2</a> explores
 data wrangling within database using the <strong>dplyr</strong> package. Chapters <a href="sqlbasics.html#sqlbasics">3</a>
-and <a href="sql2.html#sql2">4</a> introduce basic and advanced SQL</p>
+and <a href="sql2.html#sql2">4</a> introduce basic and advanced SQL. Chapter <a href="joins.html#joins">5</a> combines
+tables with JOINs in SQL and dbplyr.</p>
 </div>
-<div id="software-information" class="section level2 unnumbered">
-<h2>Software information</h2>
+<div id="software-information" class="section level2 unnumbered hasAnchor">
+<h2>Software information<a href="index.html#software-information" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The R session information when compiling this book is shown below:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="kw">sessionInfo</span>()</span></code></pre></div>
-<pre><code>## R version 4.0.0 (2020-04-24)
-## Platform: x86_64-w64-mingw32/x64 (64-bit)
-## Running under: Windows 10 x64 (build 18362)
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.5.2 (2025-10-31 ucrt)
+## Platform: x86_64-w64-mingw32/x64
+## Running under: Windows 10 x64 (build 19045)
 ## 
 ## Matrix products: default
+##   LAPACK version 3.12.1
 ## 
 ## locale:
-## [1] LC_COLLATE=English_India.1252  LC_CTYPE=English_India.1252   
-## [3] LC_MONETARY=English_India.1252 LC_NUMERIC=C                  
-## [5] LC_TIME=English_India.1252    
+## [1] LC_COLLATE=English_India.utf8  LC_CTYPE=English_India.utf8   
+## [3] LC_MONETARY=English_India.utf8 LC_NUMERIC=C                  
+## [5] LC_TIME=English_India.utf8    
+## 
+## time zone: Asia/Calcutta
+## tzcode source: internal
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] compiler_4.0.0  magrittr_1.5    bookdown_0.18   tools_4.0.0    
-##  [5] htmltools_0.4.0 rstudioapi_0.11 yaml_2.2.1      Rcpp_1.0.4.6   
-##  [9] stringi_1.4.6   rmarkdown_2.1   knitr_1.27      stringr_1.4.0  
-## [13] xfun_0.13       digest_0.6.25   rlang_0.4.6     evaluate_0.14</code></pre>
+##  [1] digest_0.6.39     R6_2.6.1          bookdown_0.48     fastmap_1.2.0    
+##  [5] xfun_0.61         cachem_1.1.0      knitr_1.50        htmltools_0.5.9  
+##  [9] rmarkdown_2.30    lifecycle_1.0.5   cli_3.6.5         sass_0.4.10      
+## [13] jquerylib_0.1.4   compiler_4.5.2    rstudioapi_0.17.1 tools_4.5.2      
+## [17] evaluate_1.0.5    bslib_0.9.0       yaml_2.3.12       jsonlite_2.0.0   
+## [21] rlang_1.2.0</code></pre>
 <p>We do not add prompts (<code>&gt;</code> and <code>+</code>) to R source code in this book, and we comment out the text output with two hashes <code>##</code> by default, as you can see from the R session information above. This is for your convenience when you want to copy and run the code (the text output will be ignored since it is commented out). Package names are in bold text (e.g., <strong>rmarkdown</strong>), and function names are followed by parentheses (e.g., <code>bookdown::render_book()</code>). The double-colon operator <code>::</code> means accessing an object from a package.</p>
 
 </div>
@@ -279,7 +313,6 @@ and <a href="sql2.html#sql2">4</a> introduce basic and advanced SQL</p>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
-<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
@@ -290,38 +323,43 @@ and <a href="sql2.html#sql2">4</a> introduce basic and advanced SQL</p>
 <script>
 gitbook.require(["gitbook"], function(gitbook) {
 gitbook.start({
-"sharing": {
-"github": false,
-"facebook": true,
-"twitter": true,
-"linkedin": false,
-"weibo": false,
-"instapaper": false,
-"vk": false,
-"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
-},
-"fontsettings": {
-"theme": "white",
-"family": "sans",
-"size": 2
-},
-"edit": {
-"link": null,
-"text": null
-},
-"history": {
-"link": null,
-"text": null
-},
-"view": {
-"link": null,
-"text": null
-},
-"download": null,
-"toc": {
-"collapse": "section",
-"scroll_highlight": true
-}
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  }
 });
 });
 </script>
