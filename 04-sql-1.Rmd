@@ -239,3 +239,7 @@ SELECT *
 FROM ecom 
 WHERE country LIKE '_o%'
 ```
+
+```{r sql1-close}
+dbDisconnect(con)
+```

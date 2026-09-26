@@ -151,3 +151,7 @@ FROM ecom
 GROUP BY device 
 ORDER by max_duration DESC
 ```
+
+```{r lite-close}
+dbDisconnect(con)
+```

@@ -99,3 +99,9 @@ the data and store it in a tibble and you can use it for any further analysis.
 ```{r dbply9}
 dplyr::collect(avg_time)
 ```
+
+It is good practice to close the connection when you are done:
+
+```{r dbply-close}
+dbDisconnect(con)
+```
