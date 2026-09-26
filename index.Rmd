@@ -10,6 +10,11 @@ description: "R DBI tutorial: connect R to SQLite, query with dbplyr and SQL —
 
 # Preface {-}
 
+*Last verified: 2026-09-26 · R 4.5.2 · DBI · dbplyr 2.6.0 · RSQLite 2.4.6 · duckdb.*
+
+New here? Grab the [one-page DBI cheatsheet](cheatsheet/dbi-cheatsheet.pdf),
+then work Chapters 1–5 in order — runnable code for each chapter lives in `code/`.
+
 ```{r fig.align='center', echo=FALSE, out.width="60%"}
 knitr::include_graphics('img/rdbsql.png')
 ```
