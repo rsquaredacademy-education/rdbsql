@@ -1,0 +1,31 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "R, Databases & SQL"
+  author: "Aravind Hebbali"
+  date: today
+  description: "R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS."
+  chapters:
+    - index.qmd
+    - about.qmd
+    - dbi.qmd
+    - dbplyr.qmd
+    - sql-basics.qmd
+    - sql-advanced.qmd
+    - joins.qmd
+
+website:
+  site-url: https://rdbsql.rsquaredacademy.com
+  repo-url: https://github.com/rsquaredacademy-education/rdbsql/
+
+format:
+  html:
+    theme: default
+    css: style.css
+    toc: true
+    code-copy: true
+  pdf:
+    documentclass: book
+    toc-depth: 3
