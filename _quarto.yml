@@ -37,3 +37,8 @@ format:
   pdf:
     documentclass: book
     toc-depth: 3
+    # NOTE: quarto books slug the whole-book PDF filename from the title
+    # (ignores output-file here). After `quarto render --to pdf`, rename the
+    # generated `R,-Databases---SQL.pdf` to `databases-and-sql.pdf`.
+    # After `quarto render --to html`, copy `sitemap.xml` into `docs/`
+    # (reserved name quarto will not copy as a resource).
