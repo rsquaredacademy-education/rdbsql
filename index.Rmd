@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
 link-citations: yes
-description: "Introduction to databases and SQL."
+description: "R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS."
 ---
 
 # Preface {-}
@@ -20,7 +20,8 @@ knitr::include_graphics('img/rdbsql.png')
 
 Chapter \@ref(dbi) introduces the **DBI** package. Chapter \@ref(dbplyr) explores
 data wrangling within database using the **dplyr** package. Chapters \@ref(sqlbasics)
-and \@ref(sql2) introduce basic and advanced SQL
+and \@ref(sql2) introduce basic and advanced SQL. Chapter \@ref(joins) combines
+tables with JOINs in SQL and dbplyr.
 
 ## Software information {-}
 
