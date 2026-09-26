@@ -163,3 +163,21 @@ table by membership in another without adding the other table's columns.
 ```{r join-close}
 dbDisconnect(con)
 ```
+
+## Exercises
+
+1. List the `customer_id` and `country` of customers who placed no orders.
+   Write it both as a `LEFT JOIN ... IS NULL` query and as an `anti_join()`.
+2. Compute total order `amount` per customer (highest first) with an
+   `INNER JOIN` + `GROUP BY`. Which customer spent the most?
+3. Find the orphan order: which `order_id` points at a non-existent customer?
+
+```{r join-answers, echo=FALSE, results='asis'}
+if (knitr::is_html_output()) {
+  cat("<details><summary>Solutions</summary>\n\n")
+  cat("1. `SELECT c.customer_id, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL` — customers 4, 16, 17, 18, 19, 20. Same result: `anti_join(customers, orders, by = \"customer_id\")`.\n\n")
+  cat("2. `SELECT c.customer_id, c.country, SUM(o.amount) AS total FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.country ORDER BY total DESC` — customer 3 (Germany, 1015.82).\n\n")
+  cat("3. `SELECT o.order_id, o.customer_id FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL` — order 120 (customer 99).\n\n")
+  cat("</details>\n")
+}
+```

@@ -243,3 +243,20 @@ WHERE country LIKE '_o%'
 ```{r sql1-close}
 dbDisconnect(con)
 ```
+
+## Exercises
+
+1. List the `referrer` and `device` of 5 visits with more than 8 page views
+   (`n_visit > 8`), ordered by longest `duration` first.
+2. How many rows are from `tablet` devices in countries starting with `P`?
+3. Which distinct `device` values appear among bouncers (`bouncers = 1`)?
+
+```{r sql1-answers, echo=FALSE, results='asis'}
+if (knitr::is_html_output()) {
+  cat("<details><summary>Solutions</summary>\n\n")
+  cat("1. `SELECT referrer, device FROM ecom WHERE n_visit > 8 ORDER BY duration DESC LIMIT 5` — top row: google / mobile.\n\n")
+  cat("2. `SELECT COUNT(*) FROM ecom WHERE device = 'tablet' AND country LIKE 'P%'` — 51 rows.\n\n")
+  cat("3. `SELECT DISTINCT device FROM ecom WHERE bouncers = 1` — laptop, tablet, mobile (all three).\n\n")
+  cat("</details>\n")
+}
+```

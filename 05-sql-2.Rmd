@@ -155,3 +155,22 @@ ORDER by max_duration DESC
 ```{r lite-close}
 dbDisconnect(con)
 ```
+
+## Exercises
+
+1. Compute the average pages per visit (`AVG(n_pages)`) for each `referrer`,
+   ordered highest average first. Which referrer tops the list?
+2. What is the longest `duration` among visits that made a purchase
+   (`purchase = 1`)?
+3. Among `mobile` visits only, count visits by `country` and show the top 5.
+   Which country is first?
+
+```{r sql2-answers, echo=FALSE, results='asis'}
+if (knitr::is_html_output()) {
+  cat("<details><summary>Solutions</summary>\n\n")
+  cat("1. `SELECT referrer, AVG(n_pages) AS avg_pages FROM ecom GROUP BY referrer ORDER BY avg_pages DESC` — direct (~6.38) tops the list.\n\n")
+  cat("2. `SELECT MAX(duration) FROM ecom WHERE purchase = 1` — 580.\n\n")
+  cat("3. `SELECT country, COUNT(*) AS visits FROM ecom WHERE device = 'mobile' GROUP BY country ORDER BY visits DESC LIMIT 5` — China (53) is first.\n\n")
+  cat("</details>\n")
+}
+```
