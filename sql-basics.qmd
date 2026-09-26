@@ -51,7 +51,7 @@ web_path <- if (file.exists("data/web.csv")) "data/web.csv" else "https://raw.gi
 ecom <- readr::read_csv(web_path, show_col_types = FALSE)
 ecom <- dplyr::select(ecom, referrer, device, bouncers, n_visit, n_pages, duration, country, purchase)
 con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-copy_to(con, ecom)
+dplyr::copy_to(con, ecom)
 ```
 ## Select Columns
 
