@@ -24,7 +24,7 @@ We will use the following R packages:
 - [RSQLite](https://rsqlite.r-dbi.org/)
 - [dbplyr](http://dbplyr.tidyverse.org/)
 
-All the data sets used in this chapter can be found [here](https://github.com/rsquaredacademy/datasets).
+All the data sets used in this chapter can be found [here](https://github.com/rsquaredacademy/datasets) and code can be run from `code/ch5-joins.R` in this repo.
 
 ## Set Up
 
