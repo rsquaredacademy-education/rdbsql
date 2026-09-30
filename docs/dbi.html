@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-c3de09f10dd778e0b4268b7d9c3359d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-fa39313ee0ae67082205aa4c05164dde.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -111,13 +111,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<!-- Google tag (gtag.js) - placeholder, replace G-PLACEHOLDER with live GA4 ID -->
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+<!-- Google tag (gtag.js) -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-6CP8KYZN41"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-PLACEHOLDER', { 'allow_google_signals': false, 'allow_ad_personalization_signals': false });
+
+  gtag('config', 'G-6CP8KYZN41');
 </script>
 
 
@@ -580,11 +581,11 @@ $has.completed
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"select * from trial limit 5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   x y
-1 72 k
-2  7 l
-3 64 m
-4 62 n
-5 90 o</code></pre>
+1 86 k
+2 66 l
+3 74 m
+4 16 n
+5  9 o</code></pre>
 </div>
 </div>
 </section>
@@ -603,26 +604,26 @@ $has.completed
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbReadTable</span>(con, <span class="st">"trial"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    x y
-1  72 k
-2   7 l
-3  64 m
-4  62 n
-5  90 o
-6  61 p
-7  23 q
-8  30 r
-9  12 s
-10 83 t
-11 42 e
-12 99 f
-13 27 g
-14 90 h
-15 71 i
-16 82 j
-17 12 k
-18 28 l
-19 23 m
-20 68 n</code></pre>
+1  86 k
+2  66 l
+3  74 m
+4  16 n
+5   9 o
+6  28 p
+7  69 q
+8  37 r
+9  31 s
+10 95 t
+11 49 e
+12 19 f
+13 25 g
+14 63 h
+15  5 i
+16 70 j
+17 99 k
+18  6 l
+19 22 m
+20 26 n</code></pre>
 </div>
 </div>
 <p>We can also use <code>sqlAppendTable()</code> to append data to an existing table.</p>
