@@ -1,23 +1,43 @@
 # R, Databases & SQL
 
+![Cover](img/rdbsql.png)
+
 *R4DS Ch. 21 in 30 minutes leaves beginners behind. This book is the 2-hour ramp before it — DBI mechanics + first 20 SQL verbs, all runnable with zero setup.*
 
-This repository contains the source of [R, Databases & SQL](https://rdbsql.rsquaredacademy.com)
-book. The book is built using [Quarto](https://quarto.org/) (CLI 1.10.18+,
-`C:\Users\HP\AppData\Local\quarto\bin` on PATH for local builds).
+📖 **Read the book:** https://rdbsql.rsquaredacademy.com
 
-Build (HTML + PDF into `docs/`, published via GitHub Pages):
+[![Launch in Posit Cloud](https://img.shields.io/badge/Posit_Cloud-Launch-blue)](https://posit.cloud/content/PLACEHOLDER_RSQUARED_RDBSQL)
+[![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rsquaredacademy-education/rdbsql)
 
-```sh
-quarto render
-mv "docs/R,-Databases---SQL.pdf" docs/databases-and-sql.pdf
-cp sitemap.xml docs/sitemap.xml
+## Syllabus
+
+| # | Chapter | You will learn |
+|:--|:--------|:---------------|
+| 1 | DBI | `dbConnect`, `dbListTables`, `dbReadTable`, `dbGetQuery`, `dbSendQuery`/`dbFetch`, `dbWriteTable`, `dbExecute`, `dbDisconnect` |
+| 2 | dbplyr | `tbl()`, `filter`, `select`, `group_by`+`summarise`, `show_query`, `explain`, `collect` + lazy evaluation |
+| 3 | SQL Basics | `SELECT`, `LIMIT`, `DISTINCT`, `WHERE`, `AND`/`OR`/`NOT`, `BETWEEN`, `IN`, `IS NULL`, `LIKE` |
+| 4 | SQL Advanced | `SUM`/`AVG`/`MIN`/`MAX`, `AS` aliases, `ORDER BY`, `GROUP BY` |
+| 5 | JOINs | `INNER JOIN`, `LEFT JOIN`, SQLite `RIGHT`/`FULL` trap, `inner_join`/`left_join`/`semi_join`/`anti_join` |
+| A | DBI Cheat Sheet | One-page command reference (CC BY-NC-SA 4.0) |
+
+Each chapter ends with 3 hands-on exercises. Worked solutions live in [`solutions/`](solutions/) (one file per chapter, kept out of the rendered book so you can attempt first). Runnable scripts live in [`code/`](code/) (run from the repo root, offline-safe via `data/ecom.sqlite`).
+
+## Zero-setup environments
+
+- **Tier 0 (primary):** Posit Cloud project — 1-click RStudio in the browser (link above; clone this repo via New Project → From Git URL).
+- **Alternative:** GitHub Codespaces — click the badge above; the `.devcontainer` boots R 4.4.2 + Quarto + packages automatically.
+- **Local:** R (4.4+) + RSQLite + Quarto CLI 1.10.18+. See Chapter 1's DuckDB note for the analytical twin.
+
+## Develop
+
+```bash
+quarto preview                     # live HTML preview
+quarto render                      # full book (HTML + Typst PDF + ePub into docs/)
+Rscript scripts/verify.R           # run all code/*.R as regression check
 ```
 
-The PDF rename and sitemap copy are manual: Quarto slugs the whole-book PDF
-filename from the title (ignores `output-file`), and silently skips a root
-`sitemap.xml` resource (reserved name). Runnable code for each chapter lives
-in `code/` (run from the repo root, offline-safe via `data/`).
+CI renders HTML, Typst PDF, and ePub and deploys `docs/` via GitHub Pages. `master` is the production branch.
 
-Last verified: 2026-09-26 · R 4.5.2 · DBI · dbplyr 2.6.0 · RSQLite 2.4.6 · duckdb.
+## License
 
+CC BY-NC-SA 4.0.
