@@ -3,17 +3,21 @@ project:
   output-dir: docs
   resources:
     - "google02e424888b5e2def.html"
-    - "sitemap.xml"
     - "robots.txt"
-    - "cheatsheet/dbi-cheatsheet.pdf"
+    - "_redirects"
+    - "404.html"
 
 execute:
   warning: false
 
+quarto-required: ">=1.10.0"
+
+sitemap: true
+
 book:
   title: "R, Databases & SQL"
   author: "Aravind Hebbali"
-  date: today
+  date: last-modified
   description: "R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS."
   chapters:
     - index.qmd
@@ -23,22 +27,39 @@ book:
     - sql-basics.qmd
     - sql-advanced.qmd
     - joins.qmd
+    - cheatsheet.qmd
 
 website:
   site-url: https://rdbsql.rsquaredacademy.com
   repo-url: https://github.com/rsquaredacademy-education/rdbsql/
+  description: "R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS."
+  open-graph: true
+  twitter-card: true
+  navbar:
+    right:
+      - text: "GitHub"
+        href: https://github.com/rsquaredacademy-education/rdbsql/
 
 format:
   html:
-    theme: default
+    theme: cosmo
     css: style.css
     toc: true
+    toc-depth: 3
+    search: true
     code-copy: true
+    code-overflow: wrap
+    include-in-header: _ga_partial.html
   pdf:
     documentclass: book
     toc-depth: 3
-    # NOTE: quarto books slug the whole-book PDF filename from the title
-    # (ignores output-file here). After `quarto render --to pdf`, rename the
-    # generated `R,-Databases---SQL.pdf` to `databases-and-sql.pdf`.
-    # After `quarto render --to html`, copy `sitemap.xml` into `docs/`
-    # (reserved name quarto will not copy as a resource).
+    pdf-engine: typst
+    keep-typ: false
+    code-overflow: wrap
+    mainfont: "Libertinus Serif"
+    monofont: "DejaVu Sans Mono"
+    number-sections: true
+  epub:
+    toc-depth: 2
+    epub-chapter-level: 1
+    cover-image: img/rdbsql.png
