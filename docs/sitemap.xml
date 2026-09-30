@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://rdbsql.rsquaredacademy.com/index.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/about.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/dbi.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/dbplyr.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/sql-basics.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/sql-advanced.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/joins.html</loc></url>
+  <url><loc>https://rdbsql.rsquaredacademy.com/cheatsheet/dbi-cheatsheet.pdf</loc></url>
+</urlset>
