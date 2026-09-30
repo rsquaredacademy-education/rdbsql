@@ -581,11 +581,11 @@ $has.completed
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"select * from trial limit 5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   x y
-1 24 k
-2 28 l
-3  9 m
-4  3 n
-5 50 o</code></pre>
+1 51 k
+2  6 l
+3 95 m
+4 12 n
+5  4 o</code></pre>
 </div>
 </div>
 </section>
@@ -604,26 +604,26 @@ $has.completed
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbReadTable</span>(con, <span class="st">"trial"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    x y
-1  24 k
-2  28 l
-3   9 m
-4   3 n
-5  50 o
-6  38 p
-7  52 q
-8  20 r
-9  13 s
-10 70 t
-11 14 e
-12 44 f
-13 23 g
-14 97 h
-15  7 i
-16 50 j
-17 40 k
-18 73 l
-19 64 m
-20 55 n</code></pre>
+1  51 k
+2   6 l
+3  95 m
+4  12 n
+5   4 o
+6  36 p
+7  69 q
+8  26 r
+9  20 s
+10 68 t
+11 95 e
+12  8 f
+13 42 g
+14 73 h
+15 39 i
+16 87 j
+17 38 k
+18 55 l
+19 13 m
+20 54 n</code></pre>
 </div>
 </div>
 <p>We can also use <code>sqlAppendTable()</code> to append data to an existing table.</p>
