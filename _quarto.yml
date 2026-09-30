@@ -54,6 +54,7 @@ format:
     documentclass: book
     toc-depth: 3
     pdf-engine: typst
+    papersize: us-letter
     keep-typ: false
     code-overflow: wrap
     mainfont: "Libertinus Serif"

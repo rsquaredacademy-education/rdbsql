@@ -50,6 +50,7 @@ jobs:
           cp /tmp/stage-epub/*.epub docs/ 2>/dev/null || echo "No ePub staged (EPUB_FAILED=${EPUB_FAILED:-0})"
           sh scripts/post-render.sh
           cp google02e424888b5e2def.html robots.txt _redirects 404.html docs/ 2>/dev/null || true
+          rm -rf docs/docs
           test -f docs/sitemap.xml || { echo "sitemap.xml missing after assemble"; exit 1; }
           ls docs/
 
