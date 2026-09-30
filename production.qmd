@@ -1,0 +1,157 @@
+# Production R Patterns {#sec-production}
+
+So far every chapter used an in-memory SQLite database. That was deliberate:
+zero setup, everything reproducible. Real jobs look different — a Postgres
+server with credentials, concurrent writers, and tables far bigger than memory.
+
+The good news: almost everything transfers. `DBI` is a common interface, so
+`dbGetQuery()`, `dbWriteTable()`, and `dbDisconnect()` work the same everywhere.
+This appendix covers the six things that change when you leave SQLite.
+
+We will use the following R packages:
+
+- [DBI](https://dbi.r-dbi.org/)
+- [RSQLite](https://rsqlite.r-dbi.org/)
+
+Sections that need a live server are display-only (`eval=FALSE`) — read them,
+do not run them. Sections that run on SQLite execute normally.
+
+## Connection Strings
+
+Only the `dbConnect()` call changes per backend. Everything after it is
+identical DBI code:
+
+```{r pg-connect, eval=FALSE}
+# Postgres (production default for most R teams)
+con <- DBI::dbConnect(RPostgres::RPostgres(),
+  host = "db.internal", dbname = "analytics",
+  user = Sys.getenv("DB_USER"), password = Sys.getenv("DB_PASS"))
+
+# MariaDB / MySQL
+con <- DBI::dbConnect(RMariaDB::MariaDB(),
+  host = "db.internal", dbname = "analytics",
+  user = Sys.getenv("DB_USER"), password = Sys.getenv("DB_PASS"))
+
+# Anything with an ODBC driver (SQL Server, Oracle, Snowflake)
+con <- DBI::dbConnect(odbc::odbc(), dsn = "warehouse",
+  uid = Sys.getenv("DB_USER"), pwd = Sys.getenv("DB_PASS"))
+```
+
+For the full backend matrix (BigQuery, Snowflake, Oracle DSNs, enterprise
+security), see [Posit Databases using R](https://solutions.posit.co/connections/db/).
+This book stays backend-agnostic on purpose: learn the patterns here once,
+then look up one connection string.
+
+## Credentials: env vars + keyring
+
+Never paste passwords into scripts. Two rules, in order of preference:
+
+```{r creds, eval=FALSE}
+# 1. Environment variables (works everywhere: laptop, CI, Posit Connect)
+Sys.setenv(DB_USER = "analyst")  # once per session, never committed
+con <- DBI::dbConnect(RPostgres::RPostgres(), password = Sys.getenv("DB_PASS"))
+
+# 2. OS credential store for interactive work (macOS Keychain, Windows
+#    Credential Manager, Linux Secret Service)
+keyring::key_set("warehouse", "analyst")  # prompts once, stores securely
+pwd <- keyring::key_get("warehouse", "analyst")
+```
+
+If a password appears in a committed file, rotate it — editing history does
+not un-leak it.
+
+## Parameterized Queries
+
+Build SQL with placeholders, not `paste0()`. String-pasting user input into
+queries is how SQL injection happens (especially in Shiny apps). This section
+executes — placeholders work on SQLite too:
+
+```{r param-setup, echo=FALSE, message=FALSE}
+library(DBI)
+library(RSQLite)
+con <- dbConnect(RSQLite::SQLite(), ":memory:")
+web_path <- if (file.exists("data/web.csv")) "data/web.csv" else "https://raw.githubusercontent.com/rsquaredacademy/datasets/master/web.csv"
+ecom <- readr::read_csv(web_path, show_col_types = FALSE)
+dplyr::copy_to(con, ecom)
+```
+
+```{r sqlinterp}
+device <- "mobile"
+q <- DBI::sqlInterpolate(con,
+  "SELECT COUNT(*) AS n FROM ecom WHERE device = ?dev",
+  dev = device)
+q
+dbGetQuery(con, q)
+```
+
+`sqlInterpolate()` quotes and escapes `?dev` for the active backend, so the
+same code is safe on Postgres. For composing queries programmatically, the
+equivalent is `glue::glue_sql("... {dev}", .con = con)` — note `.con`, which
+tells `glue` which dialect to quote for.
+
+## Transactions
+
+When several writes must succeed or fail together (debit one account, credit
+another), wrap them in a transaction. `dbWithTransaction()` commits on success
+and rolls back automatically if any step errors:
+
+```{r txn}
+dbWriteTable(con, "trial", data.frame(id = 1:3, x = c("a", "b", "c")))
+dbWithTransaction(con, {
+  dbExecute(con, "INSERT INTO trial (id, x) VALUES (4, 'd')")
+  dbExecute(con, "DELETE FROM trial WHERE id = 1")
+})
+dbGetQuery(con, "SELECT * FROM trial ORDER BY id")
+```
+
+A failed transaction leaves the table untouched — verify by forcing an error
+inside the block and re-reading the table. Prefer `dbWithTransaction()` over
+manual `dbBegin()` / `dbCommit()` / `dbRollback()`: the manual trio leaks open
+transactions when an error interrupts your script.
+
+## Writing Data at Scale
+
+`copy_to()` (used throughout this book) is a demo convenience: it uploads an
+in-memory data frame with guessed column types. For real loads:
+
+```{r writes, eval=FALSE}
+# Declare types explicitly instead of letting the database guess
+DBI::dbCreateTable(con, "events",
+  fields = c(id = "INTEGER", ts = "TIMESTAMP", label = "TEXT"))
+
+# Control large uploads: overwrite once, append after
+DBI::dbWriteTable(con, "events", january, overwrite = TRUE)
+DBI::dbWriteTable(con, "events", february, append = TRUE)
+
+# Speed repeated lookups with an index (or a view for saved queries)
+DBI::dbExecute(con, "CREATE INDEX idx_events_ts ON events (ts)")
+```
+
+Rule of thumb: `copy_to()` for classroom demos, `dbWriteTable()` with
+`overwrite` / `append` for pipelines, `dbCreateTable()` + explicit types when
+the table must survive longer than your session.
+
+## Connections in Shiny: pool
+
+A Shiny app that calls `dbConnect()` per session exhausts the database under
+load and leaks idle connections. The [pool](https://rstudio.github.io/pool/)
+package checks connections out per reactive flush and returns them after:
+
+```{r pool, eval=FALSE}
+pool <- pool::dbPool(RPostgres::RPostgres(), dbname = "analytics",
+  host = "db.internal", user = Sys.getenv("DB_USER"))
+# use pool exactly like con, then on app stop:
+pool::poolClose(pool)
+```
+
+If you take one thing from this appendix into production Shiny work, take
+`pool`.
+
+```{r prod-close}
+dbDisconnect(con)
+```
+
+Further reading: `vignette("DBI-advanced")` (transactions, quoting, bulk
+operations) and the [DBI specification](https://dbi.r-dbi.org/) for backend
+authors. Runnable code for this appendix lives in `code/ch6-production.R`
+(server sections included as comments — uncomment with your credentials).

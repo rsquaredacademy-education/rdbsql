@@ -1,0 +1,92 @@
+# DuckDB + Parquet {#sec-duckdb}
+
+[SQLite](#sec-dbi) was the right default for learning: zero setup, same DBI
+code everywhere. [DuckDB](https://duckdb.org/) is its analytical twin — an
+in-process engine (no server, like SQLite) built for fast aggregate queries
+over large files. The pitch for R users: the DBI code you already know runs
+unchanged, and you can query Parquet or CSV files directly without loading
+them into memory.
+
+> All chunks in this appendix are display-only (`eval=FALSE`): they need
+> `install.packages("duckdb")` once, which the book's automated builds skip.
+> Run them locally — every line works as written. Runnable code lives in
+> `code/ch7-duckdb.R` (skips gracefully when `duckdb` is not installed).
+
+## Connect: one Line Changes
+
+```{r duck-connect, eval=FALSE}
+# install.packages("duckdb")  # once; high-speed analytical engine
+con_duck <- DBI::dbConnect(duckdb::duckdb())
+DBI::dbWriteTable(con_duck, "ecom", ecom)
+DBI::dbGetQuery(con_duck, "SELECT referrer, AVG(duration) FROM ecom GROUP BY referrer")
+```
+
+Compare with Chapter 1: `RSQLite::SQLite()` became `duckdb::duckdb()`, and
+nothing else moved. `dbListTables()`, `dbGetQuery()`, `dbWriteTable()`,
+`dbDisconnect()` — the whole DBI vocabulary carries over, which is exactly
+why the book taught SQLite first.
+
+## Query Files Without Loading Them
+
+DuckDB's signature trick: `FROM 'file'` reads Parquet or CSV straight off
+disk, pushing filters and aggregates down so R never holds the full data:
+
+```{r duck-parquet, eval=FALSE}
+# Aggregate a 2 GB Parquet file from ~50 MB of R memory
+DBI::dbGetQuery(con_duck, "
+  SELECT country, SUM(amount) AS revenue
+  FROM 'orders.parquet'
+  WHERE year = 2025
+  GROUP BY country
+  ORDER BY revenue DESC
+  LIMIT 10")
+
+# Same for CSVs — handy for the raw logs before they become Parquet
+DBI::dbGetQuery(con_duck, "
+  SELECT COUNT(*) AS n FROM read_csv('logs/*.csv', header = true)")
+```
+
+Write results back out the same way (`COPY ... TO 'out.parquet'`), and you
+have a full extract-transform pipeline with no database server and no RAM
+anxiety. Pair with [Arrow](https://arrow.apache.org/docs/r/) (`arrow::read_parquet()`,
+`arrow::write_parquet()`) when you want the files in R as well as SQL.
+
+## dbplyr on DuckDB
+
+Lazy evaluation works exactly as in Chapter 2 — `tbl()`, verbs,
+`show_query()`, `collect()` — with DuckDB as the execution engine:
+
+```{r duck-dbplyr, eval=FALSE}
+e <- dplyr::tbl(con_duck, "ecom")
+q <- e |>
+  dplyr::filter(duration > 300) |>
+  dplyr::group_by(device) |>
+  dplyr::summarise(avg = mean(duration))
+dplyr::show_query(q)  # DuckDB SQL this time, same dplyr code
+dplyr::collect(q)
+```
+
+Two habits carry over from Chapter 2: use `show_query()` to check what
+dbplyr generates (window functions and custom SQL still deserve hand-written
+queries via `dplyr::sql()`), and prefer `dplyr::compute()` over `collect()`
+for intermediate results too big for memory — `compute()` materializes them
+as a DuckDB table instead of an R tibble.
+
+```{r duck-close, eval=FALSE}
+DBI::dbDisconnect(con_duck)
+```
+
+## SQLite or DuckDB?
+
+| | SQLite (Chapters 1–5) | DuckDB (this appendix) |
+|---|---|---|
+| Shape | Row-oriented, transactional | Column-oriented, analytical |
+| Best at | Lookups, inserts, app state | Aggregates, scans, Parquet |
+| Files | `.sqlite` | `.parquet`, `.csv`, in-memory |
+| Scale | Fits comfortably | Bigger than RAM, via pushdown |
+| R path | `RSQLite::SQLite()` | `duckdb::duckdb()` |
+
+Default to SQLite for application data and DuckDB for analysis. When your
+analysis outgrows DuckDB on one machine, the next step up is
+[R4DS Ch. 21](https://r4ds.hadley.nz/databases) — the funnel this book was
+built to feed.

@@ -28,6 +28,9 @@ book:
     - sql-advanced.qmd
     - joins.qmd
     - cheatsheet.qmd
+  appendices:
+    - production.qmd
+    - duckdb.qmd
 
 website:
   site-url: https://rdbsql.rsquaredacademy.com

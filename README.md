@@ -19,6 +19,8 @@
 | 4 | SQL Advanced | `SUM`/`AVG`/`MIN`/`MAX`, `AS` aliases, `ORDER BY`, `GROUP BY` |
 | 5 | JOINs | `INNER JOIN`, `LEFT JOIN`, SQLite `RIGHT`/`FULL` trap, `inner_join`/`left_join`/`semi_join`/`anti_join` |
 | A | DBI Cheat Sheet | One-page command reference (CC BY-NC-SA 4.0) |
+| B | Production R Patterns | Connection strings, credentials, parameterized queries, transactions, `pool` |
+| C | DuckDB + Parquet | Same DBI code at analytical speed, query files without loading them |
 
 Each chapter ends with 3 hands-on exercises. Worked solutions live in [`solutions/`](solutions/) (one file per chapter, kept out of the rendered book so you can attempt first). Runnable scripts live in [`code/`](code/) (run from the repo root, offline-safe via `data/ecom.sqlite`).
 
