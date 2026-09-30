@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-968ddd4980072ae063619731fc79ef1d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-c3de09f10dd778e0b4268b7d9c3359d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -111,6 +111,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<!-- Google tag (gtag.js) - placeholder, replace G-PLACEHOLDER with live GA4 ID -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PLACEHOLDER', { 'allow_google_signals': false, 'allow_ad_personalization_signals': false });
+</script>
 
 
 <link rel="stylesheet" href="style.css">
@@ -190,6 +198,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./joins.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">JOINs</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cheatsheet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span></a>
   </div>
 </li>
     </ul>
@@ -976,16 +990,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>What is the longest <code>duration</code> among visits that made a purchase (<code>purchase = 1</code>)?</li>
 <li>Among <code>mobile</code> visits only, count visits by <code>country</code> and show the top 5. Which country is first?</li>
 </ol>
-<details>
-<summary>
-Solutions
-</summary>
-<ol type="1">
-<li><p><code>SELECT referrer, AVG(n_pages) AS avg_pages FROM ecom GROUP BY referrer ORDER BY avg_pages DESC</code> — direct (~6.38) tops the list.</p></li>
-<li><p><code>SELECT MAX(duration) FROM ecom WHERE purchase = 1</code> — 580.</p></li>
-<li><p><code>SELECT country, COUNT(*) AS visits FROM ecom WHERE device = 'mobile' GROUP BY country ORDER BY visits DESC LIMIT 5</code> — China (53) is first.</p></li>
-</ol>
-</details>
+<p>Worked solutions in <code>solutions/sql-advanced.md</code> (attempt first).</p>
 
 
 </section>

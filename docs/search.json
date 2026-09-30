@@ -94,7 +94,7 @@
     "href": "dbi.html#create-table",
     "title": "1  DBI",
     "section": "1.5 Create Table",
-    "text": "1.5 Create Table\nSo far we have explored querying data from an existing table. Now, let us turn our attention to creating new tables in the database.\n\n1.5.0.1 Introduction\nTo create a new table, use dbWriteTable(). It takes the following 3 arguments:\n\nconnection name\nname of the new table\ndata for the new table\n\n\nx &lt;- 1:10\ny &lt;- letters[1:10]\ntrial &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial)\n\nLet us check if the new table has been created.\n\ndbListTables(con)\n\n[1] \"ecom\"         \"sqlite_stat1\" \"sqlite_stat4\" \"trial\"       \n\ndbExistsTable(con, \"trial\")\n\n[1] TRUE\n\n\nLet us query data from the new table.\n\ndbGetQuery(con, \"select * from trial limit 5\")\n\n  x y\n1 1 a\n2 2 b\n3 3 c\n4 4 d\n5 5 e\n\n\n\n\n1.5.0.2 Overwrite Table\nIn some cases, you may want to overwrite the data in an existing table. Use the overwrite argument in dbWriteTable() and set it to TRUE.\n\nx &lt;- sample(100, 10)\ny &lt;- letters[11:20]\ntrial2 &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial2, overwrite = TRUE)\n\nLet us see if the trial table has been overwritten.\n\ndbGetQuery(con, \"select * from trial limit 5\")\n\n   x y\n1 86 k\n2 85 l\n3 89 m\n4 25 n\n5 83 o",
+    "text": "1.5 Create Table\nSo far we have explored querying data from an existing table. Now, let us turn our attention to creating new tables in the database.\n\n1.5.0.1 Introduction\nTo create a new table, use dbWriteTable(). It takes the following 3 arguments:\n\nconnection name\nname of the new table\ndata for the new table\n\n\nx &lt;- 1:10\ny &lt;- letters[1:10]\ntrial &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial)\n\nLet us check if the new table has been created.\n\ndbListTables(con)\n\n[1] \"ecom\"         \"sqlite_stat1\" \"sqlite_stat4\" \"trial\"       \n\ndbExistsTable(con, \"trial\")\n\n[1] TRUE\n\n\nLet us query data from the new table.\n\ndbGetQuery(con, \"select * from trial limit 5\")\n\n  x y\n1 1 a\n2 2 b\n3 3 c\n4 4 d\n5 5 e\n\n\n\n\n1.5.0.2 Overwrite Table\nIn some cases, you may want to overwrite the data in an existing table. Use the overwrite argument in dbWriteTable() and set it to TRUE.\n\nx &lt;- sample(100, 10)\ny &lt;- letters[11:20]\ntrial2 &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial2, overwrite = TRUE)\n\nLet us see if the trial table has been overwritten.\n\ndbGetQuery(con, \"select * from trial limit 5\")\n\n   x y\n1 72 k\n2  7 l\n3 64 m\n4 62 n\n5 90 o",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
     ]
@@ -104,7 +104,7 @@
     "href": "dbi.html#append-data",
     "title": "1  DBI",
     "section": "1.6 Append Data",
-    "text": "1.6 Append Data\nYou can append data to an existing table by setting the append argument in dbWriteTable() to TRUE.\n\nx &lt;- sample(100, 10)\ny &lt;- letters[5:14]\ntrial3 &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial3, append = TRUE)\n\nLet us quickly check if the new data has been appended to the trial table.\n\ndbReadTable(con, \"trial\")\n\n    x y\n1  86 k\n2  85 l\n3  89 m\n4  25 n\n5  83 o\n6  20 p\n7  35 q\n8  55 r\n9  67 s\n10 31 t\n11 42 e\n12 21 f\n13 10 g\n14 16 h\n15 92 i\n16 93 j\n17 26 k\n18 53 l\n19 32 m\n20 50 n\n\n\nWe can also use sqlAppendTable() to append data to an existing table.\n\nsqlAppendTable(con, \"ecom\", head(ecom))\n\n&lt;SQL&gt; INSERT INTO `ecom`\n  (`referrer`, `device`, `bouncers`, `n_visit`, `n_pages`, `duration`)\nVALUES\n  ('google', 'laptop', TRUE, 10, 1, 693),\n  ('yahoo', 'tablet', TRUE, 9, 1, 459),\n  ('direct', 'laptop', TRUE, 0, 1, 996),\n  ('bing', 'tablet', FALSE, 3, 18, 468),\n  ('yahoo', 'mobile', TRUE, 9, 1, 955),\n  ('yahoo', 'laptop', FALSE, 5, 5, 135)",
+    "text": "1.6 Append Data\nYou can append data to an existing table by setting the append argument in dbWriteTable() to TRUE.\n\nx &lt;- sample(100, 10)\ny &lt;- letters[5:14]\ntrial3 &lt;- tibble::tibble(x, y)\ndbWriteTable(con, \"trial\", trial3, append = TRUE)\n\nLet us quickly check if the new data has been appended to the trial table.\n\ndbReadTable(con, \"trial\")\n\n    x y\n1  72 k\n2   7 l\n3  64 m\n4  62 n\n5  90 o\n6  61 p\n7  23 q\n8  30 r\n9  12 s\n10 83 t\n11 42 e\n12 99 f\n13 27 g\n14 90 h\n15 71 i\n16 82 j\n17 12 k\n18 28 l\n19 23 m\n20 68 n\n\n\nWe can also use sqlAppendTable() to append data to an existing table.\n\nsqlAppendTable(con, \"ecom\", head(ecom))\n\n&lt;SQL&gt; INSERT INTO `ecom`\n  (`referrer`, `device`, `bouncers`, `n_visit`, `n_pages`, `duration`)\nVALUES\n  ('google', 'laptop', TRUE, 10, 1, 693),\n  ('yahoo', 'tablet', TRUE, 9, 1, 459),\n  ('direct', 'laptop', TRUE, 0, 1, 996),\n  ('bing', 'tablet', FALSE, 3, 18, 468),\n  ('yahoo', 'mobile', TRUE, 9, 1, 955),\n  ('yahoo', 'laptop', FALSE, 5, 5, 135)",
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>DBI</span>"
     ]
@@ -344,7 +344,7 @@
     "href": "sql-basics.html#exercises",
     "title": "3  SQL Basics",
     "section": "3.12 Exercises",
-    "text": "3.12 Exercises\n\nList the referrer and device of 5 visits with more than 8 page views (n_visit &gt; 8), ordered by longest duration first.\nHow many rows are from tablet devices in countries starting with P?\nWhich distinct device values appear among bouncers (bouncers = 1)?\n\n\n\nSolutions\n\n\nSELECT referrer, device FROM ecom WHERE n_visit &gt; 8 ORDER BY duration DESC LIMIT 5 — top row: google / mobile.\nSELECT COUNT(*) FROM ecom WHERE device = 'tablet' AND country LIKE 'P%' — 51 rows.\nSELECT DISTINCT device FROM ecom WHERE bouncers = 1 — laptop, tablet, mobile (all three).",
+    "text": "3.12 Exercises\n\nList the referrer and device of 5 visits with more than 8 page views (n_visit &gt; 8), ordered by longest duration first.\nHow many rows are from tablet devices in countries starting with P?\nWhich distinct device values appear among bouncers (bouncers = 1)?\n\nWorked solutions in solutions/sql-basics.md (attempt first).",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>SQL Basics</span>"
     ]
@@ -424,7 +424,7 @@
     "href": "sql-advanced.html#exercises",
     "title": "4  SQL Advanced",
     "section": "4.7 Exercises",
-    "text": "4.7 Exercises\n\nCompute the average pages per visit (AVG(n_pages)) for each referrer, ordered highest average first. Which referrer tops the list?\nWhat is the longest duration among visits that made a purchase (purchase = 1)?\nAmong mobile visits only, count visits by country and show the top 5. Which country is first?\n\n\n\nSolutions\n\n\nSELECT referrer, AVG(n_pages) AS avg_pages FROM ecom GROUP BY referrer ORDER BY avg_pages DESC — direct (~6.38) tops the list.\nSELECT MAX(duration) FROM ecom WHERE purchase = 1 — 580.\nSELECT country, COUNT(*) AS visits FROM ecom WHERE device = 'mobile' GROUP BY country ORDER BY visits DESC LIMIT 5 — China (53) is first.",
+    "text": "4.7 Exercises\n\nCompute the average pages per visit (AVG(n_pages)) for each referrer, ordered highest average first. Which referrer tops the list?\nWhat is the longest duration among visits that made a purchase (purchase = 1)?\nAmong mobile visits only, count visits by country and show the top 5. Which country is first?\n\nWorked solutions in solutions/sql-advanced.md (attempt first).",
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>SQL Advanced</span>"
     ]
@@ -514,9 +514,59 @@
     "href": "joins.html#exercises",
     "title": "5  JOINs",
     "section": "5.8 Exercises",
-    "text": "5.8 Exercises\n\nList the customer_id and country of customers who placed no orders. Write it both as a LEFT JOIN ... IS NULL query and as an anti_join().\nCompute total order amount per customer (highest first) with an INNER JOIN + GROUP BY. Which customer spent the most?\nFind the orphan order: which order_id points at a non-existent customer?\n\n\n\nSolutions\n\n\nSELECT c.customer_id, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL — customers 4, 16, 17, 18, 19, 20. Same result: anti_join(customers, orders, by = \"customer_id\").\nSELECT c.customer_id, c.country, SUM(o.amount) AS total FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.country ORDER BY total DESC — customer 3 (Germany, 1015.82).\nSELECT o.order_id, o.customer_id FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL — order 120 (customer 99).",
+    "text": "5.8 Exercises\n\nList the customer_id and country of customers who placed no orders. Write it both as a LEFT JOIN ... IS NULL query and as an anti_join().\nCompute total order amount per customer (highest first) with an INNER JOIN + GROUP BY. Which customer spent the most?\nFind the orphan order: which order_id points at a non-existent customer?\n\nWorked solutions in solutions/joins.md (attempt first).",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>JOINs</span>"
+    ]
+  },
+  {
+    "objectID": "cheatsheet.html",
+    "href": "cheatsheet.html",
+    "title": "6  DBI Cheat Sheet",
+    "section": "",
+    "text": "6.1 Connect, query, disconnect\nOne-page reference: connect, query, disconnect. Printable PDF companion to this book (CC BY-NC-SA 4.0).",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>DBI Cheat Sheet</span>"
+    ]
+  },
+  {
+    "objectID": "cheatsheet.html#connect-query-disconnect",
+    "href": "cheatsheet.html#connect-query-disconnect",
+    "title": "6  DBI Cheat Sheet",
+    "section": "",
+    "text": "library(DBI)\ncon &lt;- dbConnect(RSQLite::SQLite(), \":memory:\")  # or duckdb::duckdb()\ndbListTables(con)                                # what is in the database?\ndbReadTable(con, \"ecom\")                         # whole table (small only!)\ndbGetQuery(con, \"SELECT * FROM ecom LIMIT 10\")   # SQL, first rows\nres &lt;- dbSendQuery(con, \"SELECT * FROM ecom\")    # big tables: fetch in batches\nx &lt;- dbFetch(res, n = 100)\ndbClearResult(res)                               # always clear when done\ndbDisconnect(con)                                # always disconnect",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>DBI Cheat Sheet</span>"
+    ]
+  },
+  {
+    "objectID": "cheatsheet.html#write-data",
+    "href": "cheatsheet.html#write-data",
+    "title": "6  DBI Cheat Sheet",
+    "section": "6.2 Write data",
+    "text": "6.2 Write data\ndbWriteTable(con, \"trial\", df)                     # create (overwrite / append args)\ndbExecute(con, \"INSERT INTO trial (x) VALUES (1)\") # statements, no cleanup needed\ndbRemoveTable(con, \"trial\")                        # delete table",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>DBI Cheat Sheet</span>"
+    ]
+  },
+  {
+    "objectID": "cheatsheet.html#inspect-a-query",
+    "href": "cheatsheet.html#inspect-a-query",
+    "title": "6  DBI Cheat Sheet",
+    "section": "6.3 Inspect a query",
+    "text": "6.3 Inspect a query\ndbHasCompleted() dbGetStatement() dbGetRowCount() dbGetRowsAffected() dbColumnInfo() — status, SQL, counts, column types of a dbSendQuery() result.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>DBI Cheat Sheet</span>"
+    ]
+  },
+  {
+    "objectID": "cheatsheet.html#dbplyr-in-4-verbs",
+    "href": "cheatsheet.html#dbplyr-in-4-verbs",
+    "title": "6  DBI Cheat Sheet",
+    "section": "6.4 dbplyr in 4 verbs",
+    "text": "6.4 dbplyr in 4 verbs\ne &lt;- dplyr::tbl(con, \"ecom\")        # lazy reference, pulls nothing\ne |&gt; dplyr::filter(duration &gt; 300)  # WHERE\ne |&gt; dplyr::group_by(device) |&gt;     # GROUP BY + aggregates\n  dplyr::summarise(avg = mean(duration))\ndplyr::show_query(q)                # see the generated SQL\ndplyr::collect(q)                   # pull results into a tibble\ninner_join(a, b) / left_join(a, b)  # JOINs; semi/anti_join filter",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>DBI Cheat Sheet</span>"
     ]
   }
 ]

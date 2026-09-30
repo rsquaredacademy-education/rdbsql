@@ -72,6 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./cheatsheet.html" rel="next">
 <link href="./sql-advanced.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -82,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-968ddd4980072ae063619731fc79ef1d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-c3de09f10dd778e0b4268b7d9c3359d4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -110,6 +111,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<!-- Google tag (gtag.js) - placeholder, replace G-PLACEHOLDER with live GA4 ID -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-PLACEHOLDER"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PLACEHOLDER', { 'allow_google_signals': false, 'allow_ad_personalization_signals': false });
+</script>
 
 
 <link rel="stylesheet" href="style.css">
@@ -189,6 +198,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="sidebar-item-container"> 
   <a href="./joins.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">JOINs</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cheatsheet.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span></a>
   </div>
 </li>
     </ul>
@@ -623,16 +638,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Compute total order <code>amount</code> per customer (highest first) with an <code>INNER JOIN</code> + <code>GROUP BY</code>. Which customer spent the most?</li>
 <li>Find the orphan order: which <code>order_id</code> points at a non-existent customer?</li>
 </ol>
-<details>
-<summary>
-Solutions
-</summary>
-<ol type="1">
-<li><p><code>SELECT c.customer_id, c.country FROM customers c LEFT JOIN orders o ON c.customer_id = o.customer_id WHERE o.order_id IS NULL</code> — customers 4, 16, 17, 18, 19, 20. Same result: <code>anti_join(customers, orders, by = "customer_id")</code>.</p></li>
-<li><p><code>SELECT c.customer_id, c.country, SUM(o.amount) AS total FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id GROUP BY c.customer_id, c.country ORDER BY total DESC</code> — customer 3 (Germany, 1015.82).</p></li>
-<li><p><code>SELECT o.order_id, o.customer_id FROM orders o LEFT JOIN customers c ON o.customer_id = c.customer_id WHERE c.customer_id IS NULL</code> — order 120 (customer 99).</p></li>
-</ol>
-</details>
+<p>Worked solutions in <code>solutions/joins.md</code> (attempt first).</p>
 
 
 </section>
@@ -1045,6 +1051,9 @@ Solutions
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./cheatsheet.html" class="pagination-link" aria-label="DBI Cheat Sheet">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
