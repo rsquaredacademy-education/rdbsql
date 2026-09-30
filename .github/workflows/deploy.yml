@@ -1,0 +1,68 @@
+name: Build & Deploy to GitHub Pages (docs/)
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install fonts
+        run: sudo apt-get update && sudo apt-get install -y fonts-linuxlibertine fonts-dejavu-core
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4.2"
+
+      - name: Install R packages
+        run: R -e 'install.packages(c("DBI", "RSQLite", "dbplyr", "duckdb", "knitr", "rmarkdown"), repos = "https://packagemanager.posit.co/cran/__linux__/jammy/latest")'
+
+      - name: Setup Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: "1.10.18"
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
+
+      - name: Render HTML
+        run: quarto render --to html --output-dir /tmp/stage-html
+
+      - name: Render PDF
+        run: quarto render --to pdf --output-dir /tmp/stage-pdf || echo "PDF_FAILED=1" >> $GITHUB_ENV
+
+      - name: Render ePub
+        run: quarto render --to epub --output-dir /tmp/stage-epub || echo "EPUB_FAILED=1" >> $GITHUB_ENV
+
+      - name: Assemble docs
+        run: |
+          rm -rf docs && mkdir -p docs
+          cp -r /tmp/stage-html/. docs/
+          cp /tmp/stage-pdf/*.pdf docs/ 2>/dev/null || echo "No PDF staged (PDF_FAILED=${PDF_FAILED:-0})"
+          cp /tmp/stage-epub/*.epub docs/ 2>/dev/null || echo "No ePub staged (EPUB_FAILED=${EPUB_FAILED:-0})"
+          sh scripts/post-render.sh
+          cp google02e424888b5e2def.html robots.txt _redirects 404.html docs/ 2>/dev/null || true
+          test -f docs/sitemap.xml || { echo "sitemap.xml missing after assemble"; exit 1; }
+          ls docs/
+
+      - name: Verify redirects
+        run: bash scripts/test-redirects.sh docs
+
+      - name: Link check (advisory)
+        uses: lycheeverse/lychee-action@v2
+        continue-on-error: true
+        with:
+          args: "docs/**/*.html --root-dir docs --exclude 'mailto:*'"
+
+      - name: Commit docs
+        if: github.event_name != 'pull_request'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: rebuild site via ci"
+          file_pattern: docs/
