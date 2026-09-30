@@ -6,7 +6,7 @@
 
 📖 **Read the book:** https://rdbsql.rsquaredacademy.com
 
-[![Launch in Posit Cloud](https://img.shields.io/badge/Posit_Cloud-Launch-blue)](https://posit.cloud/content/PLACEHOLDER_RSQUARED_RDBSQL)
+[![Launch in Posit Cloud](https://img.shields.io/badge/Posit_Cloud-Launch-blue)](https://posit.cloud/content/430439)
 [![Open in Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/rsquaredacademy-education/rdbsql)
 
 ## Syllabus
