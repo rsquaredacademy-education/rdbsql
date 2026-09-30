@@ -251,14 +251,4 @@ dbDisconnect(con)
 2. How many rows are from `tablet` devices in countries starting with `P`?
 3. Which distinct `device` values appear among bouncers (`bouncers = 1`)?
 
-::: {.content-visible when-format="html"}
-<details><summary>Solutions</summary>
-
-1. `SELECT referrer, device FROM ecom WHERE n_visit > 8 ORDER BY duration DESC LIMIT 5` — top row: google / mobile.
-
-2. `SELECT COUNT(*) FROM ecom WHERE device = 'tablet' AND country LIKE 'P%'` — 51 rows.
-
-3. `SELECT DISTINCT device FROM ecom WHERE bouncers = 1` — laptop, tablet, mobile (all three).
-
-</details>
-:::
+Worked solutions in `solutions/sql-basics.md` (attempt first).
