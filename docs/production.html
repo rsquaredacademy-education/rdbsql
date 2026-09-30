@@ -8,7 +8,7 @@
 
 <meta name="description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS.">
 
-<title>6&nbsp; DBI Cheat Sheet – R, Databases &amp; SQL</title>
+<title>Appendix A — Production R Patterns – R, Databases &amp; SQL</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -72,8 +72,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./production.html" rel="next">
-<link href="./joins.html" rel="prev">
+<link href="./duckdb.html" rel="next">
+<link href="./cheatsheet.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -134,7 +134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cheatsheet.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./production.html">Appendices</a></li><li class="breadcrumb-item"><a href="./production.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Production R Patterns</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -203,7 +203,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./cheatsheet.html" class="sidebar-item-text sidebar-link active">
+  <a href="./cheatsheet.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span></a>
   </div>
 </li>
@@ -218,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./production.html" class="sidebar-item-text sidebar-link">
+  <a href="./production.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Production R Patterns</span></span></a>
   </div>
 </li>
@@ -240,19 +240,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#connect-query-disconnect" id="toc-connect-query-disconnect" class="nav-link active" data-scroll-target="#connect-query-disconnect"><span class="header-section-number">6.1</span> Connect, query, disconnect</a></li>
-  <li><a href="#write-data" id="toc-write-data" class="nav-link" data-scroll-target="#write-data"><span class="header-section-number">6.2</span> Write data</a></li>
-  <li><a href="#inspect-a-query" id="toc-inspect-a-query" class="nav-link" data-scroll-target="#inspect-a-query"><span class="header-section-number">6.3</span> Inspect a query</a></li>
-  <li><a href="#dbplyr-in-4-verbs" id="toc-dbplyr-in-4-verbs" class="nav-link" data-scroll-target="#dbplyr-in-4-verbs"><span class="header-section-number">6.4</span> dbplyr in 4 verbs</a></li>
+  <li><a href="#connection-strings" id="toc-connection-strings" class="nav-link active" data-scroll-target="#connection-strings"><span class="header-section-number">A.1</span> Connection Strings</a></li>
+  <li><a href="#credentials-env-vars-keyring" id="toc-credentials-env-vars-keyring" class="nav-link" data-scroll-target="#credentials-env-vars-keyring"><span class="header-section-number">A.2</span> Credentials: env vars + keyring</a></li>
+  <li><a href="#parameterized-queries" id="toc-parameterized-queries" class="nav-link" data-scroll-target="#parameterized-queries"><span class="header-section-number">A.3</span> Parameterized Queries</a></li>
+  <li><a href="#transactions" id="toc-transactions" class="nav-link" data-scroll-target="#transactions"><span class="header-section-number">A.4</span> Transactions</a></li>
+  <li><a href="#writing-data-at-scale" id="toc-writing-data-at-scale" class="nav-link" data-scroll-target="#writing-data-at-scale"><span class="header-section-number">A.5</span> Writing Data at Scale</a></li>
+  <li><a href="#connections-in-shiny-pool" id="toc-connections-in-shiny-pool" class="nav-link" data-scroll-target="#connections-in-shiny-pool"><span class="header-section-number">A.6</span> Connections in Shiny: pool</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./production.html">Appendices</a></li><li class="breadcrumb-item"><a href="./production.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Production R Patterns</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-cheatsheet" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span></h1>
+<h1 class="title"><span id="sec-production" class="quarto-section-identifier">Appendix A — Production R Patterns</span></h1>
 </div>
 
 
@@ -269,38 +271,122 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>One-page reference: connect, query, disconnect. Printable PDF companion to this book (CC BY-NC-SA 4.0).</p>
-<section id="connect-query-disconnect" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="connect-query-disconnect"><span class="header-section-number">6.1</span> Connect, query, disconnect</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="st">":memory:"</span>)  <span class="co"># or duckdb::duckdb()</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListTables</span>(con)                                <span class="co"># what is in the database?</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dbReadTable</span>(con, <span class="st">"ecom"</span>)                         <span class="co"># whole table (small only!)</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"SELECT * FROM ecom LIMIT 10"</span>)   <span class="co"># SQL, first rows</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">dbSendQuery</span>(con, <span class="st">"SELECT * FROM ecom"</span>)    <span class="co"># big tables: fetch in batches</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">dbFetch</span>(res, <span class="at">n =</span> <span class="dv">100</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">dbClearResult</span>(res)                               <span class="co"># always clear when done</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)                                <span class="co"># always disconnect</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>So far every chapter used an in-memory SQLite database. That was deliberate: zero setup, everything reproducible. Real jobs look different — a Postgres server with credentials, concurrent writers, and tables far bigger than memory.</p>
+<p>The good news: almost everything transfers. <code>DBI</code> is a common interface, so <code>dbGetQuery()</code>, <code>dbWriteTable()</code>, and <code>dbDisconnect()</code> work the same everywhere. This appendix covers the six things that change when you leave SQLite.</p>
+<p>We will use the following R packages:</p>
+<ul>
+<li><a href="https://dbi.r-dbi.org/">DBI</a></li>
+<li><a href="https://rsqlite.r-dbi.org/">RSQLite</a></li>
+</ul>
+<p>Sections that need a live server are display-only (<code>eval=FALSE</code>) — read them, do not run them. Sections that run on SQLite execute normally.</p>
+<section id="connection-strings" class="level2" data-number="A.1">
+<h2 data-number="A.1" class="anchored" data-anchor-id="connection-strings"><span class="header-section-number">A.1</span> Connection Strings</h2>
+<p>Only the <code>dbConnect()</code> call changes per backend. Everything after it is identical DBI code:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Postgres (production default for most R teams)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">RPostgres</span>(),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">host =</span> <span class="st">"db.internal"</span>, <span class="at">dbname =</span> <span class="st">"analytics"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">user =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_USER"</span>), <span class="at">password =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PASS"</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># MariaDB / MySQL</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RMariaDB<span class="sc">::</span><span class="fu">MariaDB</span>(),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">host =</span> <span class="st">"db.internal"</span>, <span class="at">dbname =</span> <span class="st">"analytics"</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">user =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_USER"</span>), <span class="at">password =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PASS"</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Anything with an ODBC driver (SQL Server, Oracle, Snowflake)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(odbc<span class="sc">::</span><span class="fu">odbc</span>(), <span class="at">dsn =</span> <span class="st">"warehouse"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">uid =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_USER"</span>), <span class="at">pwd =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PASS"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>For the full backend matrix (BigQuery, Snowflake, Oracle DSNs, enterprise security), see <a href="https://solutions.posit.co/connections/db/">Posit Databases using R</a>. This book stays backend-agnostic on purpose: learn the patterns here once, then look up one connection string.</p>
 </section>
-<section id="write-data" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="write-data"><span class="header-section-number">6.2</span> Write data</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"trial"</span>, df)                     <span class="co"># create (overwrite / append args)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSERT INTO trial (x) VALUES (1)"</span>) <span class="co"># statements, no cleanup needed</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dbRemoveTable</span>(con, <span class="st">"trial"</span>)                        <span class="co"># delete table</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="credentials-env-vars-keyring" class="level2" data-number="A.2">
+<h2 data-number="A.2" class="anchored" data-anchor-id="credentials-env-vars-keyring"><span class="header-section-number">A.2</span> Credentials: env vars + keyring</h2>
+<p>Never paste passwords into scripts. Two rules, in order of preference:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Environment variables (works everywhere: laptop, CI, Posit Connect)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">DB_USER =</span> <span class="st">"analyst"</span>)  <span class="co"># once per session, never committed</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(RPostgres<span class="sc">::</span><span class="fu">RPostgres</span>(), <span class="at">password =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_PASS"</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. OS credential store for interactive work (macOS Keychain, Windows</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    Credential Manager, Linux Secret Service)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>keyring<span class="sc">::</span><span class="fu">key_set</span>(<span class="st">"warehouse"</span>, <span class="st">"analyst"</span>)  <span class="co"># prompts once, stores securely</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>pwd <span class="ot">&lt;-</span> keyring<span class="sc">::</span><span class="fu">key_get</span>(<span class="st">"warehouse"</span>, <span class="st">"analyst"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If a password appears in a committed file, rotate it — editing history does not un-leak it.</p>
 </section>
-<section id="inspect-a-query" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="inspect-a-query"><span class="header-section-number">6.3</span> Inspect a query</h2>
-<p><code>dbHasCompleted()</code> <code>dbGetStatement()</code> <code>dbGetRowCount()</code> <code>dbGetRowsAffected()</code> <code>dbColumnInfo()</code> — status, SQL, counts, column types of a <code>dbSendQuery()</code> result.</p>
+<section id="parameterized-queries" class="level2" data-number="A.3">
+<h2 data-number="A.3" class="anchored" data-anchor-id="parameterized-queries"><span class="header-section-number">A.3</span> Parameterized Queries</h2>
+<p>Build SQL with placeholders, not <code>paste0()</code>. String-pasting user input into queries is how SQL injection happens (especially in Shiny apps). This section executes — placeholders work on SQLite too:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>device <span class="ot">&lt;-</span> <span class="st">"mobile"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">sqlInterpolate</span>(con,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SELECT COUNT(*) AS n FROM ecom WHERE device = ?dev"</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dev =</span> device)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>q</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;SQL&gt; SELECT COUNT(*) AS n FROM ecom WHERE device = 'mobile'</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, q)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    n
+1 344</code></pre>
+</div>
+</div>
+<p><code>sqlInterpolate()</code> quotes and escapes <code>?dev</code> for the active backend, so the same code is safe on Postgres. For composing queries programmatically, the equivalent is <code>glue::glue_sql("... {dev}", .con = con)</code> — note <code>.con</code>, which tells <code>glue</code> which dialect to quote for.</p>
 </section>
-<section id="dbplyr-in-4-verbs" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="dbplyr-in-4-verbs"><span class="header-section-number">6.4</span> dbplyr in 4 verbs</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">"ecom"</span>)        <span class="co"># lazy reference, pulls nothing</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>e <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(duration <span class="sc">&gt;</span> <span class="dv">300</span>)  <span class="co"># WHERE</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>e <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(device) <span class="sc">|&gt;</span>     <span class="co"># GROUP BY + aggregates</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">avg =</span> <span class="fu">mean</span>(duration))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q)                <span class="co"># see the generated SQL</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">collect</span>(q)                   <span class="co"># pull results into a tibble</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">inner_join</span>(a, b) <span class="sc">/</span> <span class="fu">left_join</span>(a, b)  <span class="co"># JOINs; semi/anti_join filter</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="transactions" class="level2" data-number="A.4">
+<h2 data-number="A.4" class="anchored" data-anchor-id="transactions"><span class="header-section-number">A.4</span> Transactions</h2>
+<p>When several writes must succeed or fail together (debit one account, credit another), wrap them in a transaction. <code>dbWithTransaction()</code> commits on success and rolls back automatically if any step errors:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"trial"</span>, <span class="fu">data.frame</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>)))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWithTransaction</span>(con, {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dbExecute</span>(con, <span class="st">"INSERT INTO trial (id, x) VALUES (4, 'd')"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dbExecute</span>(con, <span class="st">"DELETE FROM trial WHERE id = 1"</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"SELECT * FROM trial ORDER BY id"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id x
+1  2 b
+2  3 c
+3  4 d</code></pre>
+</div>
+</div>
+<p>A failed transaction leaves the table untouched — verify by forcing an error inside the block and re-reading the table. Prefer <code>dbWithTransaction()</code> over manual <code>dbBegin()</code> / <code>dbCommit()</code> / <code>dbRollback()</code>: the manual trio leaks open transactions when an error interrupts your script.</p>
+</section>
+<section id="writing-data-at-scale" class="level2" data-number="A.5">
+<h2 data-number="A.5" class="anchored" data-anchor-id="writing-data-at-scale"><span class="header-section-number">A.5</span> Writing Data at Scale</h2>
+<p><code>copy_to()</code> (used throughout this book) is a demo convenience: it uploads an in-memory data frame with guessed column types. For real loads:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Declare types explicitly instead of letting the database guess</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbCreateTable</span>(con, <span class="st">"events"</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">fields =</span> <span class="fu">c</span>(<span class="at">id =</span> <span class="st">"INTEGER"</span>, <span class="at">ts =</span> <span class="st">"TIMESTAMP"</span>, <span class="at">label =</span> <span class="st">"TEXT"</span>))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Control large uploads: overwrite once, append after</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbWriteTable</span>(con, <span class="st">"events"</span>, january, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbWriteTable</span>(con, <span class="st">"events"</span>, february, <span class="at">append =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Speed repeated lookups with an index (or a view for saved queries)</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbExecute</span>(con, <span class="st">"CREATE INDEX idx_events_ts ON events (ts)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Rule of thumb: <code>copy_to()</code> for classroom demos, <code>dbWriteTable()</code> with <code>overwrite</code> / <code>append</code> for pipelines, <code>dbCreateTable()</code> + explicit types when the table must survive longer than your session.</p>
+</section>
+<section id="connections-in-shiny-pool" class="level2" data-number="A.6">
+<h2 data-number="A.6" class="anchored" data-anchor-id="connections-in-shiny-pool"><span class="header-section-number">A.6</span> Connections in Shiny: pool</h2>
+<p>A Shiny app that calls <code>dbConnect()</code> per session exhausts the database under load and leaks idle connections. The <a href="https://rstudio.github.io/pool/">pool</a> package checks connections out per reactive flush and returns them after:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>pool <span class="ot">&lt;-</span> pool<span class="sc">::</span><span class="fu">dbPool</span>(RPostgres<span class="sc">::</span><span class="fu">RPostgres</span>(), <span class="at">dbname =</span> <span class="st">"analytics"</span>,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">host =</span> <span class="st">"db.internal"</span>, <span class="at">user =</span> <span class="fu">Sys.getenv</span>(<span class="st">"DB_USER"</span>))</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># use pool exactly like con, then on app stop:</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>pool<span class="sc">::</span><span class="fu">poolClose</span>(pool)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>If you take one thing from this appendix into production Shiny work, take <code>pool</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Further reading: <code>vignette("DBI-advanced")</code> (transactions, quoting, bulk operations) and the <a href="https://dbi.r-dbi.org/">DBI specification</a> for backend authors. Runnable code for this appendix lives in <code>code/ch6-production.R</code> (server sections included as comments — uncomment with your credentials).</p>
 
 
 </section>
@@ -708,13 +794,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./joins.html" class="pagination-link" aria-label="JOINs">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">JOINs</span></span>
+      <a href="./cheatsheet.html" class="pagination-link" aria-label="DBI Cheat Sheet">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./production.html" class="pagination-link" aria-label="Production R Patterns">
-        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Production R Patterns</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./duckdb.html" class="pagination-link" aria-label="DuckDB + Parquet">
+        <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">DuckDB + Parquet</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -8,7 +8,7 @@
 
 <meta name="description" content="R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS.">
 
-<title>6&nbsp; DBI Cheat Sheet – R, Databases &amp; SQL</title>
+<title>Appendix B — DuckDB + Parquet – R, Databases &amp; SQL</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -72,8 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./production.html" rel="next">
-<link href="./joins.html" rel="prev">
+<link href="./production.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -134,7 +133,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./cheatsheet.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./production.html">Appendices</a></li><li class="breadcrumb-item"><a href="./duckdb.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">DuckDB + Parquet</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -203,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./cheatsheet.html" class="sidebar-item-text sidebar-link active">
+  <a href="./cheatsheet.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span></a>
   </div>
 </li>
@@ -224,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./duckdb.html" class="sidebar-item-text sidebar-link">
+  <a href="./duckdb.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">DuckDB + Parquet</span></span></a>
   </div>
 </li>
@@ -240,19 +239,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#connect-query-disconnect" id="toc-connect-query-disconnect" class="nav-link active" data-scroll-target="#connect-query-disconnect"><span class="header-section-number">6.1</span> Connect, query, disconnect</a></li>
-  <li><a href="#write-data" id="toc-write-data" class="nav-link" data-scroll-target="#write-data"><span class="header-section-number">6.2</span> Write data</a></li>
-  <li><a href="#inspect-a-query" id="toc-inspect-a-query" class="nav-link" data-scroll-target="#inspect-a-query"><span class="header-section-number">6.3</span> Inspect a query</a></li>
-  <li><a href="#dbplyr-in-4-verbs" id="toc-dbplyr-in-4-verbs" class="nav-link" data-scroll-target="#dbplyr-in-4-verbs"><span class="header-section-number">6.4</span> dbplyr in 4 verbs</a></li>
+  <li><a href="#connect-one-line-changes" id="toc-connect-one-line-changes" class="nav-link active" data-scroll-target="#connect-one-line-changes"><span class="header-section-number">B.1</span> Connect: one Line Changes</a></li>
+  <li><a href="#query-files-without-loading-them" id="toc-query-files-without-loading-them" class="nav-link" data-scroll-target="#query-files-without-loading-them"><span class="header-section-number">B.2</span> Query Files Without Loading Them</a></li>
+  <li><a href="#dbplyr-on-duckdb" id="toc-dbplyr-on-duckdb" class="nav-link" data-scroll-target="#dbplyr-on-duckdb"><span class="header-section-number">B.3</span> dbplyr on DuckDB</a></li>
+  <li><a href="#sqlite-or-duckdb" id="toc-sqlite-or-duckdb" class="nav-link" data-scroll-target="#sqlite-or-duckdb"><span class="header-section-number">B.4</span> SQLite or DuckDB?</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./production.html">Appendices</a></li><li class="breadcrumb-item"><a href="./duckdb.html"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">DuckDB + Parquet</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-cheatsheet" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">DBI Cheat Sheet</span></span></h1>
+<h1 class="title"><span id="sec-duckdb" class="quarto-section-identifier">Appendix B — DuckDB + Parquet</span></h1>
 </div>
 
 
@@ -269,38 +268,95 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>One-page reference: connect, query, disconnect. Printable PDF companion to this book (CC BY-NC-SA 4.0).</p>
-<section id="connect-query-disconnect" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="connect-query-disconnect"><span class="header-section-number">6.1</span> Connect, query, disconnect</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DBI)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(RSQLite<span class="sc">::</span><span class="fu">SQLite</span>(), <span class="st">":memory:"</span>)  <span class="co"># or duckdb::duckdb()</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dbListTables</span>(con)                                <span class="co"># what is in the database?</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dbReadTable</span>(con, <span class="st">"ecom"</span>)                         <span class="co"># whole table (small only!)</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"SELECT * FROM ecom LIMIT 10"</span>)   <span class="co"># SQL, first rows</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">dbSendQuery</span>(con, <span class="st">"SELECT * FROM ecom"</span>)    <span class="co"># big tables: fetch in batches</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">dbFetch</span>(res, <span class="at">n =</span> <span class="dv">100</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">dbClearResult</span>(res)                               <span class="co"># always clear when done</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">dbDisconnect</span>(con)                                <span class="co"># always disconnect</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><a href="dbi.html">SQLite</a> was the right default for learning: zero setup, same DBI code everywhere. <a href="https://duckdb.org/">DuckDB</a> is its analytical twin — an in-process engine (no server, like SQLite) built for fast aggregate queries over large files. The pitch for R users: the DBI code you already know runs unchanged, and you can query Parquet or CSV files directly without loading them into memory.</p>
+<blockquote class="blockquote">
+<p>All chunks in this appendix are display-only (<code>eval=FALSE</code>): they need <code>install.packages("duckdb")</code> once, which the book’s automated builds skip. Run them locally — every line works as written. Runnable code lives in <code>code/ch7-duckdb.R</code> (skips gracefully when <code>duckdb</code> is not installed).</p>
+</blockquote>
+<section id="connect-one-line-changes" class="level2" data-number="B.1">
+<h2 data-number="B.1" class="anchored" data-anchor-id="connect-one-line-changes"><span class="header-section-number">B.1</span> Connect: one Line Changes</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("duckdb")  # once; high-speed analytical engine</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>con_duck <span class="ot">&lt;-</span> DBI<span class="sc">::</span><span class="fu">dbConnect</span>(duckdb<span class="sc">::</span><span class="fu">duckdb</span>())</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbWriteTable</span>(con_duck, <span class="st">"ecom"</span>, ecom)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbGetQuery</span>(con_duck, <span class="st">"SELECT referrer, AVG(duration) FROM ecom GROUP BY referrer"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Compare with Chapter 1: <code>RSQLite::SQLite()</code> became <code>duckdb::duckdb()</code>, and nothing else moved. <code>dbListTables()</code>, <code>dbGetQuery()</code>, <code>dbWriteTable()</code>, <code>dbDisconnect()</code> — the whole DBI vocabulary carries over, which is exactly why the book taught SQLite first.</p>
 </section>
-<section id="write-data" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="write-data"><span class="header-section-number">6.2</span> Write data</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbWriteTable</span>(con, <span class="st">"trial"</span>, df)                     <span class="co"># create (overwrite / append args)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dbExecute</span>(con, <span class="st">"INSERT INTO trial (x) VALUES (1)"</span>) <span class="co"># statements, no cleanup needed</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dbRemoveTable</span>(con, <span class="st">"trial"</span>)                        <span class="co"># delete table</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="query-files-without-loading-them" class="level2" data-number="B.2">
+<h2 data-number="B.2" class="anchored" data-anchor-id="query-files-without-loading-them"><span class="header-section-number">B.2</span> Query Files Without Loading Them</h2>
+<p>DuckDB’s signature trick: <code>FROM 'file'</code> reads Parquet or CSV straight off disk, pushing filters and aggregates down so R never holds the full data:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate a 2 GB Parquet file from ~50 MB of R memory</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbGetQuery</span>(con_duck, <span class="st">"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT country, SUM(amount) AS revenue</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">  FROM 'orders.parquet'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE year = 2025</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">  GROUP BY country</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">  ORDER BY revenue DESC</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="st">  LIMIT 10"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Same for CSVs — handy for the raw logs before they become Parquet</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbGetQuery</span>(con_duck, <span class="st">"</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT COUNT(*) AS n FROM read_csv('logs/*.csv', header = true)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Write results back out the same way (<code>COPY ... TO 'out.parquet'</code>), and you have a full extract-transform pipeline with no database server and no RAM anxiety. Pair with <a href="https://arrow.apache.org/docs/r/">Arrow</a> (<code>arrow::read_parquet()</code>, <code>arrow::write_parquet()</code>) when you want the files in R as well as SQL.</p>
 </section>
-<section id="inspect-a-query" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="inspect-a-query"><span class="header-section-number">6.3</span> Inspect a query</h2>
-<p><code>dbHasCompleted()</code> <code>dbGetStatement()</code> <code>dbGetRowCount()</code> <code>dbGetRowsAffected()</code> <code>dbColumnInfo()</code> — status, SQL, counts, column types of a <code>dbSendQuery()</code> result.</p>
+<section id="dbplyr-on-duckdb" class="level2" data-number="B.3">
+<h2 data-number="B.3" class="anchored" data-anchor-id="dbplyr-on-duckdb"><span class="header-section-number">B.3</span> dbplyr on DuckDB</h2>
+<p>Lazy evaluation works exactly as in Chapter 2 — <code>tbl()</code>, verbs, <code>show_query()</code>, <code>collect()</code> — with DuckDB as the execution engine:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">tbl</span>(con_duck, <span class="st">"ecom"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> e <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(duration <span class="sc">&gt;</span> <span class="dv">300</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">group_by</span>(device) <span class="sc">|&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">avg =</span> <span class="fu">mean</span>(duration))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q)  <span class="co"># DuckDB SQL this time, same dplyr code</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">collect</span>(q)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Two habits carry over from Chapter 2: use <code>show_query()</code> to check what dbplyr generates (window functions and custom SQL still deserve hand-written queries via <code>dplyr::sql()</code>), and prefer <code>dplyr::compute()</code> over <code>collect()</code> for intermediate results too big for memory — <code>compute()</code> materializes them as a DuckDB table instead of an R tibble.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>DBI<span class="sc">::</span><span class="fu">dbDisconnect</span>(con_duck)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
-<section id="dbplyr-in-4-verbs" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="dbplyr-in-4-verbs"><span class="header-section-number">6.4</span> dbplyr in 4 verbs</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">tbl</span>(con, <span class="st">"ecom"</span>)        <span class="co"># lazy reference, pulls nothing</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>e <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(duration <span class="sc">&gt;</span> <span class="dv">300</span>)  <span class="co"># WHERE</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>e <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">group_by</span>(device) <span class="sc">|&gt;</span>     <span class="co"># GROUP BY + aggregates</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">summarise</span>(<span class="at">avg =</span> <span class="fu">mean</span>(duration))</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">show_query</span>(q)                <span class="co"># see the generated SQL</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>dplyr<span class="sc">::</span><span class="fu">collect</span>(q)                   <span class="co"># pull results into a tibble</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">inner_join</span>(a, b) <span class="sc">/</span> <span class="fu">left_join</span>(a, b)  <span class="co"># JOINs; semi/anti_join filter</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="sqlite-or-duckdb" class="level2" data-number="B.4">
+<h2 data-number="B.4" class="anchored" data-anchor-id="sqlite-or-duckdb"><span class="header-section-number">B.4</span> SQLite or DuckDB?</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th></th>
+<th>SQLite (Chapters 1–5)</th>
+<th>DuckDB (this appendix)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Shape</td>
+<td>Row-oriented, transactional</td>
+<td>Column-oriented, analytical</td>
+</tr>
+<tr class="even">
+<td>Best at</td>
+<td>Lookups, inserts, app state</td>
+<td>Aggregates, scans, Parquet</td>
+</tr>
+<tr class="odd">
+<td>Files</td>
+<td><code>.sqlite</code></td>
+<td><code>.parquet</code>, <code>.csv</code>, in-memory</td>
+</tr>
+<tr class="even">
+<td>Scale</td>
+<td>Fits comfortably</td>
+<td>Bigger than RAM, via pushdown</td>
+</tr>
+<tr class="odd">
+<td>R path</td>
+<td><code>RSQLite::SQLite()</code></td>
+<td><code>duckdb::duckdb()</code></td>
+</tr>
+</tbody>
+</table>
+<p>Default to SQLite for application data and DuckDB for analysis. When your analysis outgrows DuckDB on one machine, the next step up is <a href="https://r4ds.hadley.nz/databases">R4DS Ch. 21</a> — the funnel this book was built to feed.</p>
 
 
 </section>
@@ -708,14 +764,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./joins.html" class="pagination-link" aria-label="JOINs">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">JOINs</span></span>
+      <a href="./production.html" class="pagination-link" aria-label="Production R Patterns">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Production R Patterns</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./production.html" class="pagination-link" aria-label="Production R Patterns">
-        <span class="nav-page-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Production R Patterns</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
