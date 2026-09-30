@@ -1,0 +1,16 @@
+{
+  "name": "rdbsql",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "quarto.quarto",
+        "REditorSupport.r"
+      ]
+    }
+  },
+  "postCreateCommand": "Rscript scripts/verify.R",
+  "remoteUser": "root"
+}
