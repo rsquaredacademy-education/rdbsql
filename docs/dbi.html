@@ -150,6 +150,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R, Databases &amp; SQL</a> 
+        <div class="sidebar-tools-main">
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./R,-Databases---SQL.pdf">
+              <i class="bi bi-file-pdf pe-1"></i>
+            Download PDF
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./R,-Databases---SQL.epub">
+              <i class="bi bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+      </ul>
+    </div>
+</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -604,10 +623,10 @@ $has.completed
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbGetQuery</span>(con, <span class="st">"select * from trial limit 5"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   x y
-1 28 k
-2 88 l
-3 21 m
-4 36 n
+1 74 k
+2 24 l
+3 64 m
+4 72 n
 5  8 o</code></pre>
 </div>
 </div>
@@ -626,27 +645,27 @@ $has.completed
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbReadTable</span>(con, <span class="st">"trial"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     x y
-1   28 k
-2   88 l
-3   21 m
-4   36 n
-5    8 o
-6    7 p
-7   26 q
-8   69 r
-9   89 s
-10  83 t
-11   1 e
-12  17 f
-13  75 g
-14  60 h
-15  77 i
-16  74 j
-17  40 k
-18 100 l
-19  16 m
-20  22 n</code></pre>
+<pre><code>    x y
+1  74 k
+2  24 l
+3  64 m
+4  72 n
+5   8 o
+6  20 p
+7  62 q
+8  45 r
+9  94 s
+10 77 t
+11 23 e
+12 11 f
+13 75 g
+14 88 h
+15 66 i
+16 38 j
+17 71 k
+18 39 l
+19 15 m
+20 97 n</code></pre>
 </div>
 </div>
 <p>We can also use <code>sqlAppendTable()</code> to append data to an existing table.</p>
