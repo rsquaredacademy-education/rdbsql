@@ -32,6 +32,10 @@ book:
     - production.qmd
     - duckdb.qmd
   downloads: [pdf, epub]
+  # Filename for the whole-book PDF/ePub. Must be set here rather than renamed
+  # after the render: Quarto bakes this name into the landing page's download
+  # link, so a post-render rename leaves the advertised button 404ing.
+  output-file: "databases-and-sql"
 
 website:
   site-url: https://rdbsql.rsquaredacademy.com
