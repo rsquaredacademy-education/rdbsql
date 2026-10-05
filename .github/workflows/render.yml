@@ -52,6 +52,12 @@ jobs:
       - name: Render HTML
         run: quarto render --to html --output-dir /tmp/stage-html
 
+      # Generated from the rendered pages. The hand-maintained sitemap this
+      # replaces omitted cheatsheet.html, production.html and duckdb.html --
+      # all three are live pages, they were simply missing from the sitemap.
+      - name: Generate sitemap
+        run: bash scripts/make-sitemap.sh /tmp/stage-html https://rdbsql.rsquaredacademy.com
+
       # Fatal, not advisory. These were previously `|| echo "PDF_FAILED=1"`,
       # which hid a genuinely broken PDF behind a green build for months.
       - name: Render PDF
@@ -59,6 +65,21 @@ jobs:
 
       - name: Render ePub
         run: quarto render --to epub --output-dir /tmp/stage-epub
+
+      - name: Verify slugs rendered
+        run: sh scripts/verify-slugs.sh /tmp/stage-html
+
+      - name: Verify sitemap covers every page
+        run: sh scripts/verify-sitemap.sh /tmp/stage-html /tmp/stage-html/sitemap.xml
+
+      # This book has 5 @sec- cross-references in index.qmd and no other book
+      # checked them, so a broken one shipped silently.
+      - name: Verify no unresolved cross-references
+        run: |
+          if grep -r '??</strong>' /tmp/stage-html/*.html; then
+            echo "FAIL: unresolved cross-references (??) found"; exit 1
+          fi
+          echo "OK: no unresolved cross-references"
 
       - name: Assemble docs
         run: |
