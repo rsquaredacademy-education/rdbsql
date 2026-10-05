@@ -12,8 +12,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Typst ships no fonts and the bare runner has none either, so a stale
+      # fontconfig cache fails the PDF with "font fallback list must not be
+      # empty". fc-cache -f makes the resolver see what we just installed.
+      #
+      # fonts-libertinus is required here, unlike in the other books: this one
+      # renders PDF with Typst 0.13.1, which does NOT see "Linux Libertine"
+      # (verified locally). _quarto.yml asks for mainfont "Libertinus Serif",
+      # which is the only serif that resolves under both Typst 0.11 and 0.13.1.
       - name: Install fonts
-        run: sudo apt-get update && sudo apt-get install -y fonts-linuxlibertine fonts-dejavu-core
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-linuxlibertine fonts-libertinus fonts-dejavu-core
+          fc-cache -f
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
@@ -25,6 +36,14 @@ jobs:
           # NOTE: duckdb omitted — the book's only duckdb chunk is eval=FALSE, and the
           # duckdb CRAN package compiles ~30+ min from source when no jammy binary exists.
 
+      # Quarto is pinned, and so is Typst — but this book needs a NEWER Typst
+      # than the house default of 0.11.0. Quarto 1.10's Typst template emits
+      # `place(..., scope: "parent")`, and Typst 0.11 rejects that argument:
+      #   error: unexpected argument: scope
+      # which fails the whole PDF. Verified locally: 1.10.18 + 0.11.0 fails,
+      # 1.10.18 + 0.13.1 succeeds. Do not downgrade Typst here without re-testing,
+      # and do not downgrade Quarto either — 1.6.40 cannot resolve this book's
+      # @sec-... cross-references ("cannot reference heading without numbering").
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
@@ -32,27 +51,37 @@ jobs:
 
       - name: Setup Typst
         uses: typst-community/setup-typst@v4
+        with:
+          version: "0.13.1"
 
       - name: Render HTML
         run: quarto render --to html --output-dir /tmp/stage-html
 
+      # Fatal, not advisory. These were previously `|| echo "PDF_FAILED=1"`,
+      # which hid a genuinely broken PDF behind a green build for months.
       - name: Render PDF
-        run: quarto render --to pdf --output-dir /tmp/stage-pdf || echo "PDF_FAILED=1" >> $GITHUB_ENV
+        run: quarto render --to pdf --output-dir /tmp/stage-pdf
 
       - name: Render ePub
-        run: quarto render --to epub --output-dir /tmp/stage-epub || echo "EPUB_FAILED=1" >> $GITHUB_ENV
+        run: quarto render --to epub --output-dir /tmp/stage-epub
 
       - name: Assemble docs
         run: |
           rm -rf docs && mkdir -p docs
           cp -r /tmp/stage-html/. docs/
-          cp /tmp/stage-pdf/*.pdf docs/ 2>/dev/null || echo "No PDF staged (PDF_FAILED=${PDF_FAILED:-0})"
-          cp /tmp/stage-epub/*.epub docs/ 2>/dev/null || echo "No ePub staged (EPUB_FAILED=${EPUB_FAILED:-0})"
+          cp /tmp/stage-pdf/*.pdf docs/
+          cp /tmp/stage-epub/*.epub docs/
           sh scripts/post-render.sh
           cp google02e424888b5e2def.html robots.txt _redirects 404.html docs/ 2>/dev/null || true
           rm -rf docs/docs
           test -f docs/sitemap.xml || { echo "sitemap.xml missing after assemble"; exit 1; }
           ls docs/
+
+      # Downloads are advertised on the landing page; assert they really shipped.
+      - name: Verify downloads are present
+        run: |
+          ls /tmp/stage-pdf/*.pdf || { echo "PDF MISSING"; exit 1; }
+          ls /tmp/stage-epub/*.epub || { echo "EPUB MISSING"; exit 1; }
 
       - name: Verify redirects
         run: bash scripts/test-redirects.sh docs
