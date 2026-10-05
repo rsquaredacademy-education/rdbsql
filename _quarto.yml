@@ -61,7 +61,7 @@ format:
     papersize: us-letter
     keep-typ: false
     code-overflow: wrap
-    mainfont: "Libertinus Serif"
+    mainfont: "Linux Libertine"
     monofont: "DejaVu Sans Mono"
     number-sections: true
   epub:
