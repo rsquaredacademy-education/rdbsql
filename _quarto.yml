@@ -39,14 +39,14 @@ book:
 
 website:
   site-url: https://rdbsql.rsquaredacademy.com
-  repo-url: https://github.com/rsquaredacademy-education/rdbsql/
+  repo-url: https://github.com/rsquaredacademy-publications/rdbsql/
   description: "R DBI tutorial: connect R to SQLite, query with dbplyr and SQL — free 2-hour primer before R4DS."
   open-graph: true
   twitter-card: true
   navbar:
     right:
       - text: "GitHub"
-        href: https://github.com/rsquaredacademy-education/rdbsql/
+        href: https://github.com/rsquaredacademy-publications/rdbsql/
 
 format:
   html:
